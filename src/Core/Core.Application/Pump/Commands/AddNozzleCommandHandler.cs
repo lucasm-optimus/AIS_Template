@@ -1,4 +1,5 @@
-﻿using Optimus.Core.Application.Pump.State;
+﻿using Microsoft.AspNetCore.Connections;
+using Optimus.Core.Application.Pump.State;
 using Optimus.Core.Domain.Aggregates.Pump.Commands;
 using Optimus.Core.Domain.Aggregates.Pump.Events;
 
@@ -12,6 +13,12 @@ namespace Optimus.Core.Application.Pump.Commands
         public AddNozzleCommandValidator()
         {
             RuleFor(command => command.PumpNumber)
+                .GreaterThan(100)
+                .InclusiveBetween(100, 200)
+                .Must((command, pumpNumber) => {
+
+                    return false;
+                })
                 .NotEmpty();
 
             RuleFor(command => command.Number)
@@ -28,18 +35,18 @@ namespace Optimus.Core.Application.Pump.Commands
 
     public class AddNozzleCommandHandler(IPumpState state, IMediator mediator) : ICommandHandler<CreateNozzleCommand, NozzleCreated>
     {
-        public async Task<Result<NozzleCreated>> Handle(CreateNozzleCommand request, CancellationToken cancellationToken)
+        public async Task<Result<NozzleCreated>> Handle(CreateNozzleCommand command, CancellationToken cancellationToken)
         {
-            var pump = await state.Get(x => x.Number == request.PumpNumber);
+            var pumpAgg = await state.Get(x => x.Number == command.PumpNumber);
 
-            if (pump == null)
+            if (pumpAgg == null)
                 return Result.Ok().WithValidationError("Number", $"Pump not found");
 
-            var addedResult = pump.AddNozzle(request);
+            var addedResult = pumpAgg.AddNozzle(command);
 
             if (addedResult != null && addedResult.IsSuccess)
             {
-                var saveResult = await state.Update(pump.Id.ToString(), pump);
+                var saveResult = await state.Update(pumpAgg.Id.ToString(), pumpAgg);
                 if (saveResult.IsSuccess)
                 {
                     await mediator.Publish(addedResult.Value);

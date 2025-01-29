@@ -118,7 +118,7 @@ public static class StartupExtensions
     private static void LoadAssemblies()
     {
         var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
-                .Where(file => file.Contains("Becape.") || file.Contains("AutoMais."))
+                .Where(file => file.Contains("Optimus."))
                 .ToList();
 
         foreach (var dll in assemblies)
