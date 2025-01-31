@@ -1,10 +1,9 @@
-﻿namespace Optimus.Core.Application
-{
-    public interface IApplication
-    {
-    }
+﻿namespace Tilray.Integration.Core.Application;
 
-    public class Application : IApplication
-    {
-    }
+public interface IApplication
+{
+}
+
+public class Application : IApplication
+{
 }
