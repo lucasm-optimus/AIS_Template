@@ -51,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tilray.Integrations.Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{33A777D0-B204-4EE3-9E96-FF6DE7BA958A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tilray.Integrations.Repositories.Snowflake", "src\Adapters\Services\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj", "{6DD54FA4-C337-4BF2-8356-5B6FC84E3601}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tilray.Integrations.Repositories.Snowflake", "src\Adapters\Repositories\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj", "{6DD54FA4-C337-4BF2-8356-5B6FC84E3601}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ArmTemplates", "ArmTemplates", "{B1331317-A56F-4360-A13A-2D68CB6B31ED}"
 EndProject
