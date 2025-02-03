@@ -113,7 +113,7 @@ public class Invoice
     public string Description { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public DateTime? PaymentDueDate { get; set; }
-    public DateTime? ExtractDate { get; set; }
+    public DateTime? ExtractedDate { get; set; }
     public DateTime? LastModifiedDate { get; set; }
     public DateTime? InvoiceReceivedDate { get; set; }
     public decimal InvoiceAmount { get; set; }
@@ -157,16 +157,16 @@ public class Invoice
     }
 
     public string PostingDate =>
-        ExtractDate.HasValue
-        ? ExtractDate.Value.ToString("yyyy-MM-dd")
+        ExtractedDate.HasValue
+        ? ExtractedDate.Value.ToString("yyyy-MM-dd")
         : DateTime.UtcNow.ToString("yyyy-MM-dd");
 
     public string DueDate =>
         PaymentDueDate.HasValue &&
-        PaymentDueDate >= ExtractDate
+        PaymentDueDate >= ExtractedDate
             ? PaymentDueDate.Value.ToString("yyyy-MM-dd")
-            : (ExtractDate.HasValue
-                ? ExtractDate.Value.ToString("yyyy-MM-dd")
+            : (ExtractedDate.HasValue
+                ? ExtractedDate.Value.ToString("yyyy-MM-dd")
                 : DateTime.UtcNow.ToString("yyyy-MM-dd"));
 
     public string DocumentDate =>

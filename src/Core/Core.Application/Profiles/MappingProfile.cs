@@ -185,7 +185,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src =>
                 src.Invoice.LastModifiedDate.HasValue ? src.Invoice.LastModifiedDate.Value.ToString("yyyy-MM-dd") : string.Empty))
             .ForMember(dest => dest.ExtractedDate, opt => opt.MapFrom(src =>
-                src.Invoice.ExtractDate.HasValue ? src.Invoice.ExtractDate.Value.ToString("yyyy-MM-dd") : string.Empty))
+                src.Invoice.ExtractedDate.HasValue ? src.Invoice.ExtractedDate.Value.ToString("yyyy-MM-dd") : string.Empty))
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.Invoice.PaymentMethod))
             .ForMember(dest => dest.JournalAmount, opt => opt.MapFrom(src => src.LineItem.AmountWithoutVat))
             .ForMember(dest => dest.RequestedAlphaCurrencyCode, opt => opt.MapFrom(src => src.Invoice.CurrencyCode))

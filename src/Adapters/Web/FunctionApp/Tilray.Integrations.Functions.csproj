@@ -7,9 +7,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-      <Content Include="local.settings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      <Content Include="local.settings.json" />
     </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -35,7 +33,6 @@
         <ProjectReference Include="..\..\..\Core\Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
         <ProjectReference Include="..\..\Repositories\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj" />
-        <ProjectReference Include="..\..\Services\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.OBeer\Tilray.Integrations.Services.OBeer.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Rootstock\Tilray.Integrations.Services.Rootstock.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.SAPConcur\Tilray.Integrations.Services.SAPConcur.csproj" />
@@ -44,10 +41,6 @@
     <ItemGroup>
         <None Update="host.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="local.settings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </None>
     </ItemGroup>
     <ItemGroup>
