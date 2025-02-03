@@ -4,6 +4,18 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 {
     #region Private methods
 
+    private string GetSubFolderPath<T>()
+    {
+        Type type = typeof(T);
+        return type switch
+        {
+            Type invoice when invoice == typeof(Invoice) => sharepointSettings.InvoicesSubFolderPath,
+            Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
+            Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
+            _ => throw new NotSupportedException($"Uploading files of type {type.Name} is not supported."),
+        };
+    }
+
     private async Task<Result<string>> GetSiteIdAsync()
     {
         var site = await graphServiceClient.Sites[$"{sharepointSettings.HostName}:/sites/{sharepointSettings.SiteName}"]
@@ -62,7 +74,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         if (driveResult.IsFailed) return driveResult.ToResult();
 
         var fileContent = Helpers.ConvertToCsv(content);
-        var uploadPath = $"{sharepointSettings.BasePath?.TrimEnd('/')}/{companyReference.Company_Name__c.Trim()}{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/Invoices_{companyReference.Company_Name__c}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
+        var uploadPath = $"{sharepointSettings.BasePath?.TrimEnd('/')}/{companyReference.Company_Name__c.Trim()}{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/{GetSubFolderPath<T>()}{companyReference.Company_Name__c}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
 
         using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
         {

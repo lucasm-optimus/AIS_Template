@@ -60,11 +60,11 @@ public class Item
 
 public class Import
 {
-    public List<InvoiceHeader> InvoiceHeader { get; set; }
+    public List<InvoiceHeader> InvoiceHeader { get; set; } = [];
     public List<Item> Items { get; set; } = [];
 }
 
 public class ObeerInvoice
 {
-    public Import Import { get; set; }
+    public Import Import { get; set; } = new();
 }

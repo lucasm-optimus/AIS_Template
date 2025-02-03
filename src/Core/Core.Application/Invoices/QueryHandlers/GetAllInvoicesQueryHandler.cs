@@ -6,12 +6,12 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
     public async Task<Result<IEnumerable<InvoiceGroup>>> Handle(GetAllInvoices request, CancellationToken cancellationToken)
     {
         var invoicesResult = await sapConcurService.GetInvoicesAsync();
-        if (!invoicesResult.IsSuccess)
-            return Result.Fail<IEnumerable<InvoiceGroup>>($"Failed to fetch invoices: {string.Join(", ", invoicesResult.Errors.Select(e => e.Message))}");
+        if (invoicesResult.IsFailed)
+            return Result.Fail<IEnumerable<InvoiceGroup>>(string.Join(", ", invoicesResult.Errors.Select(e => e.Message)));
 
         var companyReferencesResult = await rootstockService.GetAllCompanyReferencesAsync();
-        if (!companyReferencesResult.IsSuccess)
-            return Result.Fail<IEnumerable<InvoiceGroup>>($"Failed to fetch company references: {string.Join(", ", companyReferencesResult.Errors.Select(e => e.Message))}");
+        if (companyReferencesResult.IsFailed)
+            return Result.Fail<IEnumerable<InvoiceGroup>>(string.Join(", ", companyReferencesResult.Errors.Select(e => e.Message)));
 
         var companyWithInvoices = companyReferencesResult.Value
             .Select(company => InvoiceGroup.Create(
@@ -20,10 +20,10 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
             .Where(invoiceGroup => invoiceGroup.Invoices.Count > 0);
 
 
-        //foreach (var invoice in companyWithInvoices)
-        //{
-        //    await obeerService.CreateInvoicesAsync(invoice.Invoices);
-        //}
+        foreach (var invoice in companyWithInvoices)
+        {
+            await obeerService.CreateInvoicesAsync(invoice.Invoices);
+        }
 
         return Result.Ok(companyWithInvoices);
     }

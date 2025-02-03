@@ -16,8 +16,8 @@ public class RootstockService(HttpClient client, RootstockSettings rootstockSett
 
         if (!response.IsSuccessStatusCode)
         {
-            string errorMessage = Helpers.GetErrorFromResponse(response);
-            logger.LogError($"Failed to fetch {objectName}. Error: {errorMessage}");
+            string errorMessage = $"Failed to fetch {objectName}. Error: {Helpers.GetErrorFromResponse(response)}";
+            logger.LogError(errorMessage);
             return Result.Fail<IEnumerable<T>>(errorMessage);
         }
 
@@ -29,6 +29,7 @@ public class RootstockService(HttpClient client, RootstockSettings rootstockSett
             return Result.Ok(Enumerable.Empty<T>());
         }
 
+        logger.LogInformation("Total {TotalRecords} {ObjectName} found", recordsArray.Count, objectName);
         var records = JsonConvert.DeserializeObject<IEnumerable<T>>(recordsArray.ToString());
         return Result.Ok(records);
     }

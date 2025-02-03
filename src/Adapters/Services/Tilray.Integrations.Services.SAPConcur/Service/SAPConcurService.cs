@@ -22,7 +22,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         {
             string errorMessage = Helpers.GetErrorFromResponse(response);
             logger.LogError(errorMessage);
-            return Result.Fail<T>($"API request failed with status {response.StatusCode}");
+            return Result.Fail<T>($"Failed to fetch invoice(s) with requestUri {requestUri}. Error: {errorMessage}");
         }
 
         var result = JsonConvert.DeserializeObject<T>(content);
@@ -74,7 +74,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
 
     public async Task<Result<IEnumerable<Invoice>>> GetInvoicesAsync()
     {
-        var startDate = DateTime.UtcNow.AddDays(-1);
+        var startDate = DateTime.UtcNow.AddMinutes(-sapConcurSettings.InvoicesFetchDurationInMinutes);
         var endDate = DateTime.UtcNow;
 
         logger.LogInformation("GetInvoices: Fetching invoices from {StartDate:yyyy-MM-dd} to {EndDate:yyyy-MM-dd}",
@@ -96,12 +96,21 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         }
 
         logger.LogInformation("GetInvoices: Processing {DigestCount} invoice digests", digests.Count);
-        var invoiceResults = await Task.WhenAll(digests.Select(d => GetInvoiceByIdAsync(d.ID)));
+        var invoiceResults = await Task.WhenAll(digests.Select(async digest =>
+        {
+            var invoiceResult = await GetInvoiceByIdAsync(digest.ID);
+            if (invoiceResult.IsSuccess && invoiceResult.Value != null)
+            {
+                invoiceResult.Value.LastModifiedDate = digest.LastModifiedDate;
+            }
+            return invoiceResult;
+        }));
 
         var invoices = invoiceResults
             .Where(r => r.IsSuccess && r.Value != null)
             .Select(r => r.Value);
 
+        logger.LogInformation($"GetInvoices: Successfully fetched {invoices.Count()} invoices. InvoiceIds: {string.Join(", ", invoices.Select(data => data.ID))}");
         return Result.Ok(invoices);
     }
 

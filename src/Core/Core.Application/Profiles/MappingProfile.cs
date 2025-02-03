@@ -40,9 +40,7 @@ public class MappingProfile : Profile
                         PostingDate = src.invoice.PostingDate,
                         DueDate = src.invoice.DueDate,
                         DocumentDate = src.invoice.DocumentDate,
-                        DocumentType = src.documentType,
-                        PODocNum = string.Empty,
-                        GRPODocNum = string.Empty,
+                        DocumentType = src.documentType
                     }
                 }))
             .ForPath(dest => dest.Import.Items, opt => opt.MapFrom(src =>
@@ -52,6 +50,10 @@ public class MappingProfile : Profile
                         {
                             new()
                             {
+                                PODocNum = src.items.FirstOrDefault().PODocNum,
+                                GRPODocNum = src.items.FirstOrDefault().GRPODocNum,
+                                POLineNum = string.Empty,
+                                GRPOLineNum = string.Empty,
                                 ItemCode = "FREIGHT",
                                 ItemDescription = "FREIGHT",
                                 GLAccount = "_SYS00000000706",
@@ -70,6 +72,10 @@ public class MappingProfile : Profile
                         {
                                 new()
                                 {
+                                    PODocNum = src.items.FirstOrDefault().PODocNum,
+                                    GRPODocNum = src.items.FirstOrDefault().GRPODocNum,
+                                    POLineNum = string.Empty,
+                                    GRPOLineNum = string.Empty,
                                     ItemCode = "VAT1",
                                     ItemDescription = "VAT1",
                                     GLAccount = "_SYS00000000507",
@@ -185,7 +191,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.LastModifiedDate, opt => opt.MapFrom(src =>
                 src.Invoice.LastModifiedDate.HasValue ? src.Invoice.LastModifiedDate.Value.ToString("yyyy-MM-dd") : string.Empty))
             .ForMember(dest => dest.ExtractedDate, opt => opt.MapFrom(src =>
-                src.Invoice.ExtractedDate.HasValue ? src.Invoice.ExtractedDate.Value.ToString("yyyy-MM-dd") : string.Empty))
+                src.Invoice.ExtractDate.HasValue ? src.Invoice.ExtractDate.Value.ToString("yyyy-MM-dd") : string.Empty))
             .ForMember(dest => dest.PaymentMethodType, opt => opt.MapFrom(src => src.Invoice.PaymentMethod))
             .ForMember(dest => dest.JournalAmount, opt => opt.MapFrom(src => src.LineItem.AmountWithoutVat))
             .ForMember(dest => dest.RequestedAlphaCurrencyCode, opt => opt.MapFrom(src => src.Invoice.CurrencyCode))

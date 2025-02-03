@@ -32,17 +32,35 @@ public class VendorRemitAddress
 public class MatchedPurchaseOrderReceipt
 {
     public string GoodsReceiptNumber { get; set; }
-    public GRPOType Type { get; set; }
-    public string PODocNum { get; set; }
-    public string GRPODocNum { get; set; }
-    public string POLineNum { get; set; }
-    public string GRPOLineNum { get; set; }
     public decimal AllocatedQuantity { get; set; }
 
-    public bool ValidateGoodsReceiptNumber =>
+    private string[] _grnParts;
+    public string[] GrnParts =>
+        _grnParts ??= GoodsReceiptNumber?.Split('-') ?? [];
+
+    public bool IsValidGrn =>
         !string.IsNullOrEmpty(GoodsReceiptNumber)
-        && GoodsReceiptNumber.Split('-').Length == 5
-        && (GoodsReceiptNumber.Contains("(I)") || GoodsReceiptNumber.Contains("(S)"));
+        && GrnParts.Length >= 6
+        && (GoodsReceiptNumber.Contains('I') || GoodsReceiptNumber.Contains('S'));
+
+    public string PODocNum =>
+        IsValidGrn && GrnParts.Length > 0 ? GrnParts[0] : string.Empty;
+
+    public string POLineNum =>
+        IsValidGrn && GrnParts.Length > 2 ? GrnParts[2] : string.Empty;
+
+    public string GRPODocNum =>
+        IsValidGrn && GrnParts.Length > 3 && int.TryParse(GrnParts[3], out int num)
+        ? (num + 9999).ToString("00000")
+        : string.Empty;
+
+    public string GRPOLineNum =>
+        IsValidGrn && GrnParts.Length > 4 ? GrnParts[4] : string.Empty;
+
+    public GRPOType Type =>
+        IsValidGrn && GoodsReceiptNumber.Contains('I')
+        ? GRPOType.Item
+        : GRPOType.Service;
 
     public void CalculateAllocatedQuantity(decimal remainingQty, decimal openQty, int grpoCount)
     {
@@ -53,14 +71,6 @@ public class MatchedPurchaseOrderReceipt
 
     public void UpdateGrpo(decimal openQty, ref decimal remainingQty, ref int grpoCount)
     {
-        var parts = GoodsReceiptNumber.Split('-');
-
-        PODocNum = parts[0];
-        POLineNum = parts[2];
-        GRPODocNum = (int.Parse(parts[3]) + 9999).ToString("00000");
-        GRPOLineNum = parts[4];
-        Type = GoodsReceiptNumber.Contains("(I)") ? GRPOType.Item : GRPOType.Service;
-
         CalculateAllocatedQuantity(remainingQty, openQty, grpoCount);
 
         remainingQty -= AllocatedQuantity;
@@ -70,7 +80,7 @@ public class MatchedPurchaseOrderReceipt
 
 public class MatchedPurchaseOrderReceipts
 {
-    public List<MatchedPurchaseOrderReceipt> MatchedPurchaseOrderReceipt { get; set; }
+    public List<MatchedPurchaseOrderReceipt> MatchedPurchaseOrderReceipt { get; set; } = [];
 }
 
 public class LineItem
@@ -93,7 +103,7 @@ public class LineItem
     public string Custom9 { get; set; }
     public string Custom10 { get; set; }
     public string OBeerGLAccount { get; set; }
-    public MatchedPurchaseOrderReceipts MatchedPurchaseOrderReceipts { get; set; }
+    public MatchedPurchaseOrderReceipts MatchedPurchaseOrderReceipts { get; set; } = new();
     public bool IsValid() => Quantity != 0.0m && TotalPrice != 0.0m;
     public bool HasGrpoMatches() => MatchedPurchaseOrderReceipts?.MatchedPurchaseOrderReceipt?.Count > 0;
     public void SetGlAccount(string glAccount) => OBeerGLAccount = glAccount;
@@ -101,7 +111,7 @@ public class LineItem
 
 public class LineItems
 {
-    public List<LineItem> LineItem { get; set; }
+    public List<LineItem> LineItem { get; set; } = [];
 }
 
 public class Invoice
@@ -113,7 +123,7 @@ public class Invoice
     public string Description { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public DateTime? PaymentDueDate { get; set; }
-    public DateTime? ExtractedDate { get; set; }
+    public DateTime? ExtractDate { get; set; }
     public DateTime? LastModifiedDate { get; set; }
     public DateTime? InvoiceReceivedDate { get; set; }
     public decimal InvoiceAmount { get; set; }
@@ -138,35 +148,23 @@ public class Invoice
     public decimal VatAmountThree { get; set; }
     public decimal VatAmountFour { get; set; }
     public VendorRemitAddress VendorRemitAddress { get; set; }
-    public LineItems LineItems { get; set; }
-    public string Company
-    {
-        get
-        {
-            return !string.IsNullOrEmpty(Custom1)
+    public LineItems LineItems { get; set; } = new();
+    public string Company => !string.IsNullOrEmpty(Custom1)
                 ? Custom1
                 : LineItems?.LineItem?.FirstOrDefault()?.Custom1;
-        }
-    }
-    public DateTime FiscalYear
-    {
-        get
-        {
-            return new DateTime(DateTime.Now.Year - (DateTime.Now.Month < 6 ? 1 : 0), 6, 1);
-        }
-    }
+    public DateTime FiscalYear => new(DateTime.Now.Year - (DateTime.Now.Month < 6 ? 1 : 0), 6, 1);
 
     public string PostingDate =>
-        ExtractedDate.HasValue
-        ? ExtractedDate.Value.ToString("yyyy-MM-dd")
+        ExtractDate.HasValue
+        ? ExtractDate.Value.ToString("yyyy-MM-dd")
         : DateTime.UtcNow.ToString("yyyy-MM-dd");
 
     public string DueDate =>
         PaymentDueDate.HasValue &&
-        PaymentDueDate >= ExtractedDate
+        PaymentDueDate >= ExtractDate
             ? PaymentDueDate.Value.ToString("yyyy-MM-dd")
-            : (ExtractedDate.HasValue
-                ? ExtractedDate.Value.ToString("yyyy-MM-dd")
+            : (ExtractDate.HasValue
+                ? ExtractDate.Value.ToString("yyyy-MM-dd")
                 : DateTime.UtcNow.ToString("yyyy-MM-dd"));
 
     public string DocumentDate =>
@@ -182,12 +180,9 @@ public class InvoiceProcessingResult : IError
     public List<NonPOLineItemError> ErrorsNoPo { get; } = [];
     public List<GrpoLineItemError> ErrorsGrpo { get; } = [];
     public bool HasErrors => ErrorsNoPo.Count > 0 || ErrorsGrpo.Count > 0;
-
-    public List<IError> Reasons => throw new NotImplementedException();
-
-    public string Message => throw new NotImplementedException();
-
-    public Dictionary<string, object> Metadata => throw new NotImplementedException();
+    public List<IError> Reasons => [];
+    public string Message { get; set; }
+    public Dictionary<string, object> Metadata => [];
 }
 
 public class GrpoLineItemError

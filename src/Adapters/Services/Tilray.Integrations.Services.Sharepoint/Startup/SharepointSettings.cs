@@ -15,5 +15,8 @@ public class SharepointSettings
     public string TenantId { get; set; }
     public string BasePath { get; set; }
     public string InvoicesFolderPath { get; set; }
+    public string InvoicesSubFolderPath { get; set; }
+    public string InvoicesNonPOErrorsSubFolderPath { get; set; }
+    public string InvoicesGrpoErrorsSubFolderPath { get; set; }
     public string[] Scopes { get; set; } = ["https://graph.microsoft.com/.default"];
 }
