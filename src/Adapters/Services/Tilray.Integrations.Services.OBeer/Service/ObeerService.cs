@@ -1,4 +1,5 @@
 ﻿using Tilray.Integrations.Core.Common.Extensions;
+using Tilray.Integrations.Services.OBeer.Service.Models;
 
 namespace Tilray.Integrations.Services.OBeer.Service;
 
@@ -49,7 +50,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
                 {
                     logger.LogError("Invalid GRN format for GRN {GoodsReceiptNumber}, Line Item {LineItemId}, Invoice {InvoiceId}",
                         grpo.GoodsReceiptNumber, lineItem.LineItemId, invoice.ID);
-                    errorsGrpo.Add(GrpoLineItemError.Create(invoice, grpo.GoodsReceiptNumber));
+                    errorsGrpo.Add(ErrorFactory.CreateGrpoLineItemError(invoice, grpo.GoodsReceiptNumber));
                     continue;
                 }
 
@@ -58,7 +59,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
                 {
                     logger.LogError("GRPO details not found for GRN {GoodsReceiptNumber}, line item {LineItemId}, Invoice {InvoiceId}",
                         grpo.GoodsReceiptNumber, lineItem.LineItemId, invoice.ID);
-                    errorsGrpo.Add(GrpoLineItemError.Create(invoice, grpo.GoodsReceiptNumber));
+                    errorsGrpo.Add(ErrorFactory.CreateGrpoLineItemError(invoice, grpo.GoodsReceiptNumber));
                     continue;
                 }
 
@@ -107,7 +108,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             if (result.IsFailed)
             {
                 errorsGrpo.AddRange(obeerInvoice.Import.Items.Select(item =>
-                    GrpoLineItemError.Create(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
+                    ErrorFactory.CreateGrpoLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
             }
         }
     }
@@ -149,7 +150,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
         if (result.IsFailed)
         {
             errorsNonPO.AddRange(obeerInvoice.Import.Items.Select(item =>
-                NonPOLineItemError.Create(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
+                ErrorFactory.CreateNonPOLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
         }
     }
 

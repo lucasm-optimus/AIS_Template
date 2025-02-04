@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Rootstock.Startup;
+﻿using Tilray.Integrations.Services.Rootstock.Service.MappingProfiles;
+
+namespace Tilray.Integrations.Services.Rootstock.Startup;
 
 /// <summary>
 /// This classe is responsible for registering the RootstockService in the DI container.
@@ -18,6 +20,8 @@ public class RootstockStartup : IStartupRegister
             var config = serviceProvider.GetRequiredService<RootstockSettings>();
             client.BaseAddress = new Uri(config.BaseUrl);
         }).AddHttpMessageHandler<RootstockAuthHandler>();
+
+        services.AddAutoMapper(typeof(RootstockSalesOrderMapper));
 
         return services;
     }

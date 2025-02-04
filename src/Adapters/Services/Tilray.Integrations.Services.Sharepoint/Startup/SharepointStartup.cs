@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Sharepoint.Startup;
+﻿using Tilray.Integrations.Services.Sharepoint.Service.MappingProfiles;
+
+namespace Tilray.Integrations.Services.Sharepoint.Startup;
 
 /// <summary>
 /// This classe is responsible for registering the SharepointService in the DI container.
@@ -17,6 +19,8 @@ public class SharepointStartup : IStartupRegister
         ClientSecretCredential clientSecretCredential = new(settings.TenantId, settings.ClientId, settings.ClientSecret, options);
 
         services.AddSingleton(new GraphServiceClient(clientSecretCredential, settings.Scopes));
+
+        services.AddAutoMapper(typeof(SharepointInvoiceMapper));
         return services;
     }
 }

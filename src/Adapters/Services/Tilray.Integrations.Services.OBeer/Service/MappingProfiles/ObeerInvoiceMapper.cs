@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Tilray.Integrations.Services.OBeer.Service.Models;
 
 namespace Tilray.Integrations.Services.OBeer.Service.MappingProfiles;
 

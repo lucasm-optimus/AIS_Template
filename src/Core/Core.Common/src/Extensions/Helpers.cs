@@ -25,6 +25,18 @@ public static class Helpers
         return JsonConvert.DeserializeObject<T>(jsonString);
     }
 
+    public static string ToString<T>(T entity)
+    {
+        entity.ThrowIfNull();
+
+        return JsonConvert.SerializeObject(entity);
+    }
+
+    public static StringContent CreateStringContent<T>(T entity)
+    {
+        return new StringContent(ToString(entity), Encoding.UTF8, "application/json");
+    }
+
     public static string ConvertToCsv<T>(IEnumerable<T> data)
     {
         var properties = typeof(T).GetProperties();

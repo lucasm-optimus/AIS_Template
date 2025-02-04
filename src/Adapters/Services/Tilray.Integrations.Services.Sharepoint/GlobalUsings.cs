@@ -12,3 +12,4 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Tilray.Integrations.Core.Common.Startup;
 global using Tilray.Integrations.Services.Sharepoint.Service;
+global using Tilray.Integrations.Services.Sharepoint.Service.Models;
