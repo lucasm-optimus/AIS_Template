@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-
-namespace Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
+﻿namespace Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
 
 public class ValidateSalesOrderQuery(IEnumerable<SalesOrder> salesOrders) : IQuery<IEnumerable<SalesOrder>>
 {

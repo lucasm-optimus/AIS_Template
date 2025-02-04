@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Services.Rootstock.Service.Models;
-
-namespace Tilray.Integrations.Services.Rootstock.Service.MappingProfiles;
+﻿namespace Tilray.Integrations.Services.Rootstock.Service.MappingProfiles;
 
 public class RootstockSalesOrderMapper : Profile
 {

@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Services.Rootstock.Service.Models;
-
-namespace Tilray.Integrations.Services.Rootstock.Service;
+﻿namespace Tilray.Integrations.Services.Rootstock.Service;
 
 public class RootstockService(HttpClient httpClient, RootstockSettings rootstockSettings, IMapper mapper,
     ILogger<RootstockService> logger) : IRootstockService

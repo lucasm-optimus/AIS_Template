@@ -1,10 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
-using Tilray.Integrations.Core.Common.Extensions;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Functions.Rootstock.Models;
-
 namespace Tilray.Integrations.Functions.Rootstock;
 
 public class SalesOrderCreated_Webhook(IMediator mediator, ILogger<SalesOrderCreated_Webhook> logger)
@@ -12,7 +5,6 @@ public class SalesOrderCreated_Webhook(IMediator mediator, ILogger<SalesOrderCre
     /// <summary>
     /// This function is responsible for validating the sales order
     /// </summary>
-
     [Function("SalesOrderCreated_Webhook")]
     public async Task<SalesOrderOutput> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
     {

@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-
-namespace Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
+﻿namespace Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
 
 public class ValidateSalesOrderQueryHandler(IRootstockService rootstockService) : IQueryHandler<ValidateSalesOrderQuery, IEnumerable<SalesOrder>>
 {

@@ -1,7 +1,3 @@
-using Tilray.Integrations.Core.Common.Extensions;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
-
 namespace Tilray.Integrations.Functions.Rootstock;
 
 public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, ILogger<SalesOrderCreated_CreateSalesOrderInRootstock> logger)

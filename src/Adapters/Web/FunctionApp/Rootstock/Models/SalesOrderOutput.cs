@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-
-namespace Tilray.Integrations.Functions.Rootstock.Models;
+﻿namespace Tilray.Integrations.Functions.Rootstock.Models;
 
 public class SalesOrderOutput
 {

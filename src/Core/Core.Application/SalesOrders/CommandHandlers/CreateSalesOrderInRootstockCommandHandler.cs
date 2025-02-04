@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
-
-namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers;
+﻿namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers;
 
 public class CreateSalesOrderInRootstockCommandHandler(IRootstockService rootstockService) : ICommandHandler<CreateSalesOrderInRootstockCommand>
 {
