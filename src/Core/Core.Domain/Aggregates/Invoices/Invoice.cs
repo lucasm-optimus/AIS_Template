@@ -80,7 +80,7 @@ public class MatchedPurchaseOrderReceipt
 
 public class MatchedPurchaseOrderReceipts
 {
-    public List<MatchedPurchaseOrderReceipt> MatchedPurchaseOrderReceipt { get; set; } = [];
+    public IEnumerable<MatchedPurchaseOrderReceipt> MatchedPurchaseOrderReceipt { get; set; } = [];
 }
 
 public class LineItem
@@ -105,13 +105,25 @@ public class LineItem
     public string OBeerGLAccount { get; set; }
     public MatchedPurchaseOrderReceipts MatchedPurchaseOrderReceipts { get; set; } = new();
     public bool IsValid() => Quantity != 0.0m && TotalPrice != 0.0m;
-    public bool HasGrpoMatches() => MatchedPurchaseOrderReceipts?.MatchedPurchaseOrderReceipt?.Count > 0;
+    public bool HasGrpoMatches() => MatchedPurchaseOrderReceipts?.MatchedPurchaseOrderReceipt?.Count() > 0;
     public void SetGlAccount(string glAccount) => OBeerGLAccount = glAccount;
 }
 
 public class LineItems
 {
-    public List<LineItem> LineItem { get; set; } = [];
+    public IEnumerable<LineItem> LineItem { get; set; } = [];
+    public IEnumerable<LineItem> ValidLineItems()
+    {
+        return LineItem.Where(x => x.IsValid());
+    }
+    public IEnumerable<LineItem> GrpoLineItems()
+    {
+        return ValidLineItems().Where(li => li.HasGrpoMatches());
+    }
+    public IEnumerable<LineItem> NonPOLineItems()
+    {
+        return ValidLineItems().Except(GrpoLineItems());
+    }
 }
 
 public class Invoice
@@ -151,7 +163,9 @@ public class Invoice
     public LineItems LineItems { get; set; } = new();
     public string Company => !string.IsNullOrEmpty(Custom1)
                 ? Custom1
-                : LineItems?.LineItem?.FirstOrDefault()?.Custom1;
+                : LineItems?.LineItem?.FirstOrDefault()?.Custom1 ?? string.Empty;
+    public bool IsValid() =>
+        LineItems?.ValidLineItems()?.Any() == true;
     public DateTime FiscalYear => new(DateTime.Now.Year - (DateTime.Now.Month < 6 ? 1 : 0), 6, 1);
 
     public string PostingDate =>
@@ -275,13 +289,13 @@ public class NonPOLineItemError
 public sealed class InvoiceGroup
 {
     public CompanyReference Company { get; private init; }
-    public List<Invoice> Invoices { get; private init; }
+    public IEnumerable<Invoice> Invoices { get; private init; }
 
     private InvoiceGroup() { }
 
     public static InvoiceGroup Create(
         CompanyReference company,
-        List<Invoice> invoices)
+        IEnumerable<Invoice> invoices)
     {
         return new InvoiceGroup
         {

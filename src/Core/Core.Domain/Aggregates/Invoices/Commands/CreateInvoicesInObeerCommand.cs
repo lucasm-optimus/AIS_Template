@@ -3,9 +3,9 @@
 public class CreateInvoicesInObeerCommand : ICommand
 {
     public CompanyReference CompanyReference { get; private set; } = new();
-    public List<Invoice> Invoices { get; private set; } = [];
+    public IEnumerable<Invoice> Invoices { get; private set; } = [];
 
-    public CreateInvoicesInObeerCommand(CompanyReference companyReference, List<Invoice> invoices)
+    public CreateInvoicesInObeerCommand(CompanyReference companyReference, IEnumerable<Invoice> invoices)
     {
         CompanyReference = companyReference;
         Invoices = invoices;

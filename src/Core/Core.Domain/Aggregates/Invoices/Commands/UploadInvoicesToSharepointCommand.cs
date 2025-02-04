@@ -2,10 +2,10 @@
 
 public class UploadInvoicesToSharepointCommand : ICommand
 {
-    public CompanyReference CompanyReference { get; private set; }
-    public List<Invoice> Invoices { get; private set; }
+    public CompanyReference CompanyReference { get; private set; } = new();
+    public IEnumerable<Invoice> Invoices { get; private set; } = [];
 
-    public UploadInvoicesToSharepointCommand(CompanyReference companyReference, List<Invoice> invoices)
+    public UploadInvoicesToSharepointCommand(CompanyReference companyReference, IEnumerable<Invoice> invoices)
     {
         CompanyReference = companyReference;
         Invoices = invoices;

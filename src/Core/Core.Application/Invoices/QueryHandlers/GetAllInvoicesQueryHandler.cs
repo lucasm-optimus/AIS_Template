@@ -1,7 +1,6 @@
 ﻿namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
 
-public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService,
-    IObeerService obeerService) : IQueryManyHandler<GetAllInvoices, InvoiceGroup>
+public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService) : IQueryManyHandler<GetAllInvoices, InvoiceGroup>
 {
     public async Task<Result<IEnumerable<InvoiceGroup>>> Handle(GetAllInvoices request, CancellationToken cancellationToken)
     {
@@ -16,13 +15,12 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
         var companyWithInvoices = companyReferencesResult.Value
             .Select(company => InvoiceGroup.Create(
                 company,
-                invoicesResult.Value.Where(invoice => invoice.Company == company.Concur_Company__c).ToList()))
-            .Where(invoiceGroup => invoiceGroup.Invoices.Count > 0);
+                invoicesResult.Value.Where(invoice => invoice.Company == company.Concur_Company__c)))
+            .Where(invoiceGroup => invoiceGroup.Invoices.Any());
 
-
-        foreach (var invoice in companyWithInvoices)
+        if (!companyWithInvoices.Any())
         {
-            await obeerService.CreateInvoicesAsync(invoice.Invoices);
+            return Result.Fail<IEnumerable<InvoiceGroup>>("No invoices found for any company");
         }
 
         return Result.Ok(companyWithInvoices);

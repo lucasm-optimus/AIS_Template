@@ -4,11 +4,18 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, ISh
 {
     public async Task<Result> Handle(CreateInvoicesInObeerCommand request, CancellationToken cancellationToken)
     {
-        var result = await obeerService.CreateInvoicesAsync(request.Invoices);
-        if (result.IsFailed)
+        var invoiceResult = await obeerService.CreateInvoicesAsync(request.Invoices);
+        if (invoiceResult.IsSuccess) return Result.Ok();
+
+        var uploadErrorsGrpoResult = await sharepointService.UploadFileAsync(invoiceResult.Value.ErrorsGrpo, request.CompanyReference);
+        var uploadErrorsNoPoResult = await sharepointService.UploadFileAsync(invoiceResult.Value.ErrorsNoPo, request.CompanyReference);
+
+        if (uploadErrorsGrpoResult.IsFailed || uploadErrorsNoPoResult.IsFailed)
         {
-            await sharepointService.UploadFileAsync(result.Value.ErrorsGrpo, request.CompanyReference);
-            await sharepointService.UploadFileAsync(result.Value.ErrorsNoPo, request.CompanyReference);
+            var errors = new List<IError>();
+            if (uploadErrorsGrpoResult.IsFailed) errors.AddRange(uploadErrorsGrpoResult.Errors);
+            if (uploadErrorsNoPoResult.IsFailed) errors.AddRange(uploadErrorsNoPoResult.Errors);
+            return Result.Fail(errors);
         }
 
         return Result.Ok();

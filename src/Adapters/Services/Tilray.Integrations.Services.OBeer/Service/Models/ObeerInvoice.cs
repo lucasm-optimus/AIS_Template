@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Invoices;
+﻿namespace Tilray.Integrations.Services.OBeer.Service.Models;
 
 public class InvoiceHeader
 {

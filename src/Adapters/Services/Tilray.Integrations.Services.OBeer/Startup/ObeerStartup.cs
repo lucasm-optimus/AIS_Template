@@ -16,7 +16,7 @@ public class ObeerStartup : IStartupRegister
             client.BaseAddress = new Uri(config.BaseUrl);
         });
 
-        services.AddAutoMapper(typeof(MappingProfile));
+        services.AddAutoMapper(typeof(ObeerInvoiceMapper));
 
         return services;
     }

@@ -2,5 +2,5 @@
 
 public interface IObeerService
 {
-    Task<Result<InvoiceProcessingResult>> CreateInvoicesAsync(List<Invoice> invoices);
+    Task<Result<InvoiceProcessingResult>> CreateInvoicesAsync(IEnumerable<Invoice> invoices);
 }

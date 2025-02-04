@@ -62,9 +62,21 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
     #region Public methods
 
-    public async Task<Result> UploadFileAsync<T>(List<T> content, CompanyReference companyReference)
+    public async Task<Result> UploadFileAsync(IEnumerable<Invoice> invoices, CompanyReference companyReference)
     {
-        if (content == null || content.Count == 0)
+        var sharepointInvoices = invoices
+            .SelectMany(invoice =>
+                invoice.LineItems.LineItem.Select((lineItem, index) =>
+                new { invoice, lineItem, LineItemNumber = index + 1 })
+                    )
+            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber)));
+
+        return await UploadFileAsync(sharepointInvoices, companyReference);
+    }
+
+    public async Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference)
+    {
+        if (content == null || content.Count() == 0)
         {
             logger.LogWarning("UploadFileAsync: No content provided for upload");
             return Result.Fail("UploadFileAsync: No content provided for upload");

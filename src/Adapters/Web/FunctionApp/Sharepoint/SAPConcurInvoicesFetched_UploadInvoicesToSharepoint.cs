@@ -1,3 +1,5 @@
+using Tilray.Integrations.Core.Common.Extensions;
+
 namespace Tilray.Integrations.Functions.Sharepoint;
 
 public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator mediator, ILogger<SAPConcurInvoicesFetched_UploadInvoicesToSharepoint> logger)
@@ -11,8 +13,7 @@ public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator media
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(
-            JsonConvert.DeserializeObject<UploadInvoicesToSharepointCommand>(message.Body.ToString()));
+        var result = await mediator.Send(message.Body.ToString().ToObject<UploadInvoicesToSharepointCommand>());
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));

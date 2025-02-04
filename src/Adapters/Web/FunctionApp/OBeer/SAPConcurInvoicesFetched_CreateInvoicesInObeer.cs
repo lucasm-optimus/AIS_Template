@@ -1,9 +1,11 @@
+using Tilray.Integrations.Core.Common.Extensions;
+
 namespace Tilray.Integrations.Functions.OBeer;
 
 public class SAPConcurInvoicesFetched_CreateInvoicesInObeer(IMediator mediator, ILogger<SAPConcurInvoicesFetched_CreateInvoicesInObeer> logger)
 {
     /// <summary>
-    /// This function is responsible creating invoices in Obeer.
+    /// This function is responsible for creating invoices in Obeer.
     /// </summary>
     [Function(nameof(SAPConcurInvoicesFetched_CreateInvoicesInObeer))]
     public async Task Run(
@@ -11,8 +13,7 @@ public class SAPConcurInvoicesFetched_CreateInvoicesInObeer(IMediator mediator, 
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(
-            JsonConvert.DeserializeObject<CreateInvoicesInObeerCommand>(message.Body.ToString()));
+        var result = await mediator.Send(message.Body.ToString().ToObject<CreateInvoicesInObeerCommand>());
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));

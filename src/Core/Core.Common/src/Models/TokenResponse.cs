@@ -1,4 +1,4 @@
-﻿namespace Tilray.Integrations.Services.SAPConcur.Service.Model;
+﻿namespace Tilray.Integrations.Core.Common.Models;
 
 public class TokenResponse
 {

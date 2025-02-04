@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Core.Common.Extensions;
+﻿using Newtonsoft.Json;
+
+namespace Tilray.Integrations.Core.Common.Extensions;
 
 public static class Helpers
 {
@@ -14,6 +16,13 @@ public static class Helpers
         ArgumentNullException.ThrowIfNull(argument, paramName: paramName);
 
         return argument;
+    }
+
+    public static T ToObject<T>(this string jsonString)
+    {
+        jsonString.ThrowIfNull(jsonString);
+
+        return JsonConvert.DeserializeObject<T>(jsonString);
     }
 
     public static string ConvertToCsv<T>(IEnumerable<T> data)

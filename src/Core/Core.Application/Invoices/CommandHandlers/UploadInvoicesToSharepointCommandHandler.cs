@@ -4,13 +4,11 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
 {
     public async Task<Result> Handle(UploadInvoicesToSharepointCommand request, CancellationToken cancellationToken)
     {
-        var sharepointInvoices = request.Invoices
-            .SelectMany(invoice =>
-                invoice.LineItems.LineItem.Select((lineItem, index) =>
-                new { invoice, lineItem, LineItemNumber = index + 1 })
-                    )
-            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber)))
-            .ToList();
-        return await sharepointService.UploadFileAsync(sharepointInvoices, request.CompanyReference);
+        if (!request.Invoices.Any())
+        {
+            return Result.Ok();
+        }
+
+        return await sharepointService.UploadFileAsync(request.Invoices, request.CompanyReference);
     }
 }

@@ -41,7 +41,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
         foreach (var lineItem in grpoLineItems)
         {
             var remainingQty = lineItem.Quantity;
-            var grpoCount = lineItem.MatchedPurchaseOrderReceipts.MatchedPurchaseOrderReceipt.Count;
+            var grpoCount = lineItem.MatchedPurchaseOrderReceipts.MatchedPurchaseOrderReceipt.Count();
 
             foreach (var grpo in lineItem.MatchedPurchaseOrderReceipts.MatchedPurchaseOrderReceipt)
             {
@@ -157,19 +157,23 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
 
     #region Public methods
 
-    public async Task<Result<InvoiceProcessingResult>> CreateInvoicesAsync(List<Invoice> invoices)
+    public async Task<Result<InvoiceProcessingResult>> CreateInvoicesAsync(IEnumerable<Invoice> invoices)
     {
         var invoiceProcessingResult = new InvoiceProcessingResult();
         foreach (var invoice in invoices)
         {
             logger.LogInformation("Processing invoice {InvoiceNumber}", invoice.ID);
-            var validLineItems = invoice.LineItems.LineItem.Where(li => li.IsValid());
-            await SetGlAccountForLineItemsAsync(invoice, validLineItems);
-            var grpoLineItems = validLineItems.Where(li => li.HasGrpoMatches());
-            var nonPOLineItems = validLineItems.Except(grpoLineItems);
+            if (invoice.IsValid())
+            {
+                var validLineItems = invoice.LineItems.ValidLineItems();
+                await SetGlAccountForLineItemsAsync(invoice, validLineItems);
 
-            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, invoiceProcessingResult.ErrorsGrpo);
-            await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any() ? true : false, invoiceProcessingResult.ErrorsNoPo);
+                var grpoLineItems = invoice.LineItems.GrpoLineItems();
+                var nonPOLineItems = invoice.LineItems.NonPOLineItems();
+
+                await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, invoiceProcessingResult.ErrorsGrpo);
+                await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), invoiceProcessingResult.ErrorsNoPo);
+            }
         }
 
         if (invoiceProcessingResult.HasErrors)
@@ -182,8 +186,8 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             return Result.Fail(invoiceProcessingResult);
         }
 
-        logger.LogInformation("Successfully processed {InvoiceCount} invoices", invoices.Count);
-        return Result.Ok(invoiceProcessingResult);
+        logger.LogInformation("Successfully processed {InvoiceCount} invoices", invoices.Count());
+        return Result.Ok();
     }
 
     #endregion

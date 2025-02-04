@@ -1,7 +1,6 @@
 ﻿global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Tilray.Integrations.Core.Application.Adapters.Services;
-global using Tilray.Integrations.Core.Application.Profiles;
 global using Tilray.Integrations.Core.Common.Startup;
 global using Tilray.Integrations.Services.OBeer.Service;
 global using FluentResults;
@@ -12,3 +11,4 @@ global using Newtonsoft.Json;
 global using Tilray.Integrations.Core.Application.Adapters.Repositories;
 global using Tilray.Integrations.Services.OBeer.Startup;
 global using AutoMapper;
+global using Tilray.Integrations.Services.OBeer.Service.MappingProfiles;

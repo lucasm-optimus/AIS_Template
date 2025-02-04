@@ -51,7 +51,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         }
 
         logger.LogInformation("Total {TotalDigests} invoice digests found",
-            allDigests.PaymentRequestDigest.Count);
+            allDigests.PaymentRequestDigest.Count());
         return Result.Ok(allDigests);
     }
 
@@ -95,7 +95,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             return Result.Ok(Enumerable.Empty<Invoice>());
         }
 
-        logger.LogInformation("GetInvoices: Processing {DigestCount} invoice digests", digests.Count);
+        logger.LogInformation("GetInvoices: Processing {DigestCount} invoice digests", digests.Count());
         var invoiceResults = await Task.WhenAll(digests.Select(async digest =>
         {
             var invoiceResult = await GetInvoiceByIdAsync(digest.ID);
