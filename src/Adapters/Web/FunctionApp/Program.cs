@@ -1,14 +1,21 @@
+using Azure.Messaging.ServiceBus;
+using Google.Protobuf.WellKnownTypes;
+using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Client;
+using Tilray.Integrations.Core.Common.Startup;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-string ApplicationName = "Optimus Info Integration Functions";
+builder
+    .ConfigureFunctionsWebApplication();
+//.UseOutputBindingsMiddleware()
+//.UseMiddlewares();
 
-var app = builder
-    .ConfigureFunctionsWebApplication()
-    .UseOutputBindingsMiddleware();
-
+string ApplicationName = "Tilray Integration Functions";
 builder.RegisterCommonServices(ApplicationName);
 
-app.UseOptimusMiddlewares();
+builder.Services.AddSingleton(options => { return new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnectionString")); });
 
 builder.Build().Run();

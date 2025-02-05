@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{577291D7-B67A-4D18-9888-4BCF7AE64E18}"
+	ProjectSection(SolutionItems) = preProject
+		.github\GitVersion.yml = .github\GitVersion.yml
+		NuGet.config = NuGet.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{0EA25941-98C5-41B2-B1A6-4D54995B8F63}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+		.github\workflows\Nuget Publish.yml = .github\workflows\Nuget Publish.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoMais.Core.Common", "src\AutoMais.Core.Common.csproj", "{31A11A91-6306-4211-B036-0E546AC04D17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31A11A91-6306-4211-B036-0E546AC04D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31A11A91-6306-4211-B036-0E546AC04D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31A11A91-6306-4211-B036-0E546AC04D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31A11A91-6306-4211-B036-0E546AC04D17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0EA25941-98C5-41B2-B1A6-4D54995B8F63} = {577291D7-B67A-4D18-9888-4BCF7AE64E18}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8B3AFDD-E750-4C91-B060-8937533ED380}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Title>Optimus.Core.Domain</Title>
+		<Authors>Lucas Massena</Authors>
+		<Company>Optimus Info</Company>
+		<Product>Optimus.Core.Domain</Product>
+		<Copyright>Optimus Info</Copyright>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentResults" Version="3.16.0" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tilray.Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
+  </ItemGroup>
+
+</Project> 

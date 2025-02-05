@@ -1,4 +1,4 @@
-﻿namespace Optimus.Core.Application
+﻿namespace Tilray.Integrations.Core.Application
 {
     public interface IApplication
     {
