@@ -1,6 +1,4 @@
-using Tilray.Integrations.Core.Common.Extensions;
-
-namespace Tilray.Integrations.Functions.OBeer;
+namespace Tilray.Integrations.Functions.UseCases.Invoices.OBeer;
 
 public class SAPConcurInvoicesFetched_CreateInvoicesInObeer(IMediator mediator, ILogger<SAPConcurInvoicesFetched_CreateInvoicesInObeer> logger)
 {

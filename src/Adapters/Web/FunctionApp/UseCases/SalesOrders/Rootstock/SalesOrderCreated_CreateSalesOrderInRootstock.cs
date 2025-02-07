@@ -1,4 +1,4 @@
-namespace Tilray.Integrations.Functions.Rootstock;
+namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
 public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, ILogger<SalesOrderCreated_CreateSalesOrderInRootstock> logger)
 {

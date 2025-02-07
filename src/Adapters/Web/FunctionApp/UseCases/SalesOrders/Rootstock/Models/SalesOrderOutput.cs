@@ -1,4 +1,4 @@
-﻿namespace Tilray.Integrations.Functions.Rootstock.Models;
+﻿namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock.Models;
 
 public class SalesOrderOutput
 {

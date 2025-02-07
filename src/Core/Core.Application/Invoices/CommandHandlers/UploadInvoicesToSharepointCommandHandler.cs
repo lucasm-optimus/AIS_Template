@@ -9,6 +9,6 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
-        return await sharepointService.UploadFileAsync(request.Invoices, request.CompanyReference);
+        return await sharepointService.UploadFileAsync(request.Invoices, request.Company);
     }
 }

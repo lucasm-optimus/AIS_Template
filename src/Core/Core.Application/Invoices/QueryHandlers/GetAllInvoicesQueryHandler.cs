@@ -6,11 +6,14 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
     {
         var invoicesResult = await sapConcurService.GetInvoicesAsync();
         if (invoicesResult.IsFailed)
-            return Result.Fail<IEnumerable<InvoiceGroup>>(string.Join(", ", invoicesResult.Errors.Select(e => e.Message)));
+            return Result.Fail<IEnumerable<InvoiceGroup>>(invoicesResult.Errors);
+
+        if (invoicesResult.Value is null || !invoicesResult.Value.Any())
+            return Result.Ok();
 
         var companyReferencesResult = await rootstockService.GetAllCompanyReferencesAsync();
         if (companyReferencesResult.IsFailed)
-            return Result.Fail<IEnumerable<InvoiceGroup>>(string.Join(", ", companyReferencesResult.Errors.Select(e => e.Message)));
+            return Result.Fail<IEnumerable<InvoiceGroup>>(companyReferencesResult.Errors);
 
         var companyWithInvoices = companyReferencesResult.Value
             .Select(company => InvoiceGroup.Create(

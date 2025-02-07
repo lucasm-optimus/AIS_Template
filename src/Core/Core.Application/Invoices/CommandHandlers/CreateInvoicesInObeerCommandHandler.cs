@@ -1,23 +1,34 @@
-﻿namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
 
-public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, ISharepointService sharepointService) : ICommandHandler<CreateInvoicesInObeerCommand>
+namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
+
+public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMediator mediator,
+    ILogger<CreateInvoicesInObeerCommandHandler> logger) : ICommandHandler<CreateInvoicesInObeerCommand, InvoicesProcessed>
 {
-    public async Task<Result> Handle(CreateInvoicesInObeerCommand request, CancellationToken cancellationToken)
+    public async Task<Result<InvoicesProcessed>> Handle(CreateInvoicesInObeerCommand request, CancellationToken cancellationToken)
     {
-        var invoiceResult = await obeerService.CreateInvoicesAsync(request.Invoices);
-        if (invoiceResult.IsSuccess) return Result.Ok();
-
-        var uploadErrorsGrpoResult = await sharepointService.UploadFileAsync(invoiceResult.Value.ErrorsGrpo, request.CompanyReference);
-        var uploadErrorsNoPoResult = await sharepointService.UploadFileAsync(invoiceResult.Value.ErrorsNoPo, request.CompanyReference);
-
-        if (uploadErrorsGrpoResult.IsFailed || uploadErrorsNoPoResult.IsFailed)
+        var invoicesProcessed = new InvoicesProcessed();
+        foreach (var invoice in request.Invoices)
         {
-            var errors = new List<IError>();
-            if (uploadErrorsGrpoResult.IsFailed) errors.AddRange(uploadErrorsGrpoResult.Errors);
-            if (uploadErrorsNoPoResult.IsFailed) errors.AddRange(uploadErrorsNoPoResult.Errors);
-            return Result.Fail(errors);
+            await obeerService.CreateInvoiceAsync(invoice, invoicesProcessed);
         }
 
-        return Result.Ok();
+        if (invoicesProcessed.HasErrors)
+        {
+            logger.LogWarning(
+                "Invoices processing completed with errors. GRPOErrors: {GrpoErrorCount}, NonPOErrors: {NonPoErrorCount}",
+                invoicesProcessed.ErrorsGrpo.Count,
+                invoicesProcessed.ErrorsNoPo.Count
+            );
+
+            invoicesProcessed.CompanyReference = request.Company;
+            await mediator.Publish(invoicesProcessed);
+            return Result.Fail(invoicesProcessed.Message);
+        }
+
+        logger.LogInformation("Successfully processed {InvoiceCount} invoices", request.Invoices.Count());
+        return Result.Ok(invoicesProcessed);
     }
 }

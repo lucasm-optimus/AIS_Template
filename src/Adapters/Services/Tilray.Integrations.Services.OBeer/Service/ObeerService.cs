@@ -1,4 +1,5 @@
 ﻿using Tilray.Integrations.Core.Common.Extensions;
+using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
 using Tilray.Integrations.Services.OBeer.Service.Models;
 
 namespace Tilray.Integrations.Services.OBeer.Service;
@@ -158,36 +159,21 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
 
     #region Public methods
 
-    public async Task<Result<InvoiceProcessingResult>> CreateInvoicesAsync(IEnumerable<Invoice> invoices)
+    public async Task<Result> CreateInvoiceAsync(Invoice invoice, InvoicesProcessed invoicesProcessed)
     {
-        var invoiceProcessingResult = new InvoiceProcessingResult();
-        foreach (var invoice in invoices)
+        if (invoice.IsValid())
         {
             logger.LogInformation("Processing invoice {InvoiceNumber}", invoice.ID);
-            if (invoice.IsValid())
-            {
-                var validLineItems = invoice.LineItems.ValidLineItems();
-                await SetGlAccountForLineItemsAsync(invoice, validLineItems);
+            var validLineItems = invoice.LineItems.ValidLineItems();
+            await SetGlAccountForLineItemsAsync(invoice, validLineItems);
 
-                var grpoLineItems = invoice.LineItems.GrpoLineItems();
-                var nonPOLineItems = invoice.LineItems.NonPOLineItems();
+            var grpoLineItems = invoice.LineItems.GrpoLineItems();
+            var nonPOLineItems = invoice.LineItems.NonPOLineItems();
 
-                await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, invoiceProcessingResult.ErrorsGrpo);
-                await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), invoiceProcessingResult.ErrorsNoPo);
-            }
+            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, invoicesProcessed.ErrorsGrpo);
+            await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), invoicesProcessed.ErrorsNoPo);
         }
 
-        if (invoiceProcessingResult.HasErrors)
-        {
-            logger.LogWarning(
-                "Invoices processing completed with errors. GRPOErrors: {GrpoErrorCount}, NonPOErrors: {NonPoErrorCount}",
-                invoiceProcessingResult.ErrorsGrpo.Count,
-                invoiceProcessingResult.ErrorsNoPo.Count
-            );
-            return Result.Fail(invoiceProcessingResult);
-        }
-
-        logger.LogInformation("Successfully processed {InvoiceCount} invoices", invoices.Count());
         return Result.Ok();
     }
 

@@ -1,4 +1,4 @@
-namespace Tilray.Integrations.Functions.SAPConcur;
+namespace Tilray.Integrations.Functions.UseCases.Invoices.SAPConcur;
 
 public class GetInvoicesFromSAPConcur(ILogger<GetInvoicesFromSAPConcur> logger, IMediator mediator)
 {
@@ -7,15 +7,12 @@ public class GetInvoicesFromSAPConcur(ILogger<GetInvoicesFromSAPConcur> logger, 
     /// </summary>
     [Function("GetInvoicesFromSAPConcur")]
     [ServiceBusOutput("%TopicSAPConcurInvoicesFetched%", Connection = "ServiceBusConnectionString")]
-    public async Task<InvoiceGroup> Run([TimerTrigger("%GetInvoicesFromSAPConcurCRON%")] TimerInfo myTimer)
+    public async Task<IEnumerable<InvoiceGroup>> Run([TimerTrigger("%GetInvoicesFromSAPConcurCRON%")] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetAllInvoices());
         if (result.IsSuccess)
         {
-            foreach (var invoice in result.Value)
-            {
-                return invoice;
-            }
+            return result.Value;
         }
 
         return null;

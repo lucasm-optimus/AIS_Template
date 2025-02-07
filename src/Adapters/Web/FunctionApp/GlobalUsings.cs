@@ -13,5 +13,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
 global using Tilray.Integrations.Core.Common.Extensions;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-global using Tilray.Integrations.Functions.Rootstock.Models;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;

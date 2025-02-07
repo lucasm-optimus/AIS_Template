@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Sharepoint.Service;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+
+namespace Tilray.Integrations.Services.Sharepoint.Service;
 
 public class SharepointService(GraphServiceClient graphServiceClient, IMapper mapper, SharepointSettings sharepointSettings, ILogger<SharepointService> logger) : ISharepointService
 {
@@ -12,7 +14,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
             Type invoice when invoice == typeof(Invoice) => sharepointSettings.InvoicesSubFolderPath,
             Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
             Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
-            _ => throw new NotSupportedException($"Uploading files of type {type.Name} is not supported."),
+            _ => string.Empty
         };
     }
 
@@ -69,14 +71,14 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
                 invoice.LineItems.LineItem.Select((lineItem, index) =>
                 new { invoice, lineItem, LineItemNumber = index + 1 })
                     )
-            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber)));
+            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber))).ToList();
 
         return await UploadFileAsync(sharepointInvoices, companyReference);
     }
 
     public async Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference)
     {
-        if (content == null || content.Count() == 0)
+        if (content == null || !content.Any())
         {
             logger.LogWarning("UploadFileAsync: No content provided for upload");
             return Result.Fail("UploadFileAsync: No content provided for upload");

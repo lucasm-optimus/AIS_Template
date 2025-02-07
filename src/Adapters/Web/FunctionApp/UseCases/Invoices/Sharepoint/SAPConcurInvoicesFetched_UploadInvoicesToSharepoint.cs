@@ -1,6 +1,4 @@
-using Tilray.Integrations.Core.Common.Extensions;
-
-namespace Tilray.Integrations.Functions.Sharepoint;
+namespace Tilray.Integrations.Functions.UseCases.Invoices.Sharepoint;
 
 public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator mediator, ILogger<SAPConcurInvoicesFetched_UploadInvoicesToSharepoint> logger)
 {

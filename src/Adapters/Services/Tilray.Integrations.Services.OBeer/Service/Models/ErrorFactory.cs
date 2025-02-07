@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.OBeer.Service.Models;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+
+namespace Tilray.Integrations.Services.OBeer.Service.Models;
 
 public static class ErrorFactory
 {

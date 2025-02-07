@@ -189,52 +189,10 @@ public class Invoice
             : FiscalYear.ToString("yyyy-MM-dd");
 }
 
-public class InvoiceProcessingResult : IError
+public class InvoiceGroup
 {
-    public List<NonPOLineItemError> ErrorsNoPo { get; } = [];
-    public List<GrpoLineItemError> ErrorsGrpo { get; } = [];
-    public bool HasErrors => ErrorsNoPo.Count > 0 || ErrorsGrpo.Count > 0;
-    public List<IError> Reasons => [];
-    public string Message { get; set; }
-    public Dictionary<string, object> Metadata => [];
-}
-
-public class GrpoLineItemError
-{
-    public string CardCode { get; set; }
-    public string CustomerRefNo { get; set; }
-    public string PODocNum { get; set; }
-    public string GRPODocNum { get; set; }
-    public string PostingDate { get; set; }
-    public string DueDate { get; set; }
-    public string DocumentDate { get; set; }
-    public string ConcurOrderID { get; set; }
-    public string DocumentType { get; set; }
-    public string ErrorMessage { get; set; }
-}
-
-public class NonPOLineItemError
-{
-    public string BPCode { get; set; }
-    public string BPInvoiceNumber { get; set; }
-    public string DocDate { get; set; }
-    public string DueDate { get; set; }
-    public string DocComments { get; set; }
-    public string GLAccount { get; set; }
-    public string Description { get; set; }
-    public decimal TotalPrice { get; set; }
-    public string PostingDate { get; set; }
-    public string BrandFamily { get; set; }
-    public string Facility { get; set; }
-    public string Error { get; set; }
-}
-
-public sealed class InvoiceGroup
-{
-    public CompanyReference Company { get; private init; }
-    public IEnumerable<Invoice> Invoices { get; private init; }
-
-    private InvoiceGroup() { }
+    public CompanyReference Company { get; set; }
+    public IEnumerable<Invoice> Invoices { get; set; }
 
     public static InvoiceGroup Create(
         CompanyReference company,
