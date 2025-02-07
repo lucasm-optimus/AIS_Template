@@ -1,16 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿namespace Tilray.Integrations.Core.Common.States;
 
-namespace Optimus.Core.Common.States;
-
-public interface IState<T>
+public interface IState
 {
-    Task<T> Get(string id);
-    Task<T> Get(Expression<Func<T, bool>> filter);
-    Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> filter);
-
-    Task<Result<T>> Add(T entity);
-    Task<Result<T>> AddOrUpdate(string id, T entity);
-    Task<Result> Update(string id, T entity);
-    Task<Result> Delete(string id);
-    Task<IEnumerable<T>> GetPagedAsync(Expression<Func<T, bool>> filter, int pageNumber, int pageSize, Expression<Func<T, object>>? sortBy = null, bool ascending = true);
+    Task<IEnumerable<T>> ExecuteQueryAsync<T>(string query, Func<System.Data.IDataReader, T> map, params System.Data.Common.DbParameter[] parameters);
+    Task<T> ExecuteScalarAsync<T>(string query, params System.Data.Common.DbParameter[] parameters);
 }

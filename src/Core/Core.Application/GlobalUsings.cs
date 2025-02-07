@@ -1,6 +1,9 @@
-﻿global using Optimus.Core.Common;
-global using Optimus.Core.Common.Extensions;
-global using Optimus.Core.Common.States;
-global using FluentResults;
+﻿global using FluentResults;
 global using FluentValidation;
-global using MediatR;
+global using Tilray.Integrations.Core.Common;
+global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
+global using Tilray.Integrations.Core.Application.Adapters.Services;
+global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Commands;
+global using AutoMapper;
+global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
+global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;

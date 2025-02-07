@@ -1,4 +1,4 @@
-﻿namespace Optimus.Core.Common.Stream;
+﻿namespace Tilray.Integrations.Core.Common.Stream;
 
 public interface IStream
 {

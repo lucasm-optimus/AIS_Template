@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Functions.Worker.Middleware;
-using Microsoft.Azure.Functions.Worker;
-using System.Text.Json;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Extensions.Hosting;
-
-namespace Optimus.Core.Common.Middlewares;
+﻿namespace Tilray.Integrations.Core.Common.Middlewares;
 
 public class LoggingMiddleware(ILogger logger) : IFunctionsWorkerMiddleware
 {
@@ -29,10 +20,13 @@ public class LoggingMiddleware(ILogger logger) : IFunctionsWorkerMiddleware
 
             using (logger.BeginScope(state))
             {
-                foreach (var item in state)
+                if (System.Diagnostics.Activity.Current != null)
                 {
-                    System.Diagnostics.Activity.Current?.AddBaggage(item.Key, item.Value.ToString());
-                    System.Diagnostics.Activity.Current?.AddTag(item.Key, item.Value);
+                    foreach (var item in state)
+                    {
+                        System.Diagnostics.Activity.Current.AddBaggage(item.Key, item.Value.ToString());
+                        System.Diagnostics.Activity.Current.AddTag(item.Key, item.Value);
+                    }
                 }
 
                 var httpContext = context.GetHttpContext();
@@ -42,6 +36,10 @@ public class LoggingMiddleware(ILogger logger) : IFunctionsWorkerMiddleware
                     httpContext.Response.Headers.Append("TraceId", context.TraceContext.TraceParent);
                     logger.LogDebug("[Web][Request][{method} {endpoint}]", httpContext.Request.Method, httpContext.Request.Path);
                 }
+                else
+                {
+                    logger.LogDebug("InvocationId: {InvocationId}, TraceId: {TraceId}", context.InvocationId, context.TraceContext.TraceParent);
+                }
 
                 await next(context);
             }
@@ -49,29 +47,28 @@ public class LoggingMiddleware(ILogger logger) : IFunctionsWorkerMiddleware
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception occurred");
+            var errorMessage = new
+            {
+                context.InvocationId,
+                Message = "An unhandled exception occurred. Please try again later",
+                Exception = ex.Message
+            };
 
             var request = await context.GetHttpRequestDataAsync();
-            var response = request!.CreateResponse();
-            response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+            if (request != null)
+            {
+                var response = request.CreateResponse();
+                response.StatusCode = HttpStatusCode.InternalServerError;
 
-            var errorMessage = new { InvocationId = context.InvocationId, Message = "An unhandled exception occurred. Please try again later", Exception = ex.Message };
-            string responseBody = JsonSerializer.Serialize(errorMessage);
+                string responseBody = JsonSerializer.Serialize(errorMessage);
+                await response.WriteStringAsync(responseBody);
 
-            await response.WriteStringAsync(responseBody);
-
-            Console.WriteLine("Exception occurred");
-            context.GetInvocationResult().Value = response;
+                context.GetInvocationResult().Value = response;
+            }
+            else
+            {
+                context.GetInvocationResult().Value = errorMessage;
+            }
         }
-    }
-}
-
-public static class LoggingMiddlewareExtensions
-{
-    public static FunctionsApplicationBuilder UseLoggingMiddleware(
-        this FunctionsApplicationBuilder app)
-    {
-        app.UseMiddleware<LoggingMiddleware>();
-
-        return app;
     }
 }
