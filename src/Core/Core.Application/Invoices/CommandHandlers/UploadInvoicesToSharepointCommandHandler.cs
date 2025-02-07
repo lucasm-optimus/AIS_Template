@@ -9,7 +9,7 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
 {
     public async Task<Result> Handle(UploadInvoicesToSharepointCommand request, CancellationToken cancellationToken)
     {
-        string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoicesBlobName);
+        string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
 
         if (invoiceGroup.Invoices?.Any() != true)

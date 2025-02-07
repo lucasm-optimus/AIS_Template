@@ -11,7 +11,7 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
 {
     public async Task<Result<InvoicesProcessed>> Handle(CreateInvoicesInObeerCommand request, CancellationToken cancellationToken)
     {
-        string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoicesBlobName);
+        string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
 
         if (!invoiceGroup.Company.OBeer_Invoices__c)
