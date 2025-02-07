@@ -7,11 +7,7 @@
       }
     },
     "logLevel": {
-      "default": "Information",
-      "Microsoft": "Warning",
-      "System": "Warning",
-      "Worker": "Information",
-      "Function": "Information"
+      "default": "Information"
     }
   }
 }
