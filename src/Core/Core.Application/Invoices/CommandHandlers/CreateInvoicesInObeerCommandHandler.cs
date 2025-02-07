@@ -10,6 +10,13 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
     public async Task<Result<InvoicesProcessed>> Handle(CreateInvoicesInObeerCommand request, CancellationToken cancellationToken)
     {
         var invoicesProcessed = new InvoicesProcessed();
+        if (!request.Company.OBeer_Invoices__c)
+        {
+            logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
+                request.Company.Company_Name__c);
+            return Result.Ok();
+        }
+
         foreach (var invoice in request.Invoices)
         {
             await obeerService.CreateInvoiceAsync(invoice, invoicesProcessed);
