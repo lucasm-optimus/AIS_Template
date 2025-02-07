@@ -2,7 +2,7 @@
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Invoices.Commands;
 
-public class CreateInvoicesInObeerCommand(string invoicesBlobName) : ICommand<InvoicesProcessed>
+public class CreateInvoicesInObeerCommand(string invoiceGroupBlobName) : ICommand<InvoicesProcessed>
 {
-    public string InvoicesBlobName { get; set; } = invoicesBlobName;
+    public string InvoiceGroupBlobName { get; set; } = invoiceGroupBlobName;
 }

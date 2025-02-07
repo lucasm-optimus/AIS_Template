@@ -29,12 +29,8 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
             return Result.Fail<IEnumerable<string>>("No invoices found for any company");
         }
 
-        var blobList = new List<string>();
-        foreach(var companyWithInvoice in companyWithInvoices)
-        {
-            var blobName = await blobService.UploadBlobContentAsync(companyWithInvoice, "invoice");
-            blobList.Add(blobName);
-        }
+        var blobList = await Task.WhenAll(companyWithInvoices.Select(company =>
+            blobService.UploadBlobContentAsync(company, "invoice")));
 
         return Result.Ok(blobList.AsEnumerable());
     }

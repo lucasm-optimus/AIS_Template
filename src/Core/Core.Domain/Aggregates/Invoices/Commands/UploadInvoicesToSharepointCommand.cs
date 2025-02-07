@@ -1,6 +1,6 @@
 ﻿namespace Tilray.Integrations.Core.Domain.Aggregates.Invoices.Commands;
 
-public class UploadInvoicesToSharepointCommand(string invoicesBlobName) : ICommand
+public class UploadInvoicesToSharepointCommand(string invoiceGroupBlobName) : ICommand
 {
-    public string InvoicesBlobName { get; set; } = invoicesBlobName;
+    public string InvoiceGroupBlobName { get; set; } = invoiceGroupBlobName;
 }

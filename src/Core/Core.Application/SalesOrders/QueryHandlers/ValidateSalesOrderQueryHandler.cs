@@ -1,6 +1,6 @@
 ﻿namespace Tilray.Integrations.Core.Application.SalesOrders.QueryHandlers;
 
-public class ValidateSalesOrderQueryHandler(IRootstockService rootstockService) : IQueryHandler<ValidateSalesOrderQuery, IEnumerable<SalesOrder>>
+public class ValidateSalesOrderQueryHandler(IRootstockService rootstockService) : IQueryManyHandler<ValidateSalesOrderQuery, SalesOrder>
 {
     public async Task<Result<IEnumerable<SalesOrder>>> Handle(ValidateSalesOrderQuery request, CancellationToken cancellationToken)
     {

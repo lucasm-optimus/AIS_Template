@@ -5,7 +5,7 @@ namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 public class SalesOrderCreated_Webhook(IMediator mediator, ILogger<SalesOrderCreated_Webhook> logger)
 {
     /// <summary>
-    /// This function is responsible for validating the sales order
+    /// This function is responsible for validating the sales order.
     /// </summary>
     [Function("SalesOrderCreated_Webhook")]
     public async Task<SalesOrderOutput> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
