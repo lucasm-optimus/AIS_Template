@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomerAddressInfoResponse
     {

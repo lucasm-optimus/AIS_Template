@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomerInfoResponse
     {
@@ -16,12 +11,12 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
 
         public string Name { get; private set; }
 
-        public static RstkCustomerInfoResponse MapFromPayload(dynamic payload)
+        public static RstkCustomerInfoResponse MapFromPayload(dynamic records)
         {
             return new RstkCustomerInfoResponse
             {
-                CustomerNo = payload[0]["rstk__socust_custno__c"],
-                Name = payload[0]["Name"]
+                CustomerNo = records[0]["rstk__socust_custno__c"],
+                Name = records[0]["Name"]
             };
         }
     }

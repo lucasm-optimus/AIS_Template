@@ -7,7 +7,7 @@ namespace Tilray.Integrations.Services.SAPConcur.Service
 {
     public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger) : ISAPConcurService
     {
-        public Task<Result<IEnumerable<EcomSalesOrder>>> GetSalesOrders()
+        public Task<Result<IEnumerable<SalesOrder>>> GetSalesOrders()
         {
             // Implement http client to get sales orders from SAP Concur
             throw new NotImplementedException();

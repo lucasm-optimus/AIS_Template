@@ -1,10 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using Tilray.Integrations.Core.Application.Rootstock.Services;
-using Tilray.Integrations.Core.Domain;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
@@ -15,97 +11,115 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
         IRootstockService rootstockService,
         IMediator mediator,
         ILogger<ProcessSalesOrderCommandHandler> logger,
-        OrderDefaultsSettings orderDefaults) : ICommandHandler<ProcessSalesOrdersCommand, EcomSalesOrderProcessed>
+        OrderDefaultsSettings orderDefaults) : ICommandHandler<ProcessSalesOrdersCommand, SalesOrdersProcessed>
     {
-        public async Task<Result<EcomSalesOrderProcessed>> Handle(ProcessSalesOrdersCommand request, CancellationToken cancellationToken)
+        public async Task<Result<SalesOrdersProcessed>> Handle(ProcessSalesOrdersCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"Begin processing {request.SalesOrder.Count()} sales orders.");
+            #region Preparing variables
+
+            logger.LogInformation($"[{request.correlationId}] Begin processing {request.SalesOrders.Count()} sales orders.");
 
             var salesOrders = new List<SalesOrder>();
-            var failedSalesOrders = new List<(EcomSalesOrder salesOrder, string message)>();
+            var failedSalesOrders = new List<(SalesOrder salesOrder, IEnumerable<string> messages)>();
 
-            var tasks = request.SalesOrder.Select(async salesOrder =>
+            #endregion
+
+            #region Parallel processing of all orders
+
+            var tasks = request.SalesOrders.Select(async salesOrder =>
             {
-                //var checkIfOrderExists = await rootstockService.GetSalesOrder(salesOrder.ECommOrderID);
-
-                var response = await ProcessIndividualSalesOrder(salesOrder);
-                if (response.result && response.salesOrder != null)
+                var response = await ProcessIndividualSalesOrder(salesOrder, request.correlationId);
+                if (response.IsSuccess && response.Value != null)
                 {
-                    salesOrders.Add(response.salesOrder);
+                    salesOrders.Add(response.Value);
                 }
                 else
                 {
-                    failedSalesOrders.Add((salesOrder, response.message));
+                    failedSalesOrders.Add((response.Value, response.Reasons.Select(r => r.Message)));
                 }
             });
 
             await Task.WhenAll(tasks);
 
+            #endregion
+
+            #region Logging process information
+
             if (failedSalesOrders.Any())
             {
-                var failedSalesOrderMessages = failedSalesOrders.Select(f => $"Sales Order {f.salesOrder.ECommOrderID} failed to process: {f.message}");
-                logger.LogError($"Failed to process sales orders: {failedSalesOrderMessages}");
+                logger.LogWarning($"[{request.correlationId}] Failed to process {failedSalesOrders.Count()} sales orders.");
+
+                foreach (var failedSalesOrder in failedSalesOrders)
+                {
+                    foreach (var message in failedSalesOrder.messages)
+                    {
+                        logger.LogWarning($"[{request.correlationId}] Sales Order {failedSalesOrder.salesOrder.ECommerceOrderID} failed to process: {message}");
+                    }
+                }
             }
 
-            return Result.Ok(new EcomSalesOrderProcessed(salesOrders));
+            logger.LogInformation($"[{request.correlationId}] Successfully processed {salesOrders.Count()} sales orders.");
+
+            #endregion
+
+            return Result.Ok(new SalesOrdersProcessed(salesOrders));
         }
 
-        private async Task<(bool result, string message, SalesOrder? salesOrder)> ProcessIndividualSalesOrder(EcomSalesOrder payload)
+        private async Task<Result<SalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload, string correlationId)
         {
-            if (payload.StoreName != Constants.Ecom.SalesOrder.StoreName_AphriaMed && payload.StoreName != Constants.Ecom.SalesOrder.StoreName_SweetWater)
+            #region Preparing Sales Agg
+
+            var result = Result.Ok();
+            logger.LogInformation($"[{correlationId}]  Processing sales order {payload.ECommOrderID}");
+
+            var salesAgg = SalesAgg.Create(payload.StoreName);
+            logger.LogInformation($"[{correlationId}] Created sales order aggregate for {payload.ECommOrderID}");
+
+            #endregion
+
+            #region Validate Sales Orders
+
+            var salesOrderValidated = salesAgg.ValidateSalesOrder(payload);
+            logger.LogInformation($"[{correlationId}] Validated sales order {payload.ECommOrderID}");
+
+            if (!salesOrderValidated.result)
             {
-                logger.LogInformation("Store name not recognized");
-                return (false, "Store name not recognized", null);
+                logger.LogWarning($"[{correlationId}] Sales Order {payload.ECommOrderID} failed validation.");
+                return Result.Fail<SalesOrder>(salesOrderValidated.messages);
             }
 
-            if (!ConfirmShippingInfoPopulated(payload))
-            {
-                return (false, "Shipping Carrier or Shipping Method is blank", null);
-            }
+            #endregion
 
-            if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed && !ConfirmOrderTotalMatchesPayments(payload, out double totalPayment, out double orderTotal))
-            {
-                return (false, $"Order total {orderTotal} does not match total payments {totalPayment}", null);
-            }
+            #region Create Sales Order
 
-            if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed && !ConfirmPatientType(payload))
-            {
-                return (false, "Patient Type is blank", null);
-            }
+            var salesOrderProcessed = salesAgg.CreateSalesOrder(payload, orderDefaults);
+            logger.LogInformation($"[{correlationId}] Created sales order {payload.ECommOrderID}");
 
-            if (await rootstockService.GetCustomerInfo(payload.CustomerAccountID) == null)
+            #endregion
+
+            #region Create Customer and Customer Address if does not exists
+
+            var customerInfo = await rootstockService.GetCustomerInfo(payload.CustomerAccountNumber);
+            if (customerInfo == null)
             {
-                await mediator.Send(new CreateCustomerCommand(payload));
+                await mediator.Send(new CreateCustomerCommand(salesOrderProcessed.SalesOrderCustomer, correlationId));
+                logger.LogInformation($"[{correlationId}] Created customer {payload.CustomerAccountNumber} for sales order {payload.ECommOrderID}");
             }
 
             var customerAddressInfo = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountNumber, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
             if (customerAddressInfo == null)
             {
-                customerAddressInfo = (await mediator.Send(new CreateCustomerAddressCommand(payload))).Value.customerAddressInfo;
+                var response = (await mediator.Send(new CreateCustomerAddressCommand(salesOrderProcessed.SalesOrderCustomerAddress, payload.CustomerAccountID, payload.CustomerAccountNumber, correlationId))).Value;
+
+                customerAddressInfo = response.CustomerAddressInfo;
+                logger.LogInformation($"[{correlationId}] Created customer address {payload.CustomerAccountNumber} for sales order {payload.ECommOrderID}");
             }
 
-            var salesOrder = SalesOrder.Create(payload, orderDefaults, customerAddressInfo.CustomerID);
-            return (true, $"Sales order formatted for store {payload.StoreName}.", salesOrder);
-        }
+            salesAgg.UpdateCustomerAddressReference(customerAddressInfo.CustomerID);
 
-        private bool ConfirmShippingInfoPopulated(EcomSalesOrder sapSalesOrder)
-        {
-            return sapSalesOrder.ShippingCarrier != null && sapSalesOrder.ShippingMethod != null;
-        }
+            #endregion
 
-        private bool ConfirmOrderTotalMatchesPayments(EcomSalesOrder sapSalesOrder, out double TotalPayment, out double OrderTotal)
-        {
-            var totalPayments = sapSalesOrder.AmountPaidByCustomer + sapSalesOrder.AmountPaidByBillTo;
-            var orderTotal = sapSalesOrder.ShippingCost - sapSalesOrder.DiscountAmount + sapSalesOrder.Taxes.Sum(t => t.Amount) + sapSalesOrder.OrderLines.Sum(ol => ol.Quantity * ol.UnitPrice);
-            TotalPayment = totalPayments;
-            OrderTotal = orderTotal;
-            return totalPayments == orderTotal;
-        }
-
-        private bool ConfirmPatientType(EcomSalesOrder sapSalesOrder)
-        {
-            var validPatientTypes = new List<string> { "Insured", "Non-Insured", "Veteran" };
-            return validPatientTypes.Contains(sapSalesOrder.PatientType);
+            return Result.Ok(salesAgg.SalesOrder);
         }
     }
 }

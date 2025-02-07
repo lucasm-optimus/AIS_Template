@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomer
     {
@@ -35,9 +35,16 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
         public void SetRstkSocustMaintcurrindC(bool maintCurrInd) => rstk__socust_maintcurrind__c = maintCurrInd;
         public void SetRstkSocustTermsR(ExternalReferenceId terms) => rstk__socust_terms__r = terms;
 
-        public static string GetCreatedRowId(dynamic payload)
-        {
-            return payload[0]["id"];
-        }
+        //public static string GetCreatedRowId(ResponseResult payload)
+        //{
+        //    var x = payload;
+        //    var x1 = payload[0];
+        //    if (payload[0].errorCode != null)
+        //    {
+
+        //    }
+        //    var x2 = payload["records"];
+        //    return payload[0]["id"];
+        //}
     }
 }

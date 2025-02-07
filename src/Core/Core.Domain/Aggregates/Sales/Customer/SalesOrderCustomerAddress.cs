@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 {
     public class SalesOrderCustomerAddress
     {
@@ -53,7 +54,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
             };
         }
 
-        public static SalesOrderCustomerAddress Create(EcomSalesOrder order, double sequence, string name)
+        public static SalesOrderCustomerAddress Create(Models.Ecom.SalesOrder order)
         {
             return new SalesOrderCustomerAddress
             {
@@ -73,17 +74,18 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
                 IsAcknowledgement = true,
                 IsDefaultAcknowledgement = true,
                 TaxLocation = GetTaxLocation(order.ShipToState),
-                Storefront = order.StoreName,
-                CustomerNextAddressSequence = sequence,
-                Name = name
+                Storefront = order.StoreName
             };
         }
 
-        public RstkCustomerAddress GetRootstockCustomerAddress(EcomSalesOrder payload)
+        public void SetCustomerNextAddressSequence(double sequence) => CustomerNextAddressSequence = sequence;
+        public void SetName(string name) => Name = name;
+
+        public RstkCustomerAddress GetRootstockCustomerAddress(string CustomerAccountNumber)
         {
             var address = RstkCustomerAddress.Create();
-            address.SetRstkSocaddrCustnoR(ExternalReferenceId.Create("rstk__socust__c", payload.CustomerAccountNumber));
-            address.SetExternalCustomerNumberC($"{payload.CustomerAccountNumber}_{CustomerNextAddressSequence}");
+            address.SetRstkSocaddrCustnoR(ExternalReferenceId.Create("rstk__socust__c", CustomerAccountNumber));
+            address.SetExternalCustomerNumberC($"{CustomerAccountNumber}_{CustomerNextAddressSequence}");
             address.SetRstkSocaddrNameC(Name);
             address.SetRstkSocaddrAddress1C(Address1);
             address.SetRstkSocaddrAddress2C(Address2);

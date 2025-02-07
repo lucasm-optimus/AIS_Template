@@ -1,15 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tilray.Integrations.Core.Application.Ecom.Commands;
 using Tilray.Integrations.Core.Application.Rootstock.Services;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer.Events;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -20,9 +14,11 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<CustomerCreated>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
-            var salesOrderCustomer = SalesOrderCustomer.Create(request.salesOrder, orderDefaults);
-            var rootstockCustomer = salesOrderCustomer.GetRootstockCustomer();
+            logger.LogInformation($"[{request.CorrelationId}] Begin creating customer {request.customer.CustomerNo}.");
+            var rootstockCustomer = request.customer.GetRootstockCustomer();
             await rootstockService.CreateCustomer(rootstockCustomer);
+            
+            logger.LogInformation($"[{request.CorrelationId}] Customer {request.customer.CustomerNo} created.");
             return Result.Ok(new CustomerCreated());
         }
     }

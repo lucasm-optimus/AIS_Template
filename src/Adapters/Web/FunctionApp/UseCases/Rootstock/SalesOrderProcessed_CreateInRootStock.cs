@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 
-namespace Tilray.Integrations.FunctionsApp.UseCases.Rootstock;
+namespace Tilray.Integrations.Functions.UseCases.Rootstock;
 
 public class SalesOrderProcessed_CreateInRootStock(IMediator mediator, ILogger<SalesOrderProcessed_CreateInRootStock> logger)
 {

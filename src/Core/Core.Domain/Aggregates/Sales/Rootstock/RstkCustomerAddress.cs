@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomerAddress
     {

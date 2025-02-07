@@ -1,20 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Services
 {
     public interface IRootstockService
     {
-        Task<string?> CreateCustomer(RstkCustomer customer);
+        Task<ResponseResult> CreateCustomer(RstkCustomer customer);
         Task<RstkCustomerInfoResponse?> GetCustomerInfo(string sfAccountId);
-        Task<string?> CreateCustomerAddress(RstkCustomerAddress customerAddress);
+        Task<ResponseResult> CreateCustomerAddress(RstkCustomerAddress customerAddress);
         Task<int?> GetCustomerAddressNextSequence(string customerNo);
         Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string addressType);
         Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip);
-        Task<dynamic> CreateSalesOrder(RstkSalesOrder salesOrder);
-        Task<dynamic> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
-        Task CreatePrePayment(RstkPrePayment rstkPrePayment);
+        Task<ResponseResult> CreateSalesOrder(RstkSalesOrder salesOrder);
+        Task<ResponseResult> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
+        Task<ResponseResult> CreatePrePayment(RstkPrePayment rstkPrePayment);
         Task<bool> SalesOrderExists(string customerReferenceNumber);
     }
 }

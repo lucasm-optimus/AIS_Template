@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
+namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 {
     public class SalesOrderCustomer
     {
@@ -23,7 +24,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Customer
         public bool UseSFAddresses { get; private set; }
         public string DefaultProductType { get; private set; }
 
-        public static SalesOrderCustomer Create(EcomSalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public static SalesOrderCustomer Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             var salesOrderCustomer = new SalesOrderCustomer { CustomerNo = payload.CustomerAccountNumber };
             salesOrderCustomer.SetAccountingDimension2($"{orderDefaults.Medical.Division}_{orderDefaults.Medical.Customer.AccountingDimension2Suffix}{payload.ShipToState}");

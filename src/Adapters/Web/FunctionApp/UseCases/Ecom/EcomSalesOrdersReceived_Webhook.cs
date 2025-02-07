@@ -10,7 +10,7 @@ using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
-namespace Tilray.Integrations.FunctionsApp.UseCases.Ecom;
+namespace Tilray.Integrations.Functions.UseCases.Ecom;
 
 public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClient serviceBusClient)
 {
@@ -25,9 +25,13 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
-        var requestBody = (await new StreamReader(req.Body).ReadToEndAsync());
-        var ecomSalesOrders = JsonConvert.DeserializeObject<List<EcomSalesOrder>>(requestBody);
-        FluentResults.Result<EcomSalesOrderProcessed> response = await mediator.Send(new ProcessSalesOrdersCommand(ecomSalesOrders));
+        // Extract the correlation ID from the request headers
+        string correlationId = req.Headers["X-Correlation-ID"].FirstOrDefault() ?? Guid.NewGuid().ToString();
+
+        var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Models.Ecom.SalesOrder>>(requestBody);
+
+        FluentResults.Result<SalesOrdersProcessed> response = await mediator.Send(new ProcessSalesOrdersCommand(ecomSalesOrders, correlationId));
 
         if (response.IsSuccess)
         {

@@ -1,15 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tilray.Integrations.Core.Application.Ecom.Commands;
 using Tilray.Integrations.Core.Application.Rootstock.Services;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.Customer.Events;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -20,17 +14,21 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<CustomerAddressCreated>> Handle(CreateCustomerAddressCommand request, CancellationToken cancellationToken)
         {
-            var customer = await rootstockService.GetCustomerInfo(request.payload.CustomerAccountID);
+            logger.LogInformation($"[{request.CorrelationId}] Begin creating customer address for {request.CustomerAccountId}.");
 
-            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(request.payload.CustomerAccountNumber) ?? 1;
-            var salesOrderCustomerAddress = SalesOrderCustomerAddress.Create(request.payload, nextAddressSequence, $"{request.payload.CustomerAccountNumber}_{nextAddressSequence}");
+            var customer = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
 
-            var rootstockCustomerAddress = salesOrderCustomerAddress.GetRootstockCustomerAddress(request.payload);
+            logger.LogInformation($"[{request.CorrelationId}] Getting next address sequence for customer {request.CustomerAccountNumber}.");
+            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(request.CustomerAccountNumber) ?? 1;
+
+            logger.LogInformation($"[{request.CorrelationId}] Creating customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.");
+            var rootstockCustomerAddress = request.Address.GetRootstockCustomerAddress(request.CustomerAccountNumber);
             await rootstockService.CreateCustomerAddress(rootstockCustomerAddress);
 
-            var customerAddressInfo = await rootstockService.GetCustomerAddressInfo(request.payload.CustomerAccountNumber, request.payload.ShipToAddress1, request.payload.ShipToCity, request.payload.ShipToState, request.payload.ShipToZip);
+            logger.LogInformation($"[{request.CorrelationId}] Getting customer address info for customer {request.CustomerAccountNumber}.");
+            var customerAddressInfo = await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
 
-            return Result.Ok(new CustomerAddressCreated(customerAddressInfo));
+            return Result.Ok(new CustomerAddressCreated(customerAddressInfo, customer));
         }
     }
 }

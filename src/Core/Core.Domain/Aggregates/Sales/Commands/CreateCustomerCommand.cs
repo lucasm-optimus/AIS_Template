@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
-using Tilray.Integrations.Core.Common;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands
 {
-    public record CreateSalesOrderCommand(SalesOrder SalesOrder, string CorrelationId) : ICommand<SalesOrderCreated>
+    public record CreateCustomerCommand(SalesOrderCustomer customer, string CorrelationId) : ICommand<CustomerCreated>
     {
     }
 }

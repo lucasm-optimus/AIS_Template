@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tilray.Integrations.Core.Application.Rootstock.Stream
+namespace Tilray.Integrations.Core.Application.Rootstock.Streams
 {
     public interface IRootstockStream
     {

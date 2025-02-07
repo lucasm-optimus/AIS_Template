@@ -23,6 +23,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                 rstk__externalid__c = externalId
             };
         }
-        override public string ToString() => JsonConvert.SerializeObject(new { name = rstk__externalid__c });
+        override public string ToString()
+        {
+            return JsonConvert.SerializeObject(new { name = rstk__externalid__c });
+        }
     }
 }
