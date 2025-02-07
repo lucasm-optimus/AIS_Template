@@ -1,23 +1,29 @@
 ﻿using Microsoft.Extensions.Logging;
+using Tilray.Integrations.Core.Application.Adapters.Storage;
+using Tilray.Integrations.Core.Common.Extensions;
 
 namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
 
-public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepointService, ILogger<UploadInvoicesToSharepointCommandHandler> logger) : ICommandHandler<UploadInvoicesToSharepointCommand>
+public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepointService, IBlobService blobService,
+    ILogger<UploadInvoicesToSharepointCommandHandler> logger) : ICommandHandler<UploadInvoicesToSharepointCommand>
 {
     public async Task<Result> Handle(UploadInvoicesToSharepointCommand request, CancellationToken cancellationToken)
     {
-        if (request.Invoices?.Any() != true)
+        string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoicesBlobName);
+        var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
+
+        if (invoiceGroup.Invoices?.Any() != true)
         {
             return Result.Ok();
         }
 
-        if (!request.Company.OBeer_Invoices__c)
+        if (!invoiceGroup.Company.OBeer_Invoices__c)
         {
             logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
-                request.Company.Company_Name__c);
+                invoiceGroup.Company.Company_Name__c);
             return Result.Ok();
         }
 
-        return await sharepointService.UploadFileAsync(request.Invoices, request.Company);
+        return await sharepointService.UploadFileAsync(invoiceGroup.Invoices, invoiceGroup.Company);
     }
 }

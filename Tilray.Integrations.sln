@@ -61,6 +61,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceBus", "ServiceBus", 
 		template.json = template.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Storage", "Storage", "{625755D5-AABF-4E6C-84F7-B9F3855387AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tilray.Integrations.Storage.Blob", "src\Adapters\Storage\Tilray.Integrations.Storage.Blob\Tilray.Integrations.Storage.Blob.csproj", "{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +107,10 @@ Global
 		{6DD54FA4-C337-4BF2-8356-5B6FC84E3601}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DD54FA4-C337-4BF2-8356-5B6FC84E3601}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DD54FA4-C337-4BF2-8356-5B6FC84E3601}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +133,8 @@ Global
 		{6DD54FA4-C337-4BF2-8356-5B6FC84E3601} = {33A777D0-B204-4EE3-9E96-FF6DE7BA958A}
 		{B1331317-A56F-4360-A13A-2D68CB6B31ED} = {D137EEB2-196C-4688-AA7B-17EF4BAA5874}
 		{B9ACF540-A964-432B-A779-D178F4DFAD00} = {B1331317-A56F-4360-A13A-2D68CB6B31ED}
+		{625755D5-AABF-4E6C-84F7-B9F3855387AB} = {90CF196C-B249-487A-B806-69810D31C319}
+		{BBE961E6-B8B9-44EC-AEE0-694C3EAD8D9B} = {625755D5-AABF-4E6C-84F7-B9F3855387AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE04B0CA-C745-4EB6-8B3B-583BD6822054}

@@ -11,7 +11,7 @@ public class SAPConcurInvoicesFetched_CreateInvoicesInObeer(IMediator mediator, 
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(message.Body.ToString().ToObject<CreateInvoicesInObeerCommand>());
+        var result = await mediator.Send(new CreateInvoicesInObeerCommand(message.Body.ToString()));
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));

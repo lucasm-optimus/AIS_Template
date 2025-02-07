@@ -7,7 +7,7 @@ public class GetInvoicesFromSAPConcur(ILogger<GetInvoicesFromSAPConcur> logger, 
     /// </summary>
     [Function("GetInvoicesFromSAPConcur")]
     [ServiceBusOutput("%TopicSAPConcurInvoicesFetched%", Connection = "ServiceBusConnectionString")]
-    public async Task<IEnumerable<InvoiceGroup>> Run([TimerTrigger("%GetInvoicesFromSAPConcurCRON%")] TimerInfo myTimer)
+    public async Task<IEnumerable<string>> Run([TimerTrigger("%GetInvoicesFromSAPConcurCRON%", RunOnStartup = true)] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetAllInvoices());
         if (result.IsSuccess)

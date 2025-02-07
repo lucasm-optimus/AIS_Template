@@ -11,7 +11,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         Type type = typeof(T);
         return type switch
         {
-            Type invoice when invoice == typeof(Invoice) => sharepointSettings.InvoicesSubFolderPath,
+            Type invoice when invoice == typeof(SharepointInvoice) => sharepointSettings.InvoicesSubFolderPath,
             Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
             Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
             _ => string.Empty

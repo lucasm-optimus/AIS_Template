@@ -18,11 +18,11 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
         HttpResponseMessage response = await client.PostAsync(apiUrl, content);
         if (response.IsSuccessStatusCode)
         {
-            logger.LogInformation($"Obeer Invoice created successfully for {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.CustomerRefNo}");
+            logger.LogInformation($"Obeer Invoice created successfully for {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.ConcurOrderID}");
             return Result.Ok();
         }
 
-        string errorMessage = $@"Failed to create invoice in Obeer. InvoiceId: {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.CustomerRefNo}
+        string errorMessage = $@"Failed to create invoice in Obeer. InvoiceId: {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.ConcurOrderID}
             Error: {Helpers.GetErrorFromResponse(response)}";
         logger.LogError(errorMessage);
         return Result.Fail(errorMessage);

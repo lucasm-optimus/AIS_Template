@@ -1,19 +1,22 @@
-﻿namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
+﻿using Tilray.Integrations.Core.Application.Adapters.Storage;
 
-public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService) : IQueryManyHandler<GetAllInvoices, InvoiceGroup>
+namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
+
+public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService, IBlobService blobService)
+    : IQueryManyHandler<GetAllInvoices, string>
 {
-    public async Task<Result<IEnumerable<InvoiceGroup>>> Handle(GetAllInvoices request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<string>>> Handle(GetAllInvoices request, CancellationToken cancellationToken)
     {
         var invoicesResult = await sapConcurService.GetInvoicesAsync();
         if (invoicesResult.IsFailed)
-            return Result.Fail<IEnumerable<InvoiceGroup>>(invoicesResult.Errors);
+            return Result.Fail<IEnumerable<string>>(invoicesResult.Errors);
 
         if (invoicesResult.Value is null || !invoicesResult.Value.Any())
             return Result.Ok();
 
         var companyReferencesResult = await rootstockService.GetAllCompanyReferencesAsync();
         if (companyReferencesResult.IsFailed)
-            return Result.Fail<IEnumerable<InvoiceGroup>>(companyReferencesResult.Errors);
+            return Result.Fail<IEnumerable<string>>(companyReferencesResult.Errors);
 
         var companyWithInvoices = companyReferencesResult.Value
             .Select(company => InvoiceGroup.Create(
@@ -23,9 +26,16 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
 
         if (!companyWithInvoices.Any())
         {
-            return Result.Fail<IEnumerable<InvoiceGroup>>("No invoices found for any company");
+            return Result.Fail<IEnumerable<string>>("No invoices found for any company");
         }
 
-        return Result.Ok(companyWithInvoices);
+        var blobList = new List<string>();
+        foreach(var companyWithInvoice in companyWithInvoices)
+        {
+            var blobName = await blobService.UploadBlobContentAsync(companyWithInvoice, "invoice");
+            blobList.Add(blobName);
+        }
+
+        return Result.Ok(blobList.AsEnumerable());
     }
 }

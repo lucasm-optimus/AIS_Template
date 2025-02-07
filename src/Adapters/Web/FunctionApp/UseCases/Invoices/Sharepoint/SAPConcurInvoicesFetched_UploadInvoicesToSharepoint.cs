@@ -11,7 +11,7 @@ public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator media
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(message.Body.ToString().ToObject<UploadInvoicesToSharepointCommand>());
+        var result = await mediator.Send(new UploadInvoicesToSharepointCommand(message.Body.ToString()));
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));
