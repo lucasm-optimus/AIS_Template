@@ -7,7 +7,7 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
     /// </summary>
     [Function(nameof(SalesOrderCreated_CreateSalesOrderInRootstock))]
     public async Task Run(
-        [ServiceBusTrigger("%TopicSalesOrderCreated%", "%SubscriptionCreateSalesOrderInRootStock%", Connection = "ServiceBusConnectionString")]
+        [ServiceBusTrigger("%TopicSalesOrderCreated%", "%SubscriptionCreateMedSalesOrderInRootStock%", Connection = "ServiceBusConnectionString")]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
