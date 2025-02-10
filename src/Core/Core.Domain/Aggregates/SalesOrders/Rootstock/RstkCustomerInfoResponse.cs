@@ -13,11 +13,18 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 
         public static RstkCustomerInfoResponse MapFromPayload(dynamic records)
         {
-            return new RstkCustomerInfoResponse
+            if (records.Count > 0)
             {
-                CustomerNo = records[0]["rstk__socust_custno__c"],
-                Name = records[0]["Name"]
-            };
+                return new RstkCustomerInfoResponse
+                {
+                    CustomerNo = records[0]["rstk__socust_custno__c"],
+                    Name = records[0]["Name"]
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

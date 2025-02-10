@@ -21,7 +21,21 @@ public class SalesOrderProcessed_CreateInRootStock(IMediator mediator, ILogger<S
         {
             var salesOrder = JsonConvert.DeserializeObject<MedSalesOrder>(message.Body.ToString());
             var response = await mediator.Send(new CreateSalesOrderCommand(salesOrder, message.CorrelationId));
-            await messageActions.CompleteMessageAsync(message);
+
+            if (response.IsSuccess)
+            {
+                logger.LogInformation($"SalesOrderProcessed_CreateInRootStock: MessageId: {message.MessageId}: Sales order created in RootStock. ");
+                await messageActions.CompleteMessageAsync(message);
+            }
+            else
+            {
+                logger.LogError($"SalesOrderProcessed_CreateInRootStock: MessageId: {message.MessageId}: Failed to create sales order in RootStock. ");
+                foreach (var reason in response.Reasons)
+                {
+                    logger.LogError($"SalesOrderProcessed_CreateInRootStock: MessageId: {message.MessageId}: {reason.Message}");
+                }
+                await messageActions.DeadLetterMessageAsync(message);
+            }
         }
         catch (Exception ex)
         {

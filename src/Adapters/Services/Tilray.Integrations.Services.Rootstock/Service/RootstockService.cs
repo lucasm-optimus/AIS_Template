@@ -301,7 +301,16 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             _ => throw new Exception("Invalid address type.")
         };
 
-        return RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
+        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
+        if (result.IsSuccess)
+        {
+            return result.Value;
+        }
+        else
+        {
+            logger.LogError($"Failed to fetch customer address info. Error: {result.Errors}");
+            return null;
+        }
     }
 
     public async Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip)
@@ -316,7 +325,16 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             " AND rstk__socaddr_useasshipto__c = true";
 
         var responseResult = await ExecuteQueryAsync(query);
-        return RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
+        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
+        if (result.IsSuccess)
+        {
+            return result.Value;
+        }
+        else
+        {
+            logger.LogError($"Failed to fetch customer address info. Error: {result.Errors}");
+            return null;
+        }
     }
 
     public async Task<ResponseResult> CreateSalesOrder(RstkSalesOrder salesOrder)

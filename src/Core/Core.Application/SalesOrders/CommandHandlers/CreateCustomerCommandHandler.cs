@@ -15,8 +15,15 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
         {
             logger.LogInformation($"[{request.CorrelationId}] Begin creating customer {request.customer.CustomerNo}.");
             var rootstockCustomer = request.customer.GetRootstockCustomer();
-            await rootstockService.CreateCustomer(rootstockCustomer);
-            
+            var createdCustomer = await rootstockService.CreateCustomer(rootstockCustomer);
+
+            if (!createdCustomer.Success)
+            {
+                var errorMessage = $"Failed to create customer {request.customer.CustomerNo}.";
+                logger.LogError(errorMessage);
+                return Result.Fail<CustomerCreated>(errorMessage);
+            }
+
             logger.LogInformation($"[{request.CorrelationId}] Customer {request.customer.CustomerNo} created.");
             return Result.Ok(new CustomerCreated());
         }

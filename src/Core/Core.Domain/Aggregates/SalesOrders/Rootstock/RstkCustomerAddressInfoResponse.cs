@@ -23,15 +23,22 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         [JsonProperty("locationReference")]
         public string LocationReference { get; private set; }
 
-        public static RstkCustomerAddressInfoResponse MapFromPayload(dynamic payload)
+        public static Result<RstkCustomerAddressInfoResponse> MapFromPayload(dynamic payload)
         {
-            return new()
+            if (payload.Count > 0)
             {
-                CustomerID = payload[0]["id"],
-                CustomerAddressID = payload[0]["rstk__externalid__c"],
-                Name = payload[0]["name"],
-                LocationReference = payload[0]["External_Customer_Number__c"]
-            };
+                return Result.Ok(new RstkCustomerAddressInfoResponse
+                {
+                    CustomerID = payload[0]["id"],
+                    CustomerAddressID = payload[0]["rstk__externalid__c"],
+                    Name = payload[0]["name"],
+                    LocationReference = payload[0]["External_Customer_Number__c"]
+                });
+            }
+            else
+            {
+                return Result.Fail<RstkCustomerAddressInfoResponse>("Faild to convert payload");
+            }
         }
 
         public static int? GetNextSequenceNumber(dynamic payload)
