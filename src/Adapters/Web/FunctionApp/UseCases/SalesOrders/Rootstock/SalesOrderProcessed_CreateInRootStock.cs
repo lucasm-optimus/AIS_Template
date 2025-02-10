@@ -15,7 +15,7 @@ public class SalesOrderProcessed_CreateInRootStock(IMediator mediator, ILogger<S
     /// <param name="log"></param>
 
     [Function(nameof(SalesOrderProcessed_CreateInRootStock))]
-    public async Task Run([ServiceBusTrigger("%TopicEcomSalesOrderRecieved%", "%SubscriptionCreateMedSalesOrderInRootStock%", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
+    public async Task Run([ServiceBusTrigger("%TopicEcomSalesOrderRecieved%", "%SubscriptionCreateSalesOrderInRootStock%", Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
     {
         try
         {

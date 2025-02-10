@@ -98,11 +98,11 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
 
             #region Create Customer and Customer Address if does not exists
 
-            var customerInfo = await rootstockService.GetCustomerInfo(payload.CustomerAccountNumber);
+            var customerInfo = await rootstockService.GetCustomerInfo(payload.CustomerAccountID);
             if (customerInfo == null)
             {
                 await mediator.Send(new CreateCustomerCommand(salesOrderProcessed.SalesOrderCustomer, correlationId));
-                logger.LogInformation($"[{correlationId}] Created customer {payload.CustomerAccountNumber} for sales order {payload.ECommOrderID}");
+                logger.LogInformation($"[{correlationId}] Created customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
             }
 
             var customerAddressInfo = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountNumber, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
@@ -111,10 +111,10 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
                 var response = (await mediator.Send(new CreateCustomerAddressCommand(salesOrderProcessed.SalesOrderCustomerAddress, payload.CustomerAccountID, payload.CustomerAccountNumber, correlationId))).Value;
 
                 customerAddressInfo = response.CustomerAddressInfo;
-                logger.LogInformation($"[{correlationId}] Created customer address {payload.CustomerAccountNumber} for sales order {payload.ECommOrderID}");
+                logger.LogInformation($"[{correlationId}] Created customer address {response.CustomerAddressInfo.CustomerAddressID} for sales order {payload.ECommOrderID}");
             }
 
-            salesAgg.UpdateCustomerAddressReference(customerAddressInfo.CustomerID);
+            salesAgg.UpdateCustomerAddressReference(customerAddressInfo.CustomerAddressID);
 
             #endregion
 
