@@ -9,14 +9,14 @@ public interface IRootstockService
     Task<Result<IEnumerable<CompanyReference>>> GetAllCompanyReferencesAsync();
     Task<Result<IEnumerable<SalesOrder>>> ValidateSalesOrders(IEnumerable<SalesOrder> salesOrders);
     Task<Result> CreateSalesOrderAsync(SalesOrder salesOrder);
-    Task<ResponseResult> CreateCustomer(RstkCustomer customer);
-    Task<RstkCustomerInfoResponse?> GetCustomerInfo(string sfAccountId);
-    Task<ResponseResult> CreateCustomerAddress(RstkCustomerAddress customerAddress);
+    Task<Result<dynamic?>> CreateCustomer(RstkCustomer customer);
+    Task<Result<RstkCustomerInfoResponse?>> GetCustomerInfo(string sfAccountId);
+    Task<Result<dynamic?>> CreateCustomerAddress(RstkCustomerAddress customerAddress);
     Task<int?> GetCustomerAddressNextSequence(string customerNo);
-    Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string addressType);
-    Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip);
-    Task<ResponseResult> CreateSalesOrder(RstkSalesOrder salesOrder);
-    Task<ResponseResult> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
-    Task<ResponseResult> CreatePrePayment(RstkPrePayment rstkPrePayment);
+    Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string addressType);
+    Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip);
+    Task<Result<dynamic?>> CreateSalesOrder(RstkSalesOrder salesOrder);
+    Task<Result<dynamic?>> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
+    Task<Result<dynamic?>> CreatePrePayment(RstkPrePayment rstkPrePayment);
     Task<bool> SalesOrderExists(string customerReferenceNumber);
 }

@@ -15,13 +15,13 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
         {
             logger.LogInformation($"[{request.CorrelationId}] Begin creating customer address for {request.CustomerAccountId}.");
 
-            var customer = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
+            var customerInfoResult = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
 
-            if (customer == null)
+            if (customerInfoResult.IsFailed)
             {
                 var errorMessage = $"Customer {request.CustomerAccountId} not found.";
                 logger.LogError(errorMessage);
-                return Result.Fail<CustomerAddressCreated>(errorMessage);
+                return Result.Fail<CustomerAddressCreated>(customerInfoResult.Errors);
             }
 
             logger.LogInformation($"[{request.CorrelationId}] Getting next address sequence for customer {request.CustomerAccountNumber}.");
@@ -29,26 +29,26 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 
             logger.LogInformation($"[{request.CorrelationId}] Creating customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.");
             var rootstockCustomerAddress = request.Address.GetRootstockCustomerAddress(request.CustomerAccountNumber);
-            var createdCustomerAddress = await rootstockService.CreateCustomerAddress(rootstockCustomerAddress);
+            var createdCustomerAddressResult = await rootstockService.CreateCustomerAddress(rootstockCustomerAddress);
 
-            if (createdCustomerAddress == null)
+            if (createdCustomerAddressResult.IsFailed)
             {
                 var errorMessage = $"Failed to create customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.";
                 logger.LogError(errorMessage);
-                return Result.Fail<CustomerAddressCreated>(errorMessage);
+                return Result.Fail<CustomerAddressCreated>(createdCustomerAddressResult.Errors);
             }
 
             logger.LogInformation($"[{request.CorrelationId}] Getting customer address info for customer {request.CustomerAccountNumber}.");
-            var customerAddressInfo = await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
+            var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
 
-            if (customerAddressInfo == null)
+            if (customerAddressInfoResult.IsFailed)
             {
                 var errorMessage = $"Failed to get customer address info for customer {request.CustomerAccountNumber}.";
                 logger.LogError(errorMessage);
-                return Result.Fail<CustomerAddressCreated>(errorMessage);
+                return Result.Fail<CustomerAddressCreated>(customerAddressInfoResult.Errors);
             }
 
-            return Result.Ok(new CustomerAddressCreated(customerAddressInfo, customer));
+            return Result.Ok(new CustomerAddressCreated(customerAddressInfoResult.Value, customerInfoResult.Value));
         }
     }
 }

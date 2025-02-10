@@ -182,7 +182,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             : Result.Fail($"Failed to create the following line items: {string.Join("; ", errors)}");
     }
 
-    private async Task<ResponseResult> PostRootstockDataAsync(string objectName, object obj)
+    private async Task<Result<dynamic?>> PostRootstockDataAsync(string objectName, object obj)
     {
         var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
         var response = await httpClient.PostAsync($"{SObjectUrl}/{objectName}", content);
@@ -191,29 +191,30 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (response.IsSuccessStatusCode)
         {
             logger.LogInformation($"[Rootstock Create] Successfully created entry in entity {objectName}.");
-            return ResponseResult.CreateSuccessResult(responseContent);
+            return Result.Ok(responseContent["records"]);
         }
         else
         {
             string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')";
             logger.LogError($"[Rootstock Create] Failed to create entry in entity {objectName}. Error: {errorMessage}.");
-            return ResponseResult.CreateErrorResult(responseContent);
+            return Result.Fail(errorMessage);
         }
     }
 
-    private async Task<ResponseResult> ExecuteQueryAsync(string query)
+    private async Task<Result<dynamic>> ExecuteQueryAsync(string query)
     {
         HttpResponseMessage response = await httpClient.GetAsync($"{QueryUrl}?q={query}");
         var responseContent = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
         if (response.IsSuccessStatusCode)
         {
-            return ResponseResult.CreateSuccessResult(responseContent);
+            logger.LogInformation($"Successfully fetched data. Query: {query}");
+            return Result.Ok(responseContent["records"]);
         }
         else
         {
             string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')"; ;
             logger.LogError($"Failed to fetch. Error: {errorMessage}");
-            return ResponseResult.CreateErrorResult(responseContent);
+            return Result.Fail(errorMessage);
         }
     }
 
@@ -265,19 +266,24 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             : await CreateSalesOrderLinesAsync(salesOrder, headerResult.Value);
     }
 
-    public async Task<ResponseResult> CreateCustomer(RstkCustomer customer)
+    public async Task<Result<dynamic?>> CreateCustomer(RstkCustomer customer)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.Customer, customer);
+        var createdCustomerResult = await PostRootstockDataAsync(Constants.Rootstock.TableNames.Customer, customer);
+        return createdCustomerResult.IsFailed
+            ? createdCustomerResult
+            : RootstockCustomerCreateResponse.GetRecordId(createdCustomerResult.Value);
     }
 
-    public async Task<RstkCustomerInfoResponse> GetCustomerInfo(string sfAccountId)
+    public async Task<Result<RstkCustomerInfoResponse?>> GetCustomerInfo(string sfAccountId)
     {
         var formattedQuery = string.Format(RootstockQueries.GetCustomerBySfAccountQuery, sfAccountId);
         var responseResult = await ExecuteQueryAsync(formattedQuery);
-        return RstkCustomerInfoResponse.MapFromPayload(responseResult.Records);
+        return responseResult.IsFailed
+            ? responseResult
+            : RstkCustomerInfoResponse.MapFromPayload(responseResult.Value);
     }
 
-    public async Task<ResponseResult> CreateCustomerAddress(RstkCustomerAddress customerAddress)
+    public async Task<Result<dynamic>> CreateCustomerAddress(RstkCustomerAddress customerAddress)
     {
         return await PostRootstockDataAsync(Constants.Rootstock.TableNames.CustomerAddress, customerAddress);
     }
@@ -285,11 +291,11 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     public async Task<int?> GetCustomerAddressNextSequence(string customerNo)
     {
         var formattedQuery = string.Format(RootstockQueries.GetMaxAddressSequenceByCustomerNo, customerNo);
-        var payload = await ExecuteQueryAsync(formattedQuery);
-        return RstkCustomerAddressInfoResponse.GetNextSequenceNumber(payload);
+        var responseResult = await ExecuteQueryAsync(formattedQuery);
+        return RstkCustomerAddressInfoResponse.GetNextSequenceNumber(responseResult.Value);
     }
 
-    public async Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string addressType)
+    public async Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string addressType)
     {
         //await string.Format(, customerNo)
         var responseResult = addressType switch
@@ -301,19 +307,20 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             _ => throw new Exception("Invalid address type.")
         };
 
-        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
-        if (result.IsSuccess)
+        if (responseResult.IsFailed)
         {
-            return result.Value;
+            logger.LogError($"Failed to fetch customer address info. Error: {responseResult.Errors}");
+            return Result.Fail<RstkCustomerAddressInfoResponse>(responseResult.Errors);
         }
-        else
-        {
-            logger.LogError($"Failed to fetch customer address info. Error: {result.Errors}");
-            return null;
-        }
+
+        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Value);
+        return result.IsSuccess
+            ? result
+            : Result.Fail<RstkCustomerAddressInfoResponse>(result.Errors);
+
     }
 
-    public async Task<RstkCustomerAddressInfoResponse> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip)
+    public async Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip)
     {
         string query =
             "SELECT  ID, rstk__externalid__c, Name, External_Customer_Number__c  FROM rstk__socaddr__c " +
@@ -325,29 +332,20 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             " AND rstk__socaddr_useasshipto__c = true";
 
         var responseResult = await ExecuteQueryAsync(query);
-        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Records);
-        if (result.IsSuccess)
-        {
-            return result.Value;
-        }
-        else
-        {
-            logger.LogError($"Failed to fetch customer address info. Error: {result.Errors}");
-            return null;
-        }
+        return RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Value);
     }
 
-    public async Task<ResponseResult> CreateSalesOrder(RstkSalesOrder salesOrder)
+    public async Task<Result<dynamic?>> CreateSalesOrder(RstkSalesOrder salesOrder)
     {
         return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SalesOrder, salesOrder);
     }
 
-    public async Task<ResponseResult> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem)
+    public async Task<Result<dynamic?>> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem)
     {
         return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SalesOrder, salesOrderLineItem);
     }
 
-    public async Task<ResponseResult> CreatePrePayment(RstkPrePayment prePayment)
+    public async Task<Result<dynamic?>> CreatePrePayment(RstkPrePayment prePayment)
     {
         return await PostRootstockDataAsync(Constants.Rootstock.TableNames.Prepayment, prePayment);
     }
@@ -356,7 +354,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     {
         var formattedQuery = string.Format(RootstockQueries.GetListofCustomerReferencesByCustomerReferences, customerReferenceNumber);
         var responseResult = await ExecuteQueryAsync(formattedQuery);
-        return responseResult.RecordCount > 0;
+        return responseResult.Value.RecordCount > 0;
     }
 
     #endregion

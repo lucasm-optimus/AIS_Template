@@ -34,7 +34,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public bool rstk__socaddr_defaultinstall_ui__c { get; private set; }
         public bool rstk__socaddr_defaultshipto_ui__c { get; private set; }
         public double? rstk__socaddr_seq__c { get; private set; }
-        public string rstk__socaddr_taxloc__r { get; private set; }
+        public ExternalReferenceId rstk__socaddr_taxloc__r { get; private set; }
 
         public static RstkCustomerAddress Create()
         {
@@ -64,7 +64,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public void SetRstkSocaddrDefaultinstallUiC(bool value) => rstk__socaddr_defaultinstall_ui__c = value;
         public void SetRstkSocaddrDefaultshiptoUiC(bool value) => rstk__socaddr_defaultshipto_ui__c = value;
         public void SetRstkSocaddrSeqC(double? value) => rstk__socaddr_seq__c = value;
-        public void SetRstkSocaddrTaxlocR(string value) => rstk__socaddr_taxloc__r = value;
+        public void SetRstkSocaddrTaxlocR(ExternalReferenceId value) => rstk__socaddr_taxloc__r = value;
 
         public static string GetCreatedRowId(dynamic payload)
         {

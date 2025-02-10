@@ -28,7 +28,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         public bool IsDefaultInstallation { get; set; }
         public bool IsAcknowledgement { get; set; }
         public bool IsDefaultAcknowledgement { get; set; }
-        public string TaxLocation { get; set; }
+        public ExternalReferenceId TaxLocation { get; set; }
         public string Storefront { get; set; }
         public double CustomerNextAddressSequence { get; set; }
 
@@ -73,7 +73,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
                 IsDefaultInstallation = true,
                 IsAcknowledgement = true,
                 IsDefaultAcknowledgement = true,
-                TaxLocation = GetTaxLocation(order.ShipToState),
+                TaxLocation = ExternalReferenceId.Create("rstk__sotax__c", GetTaxLocation(order.ShipToState)),
                 Storefront = order.StoreName
             };
         }

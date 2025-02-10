@@ -32,17 +32,17 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
             logger.LogInformation($"[{request.CorrelationId}] Processed rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
 
             //Create SalesOrder
-            var CreatedSalesOrder = await rootstockService.CreateSalesOrder(rotstockSalesOrderResult.Value);
+            var CreatedSalesOrderResult = await rootstockService.CreateSalesOrder(rotstockSalesOrderResult.Value);
             logger.LogInformation($"[{request.CorrelationId}] Created rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
 
             //SalesOrder-ProcessLineItems if SalesOrder-ProcessHeader is successful
-            if (CreatedSalesOrder.Success)
+            if (CreatedSalesOrderResult.IsSuccess)
             {
                 // SalesOrder-ProcessLineItems
                 for (int i = 1; i < request.SalesOrder.LineItems.Count; i++)
                 {
                     var currentLineItem = request.SalesOrder.LineItems[i];
-                    var rstkSalesOrderLineItemResult = salesAgg.ProcessRootstockLineItem(i, CreatedSalesOrder);
+                    var rstkSalesOrderLineItemResult = salesAgg.ProcessRootstockLineItem(i, CreatedSalesOrderResult);
                     logger.LogInformation($"[{request.CorrelationId}] Processed rootstock sales order line item: {currentLineItem.ItemNumber} for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
 
                     if (rstkSalesOrderLineItemResult.IsSuccess)
@@ -53,7 +53,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                     else
                     {
                         logger.LogError($"[{request.CorrelationId}] Creating rootstock sales order line item: {currentLineItem.ItemNumber} for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
-                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock sales order line item: {currentLineItem.ItemNumber} for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
+                        return Result.Fail(rstkSalesOrderLineItemResult.Errors);
                     }
                 }
 
@@ -69,7 +69,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                     else
                     {
                         logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
-                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
+                        return Result.Fail(rstkPrePaymentResult.Errors);
                     }
                 }
 
@@ -85,7 +85,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                     else
                     {
                         logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
-                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
+                        return Result.Fail(rstkPrePaymentResult.Errors);
                     }
                 }
 

@@ -26,46 +26,36 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 
         public static SalesOrderCustomer Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
-            var salesOrderCustomer = new SalesOrderCustomer { CustomerNo = payload.CustomerAccountNumber };
-            salesOrderCustomer.SetAccountingDimension2($"{orderDefaults.Medical.Division}_{orderDefaults.Medical.Customer.AccountingDimension2Suffix}{payload.ShipToState}");
-            salesOrderCustomer.SetPaymentTerms($"{orderDefaults.Medical.Customer.PaymentTerms}");
-            salesOrderCustomer.SetCustomerBuysProduct(true);
-            salesOrderCustomer.SetAccountingDimension1($"{orderDefaults.Medical.Division}_{(payload.PatientType == "Veteran" ? orderDefaults.Medical.Customer.AccountingDimension1Veteran : orderDefaults.Medical.Customer.AccountingDimension1Civilian)}");
-            salesOrderCustomer.SetCustomerClass(orderDefaults.Medical.Customer.CustomerClass);
-            salesOrderCustomer.SetSFAccountID(payload.CustomerAccountID);
-            salesOrderCustomer.SetCustomerBuysService(true);
-            salesOrderCustomer.SetPlaceOrdersInTheCustomerCurrency(true);
-            salesOrderCustomer.SetUseSFAddresses(false);
-            salesOrderCustomer.SetDefaultProductType("All");
-
-            return salesOrderCustomer;
+            return new SalesOrderCustomer
+            {
+                CustomerNo = payload.CustomerAccountNumber,
+                AccountingDimension2 = $"{orderDefaults.Medical.Division}_{orderDefaults.Medical.Customer.AccountingDimension2Suffix}{payload.ShipToState}",
+                PaymentTerms = $"{orderDefaults.Medical.Customer.PaymentTerms}",
+                CustomerBuysProduct = true,
+                AccountingDimension1 = $"{orderDefaults.Medical.Division}_{(payload.PatientType == "Veteran" ? orderDefaults.Medical.Customer.AccountingDimension1Veteran : orderDefaults.Medical.Customer.AccountingDimension1Civilian)}",
+                CustomerClass = orderDefaults.Medical.Customer.CustomerClass,
+                SFAccountID = payload.CustomerAccountID,
+                CustomerBuysService = true,
+                PlaceOrdersInTheCustomerCurrency = true,
+                UseSFAddresses = false,
+                DefaultProductType = "All"
+            };
         }
 
         public RstkCustomer GetRootstockCustomer()
         {
-            var customer = RstkCustomer.Create();
-            customer.SetRstkSocustCustnoC(CustomerNo);
-            customer.SetRstkSocustSfAccountC(SFAccountID);
-            customer.SetRstkSocustCclassR(ExternalReferenceId.Create("rstk__socclass__c", CustomerClass));
-            customer.SetRstkSocustDimvalR(ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension1));
-            customer.SetRstkSocustDimval2R(ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension2));
-            customer.SetRstkSocustDfltprodtypeC(DefaultProductType);
-            customer.SetRstkSocustProdindC(CustomerBuysProduct);
-            customer.SetRstkSocustServiceindC(CustomerBuysService);
-            customer.SetRstkSocustMaintcurrindC(PlaceOrdersInTheCustomerCurrency);
-            customer.SetRstkSocustTermsR(ExternalReferenceId.Create("rstk__syterms__c", PaymentTerms));
-            return customer;
+            return RstkCustomer.Create(
+                custNo: CustomerNo,
+                sfAccount: SFAccountID,
+                cclass: ExternalReferenceId.Create("rstk__socclass__c", CustomerClass),
+                dimval: ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension1),
+                dimval2: ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension2),
+                dfltProdType: DefaultProductType,
+                prodInd: CustomerBuysProduct,
+                serviceInd: CustomerBuysService,
+                maintCurrInd: PlaceOrdersInTheCustomerCurrency,
+                terms: ExternalReferenceId.Create("rstk__syterms__c", PaymentTerms)
+              );
         }
-
-        public void SetAccountingDimension2(string accountingDimension2) => AccountingDimension2 = accountingDimension2;
-        public void SetPaymentTerms(string paymentTerms) => PaymentTerms = paymentTerms;
-        public void SetCustomerBuysProduct(bool customerBuysProduct) => CustomerBuysProduct = customerBuysProduct;
-        public void SetAccountingDimension1(string accountingDimension1) => AccountingDimension1 = accountingDimension1;
-        public void SetCustomerClass(string customerClass) => CustomerClass = customerClass;
-        public void SetSFAccountID(string sFAccountID) => SFAccountID = sFAccountID;
-        public void SetCustomerBuysService(bool customerBuysService) => CustomerBuysService = customerBuysService;
-        public void SetPlaceOrdersInTheCustomerCurrency(bool placeOrdersInTheCustomerCurrency) => PlaceOrdersInTheCustomerCurrency = placeOrdersInTheCustomerCurrency;
-        public void SetUseSFAddresses(bool useSFAddresses) => UseSFAddresses = useSFAddresses;
-        public void SetDefaultProductType(string defaultProductType) => DefaultProductType = defaultProductType;
     }
 }
