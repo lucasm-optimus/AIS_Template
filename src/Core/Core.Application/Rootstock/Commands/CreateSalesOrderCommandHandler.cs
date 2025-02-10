@@ -3,6 +3,7 @@ using Tilray.Integrations.Core.Application.Rootstock.Services;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -22,7 +23,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
             var salesAgg = SalesAgg.Create(request.SalesOrder);
 
             //SalesOrder-ProcessHeader
-            var rotstockSalesOrder = salesAgg.ProcessRootstockHeader();
+            var rotstockSalesOrder = RstkSalesOrder.Create(salesAgg.SalesOrder);
             logger.LogInformation($"[{request.CorrelationId}] Processed rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
 
             //Create SalesOrder

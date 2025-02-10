@@ -47,46 +47,58 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         #region Agg Methods 
 
-        public SalesOrderValidated ValidateSalesOrder(Models.Ecom.SalesOrder salesOrder)
+        public Result<SalesOrderProcessed> ProcessOrder(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
-            List<string> errorMessages = new List<string>();
+            try
+            {
+                if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed)
+                {
+                    SalesOrder = CreateForAphria(payload, orderDefaults);
+                }
+                else if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_SweetWater)
+                {
+                    SalesOrder = CreateForSweetWater(payload, orderDefaults);
+                }
+
+                SalesOrder.StoreName = payload.StoreName;
+                SalesOrderCustomer = SalesOrderCustomer.Create(payload, orderDefaults);
+                SalesOrderCustomerAddress = SalesOrderCustomerAddress.Create(payload);
+
+                return Result.Ok(new SalesOrderProcessed(SalesOrder, SalesOrderCustomer, SalesOrderCustomerAddress));
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail<SalesOrderProcessed>($"Failed to process sales order. Exception Message:{ex.Message}");
+            }
+        }
+
+        public Result<SalesOrderValidated> ValidateSalesOrder(Models.Ecom.SalesOrder salesOrder)
+        {
+            var result = Result.Ok();
 
             if (salesOrder.StoreName != Constants.Ecom.SalesOrder.StoreName_AphriaMed && salesOrder.StoreName != Constants.Ecom.SalesOrder.StoreName_SweetWater)
             {
-                errorMessages.Add("Store name not recognized");
+                result.WithError("Store name not recognized");
             }
             if (!ConfirmShippingInfoPopulated(salesOrder))
             {
-                errorMessages.Add("Shipping Carrier or Shipping Method is blank");
+                result.WithError("Shipping Carrier or Shipping Method is blank");
             }
             if (!ConfirmOrderTotalMatchesPayments(salesOrder, out var totalPayment, out var orderTotal))
             {
-                errorMessages.Add("Order total does not match payments");
+                result.WithError("Order total does not match payments");
             }
             if (!ConfirmPatientType(salesOrder))
             {
-                errorMessages.Add("Patient type is not valid");
+                result.WithError("Patient type is not valid");
             }
 
-            return new SalesOrderValidated(errorMessages.Count == 0, errorMessages);
-        }
-
-        public SalesOrderProcessed CreateSalesOrder(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
-        {
-            if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed)
+            if (result.IsFailed)
             {
-                SalesOrder = CreateForAphria(payload, orderDefaults);
-            }
-            else if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_SweetWater)
-            {
-                SalesOrder = CreateForSweetWater(payload, orderDefaults);
+                return result;
             }
 
-            SalesOrder.StoreName = payload.StoreName;
-            SalesOrderCustomer = SalesOrderCustomer.Create(payload, orderDefaults);
-            SalesOrderCustomerAddress = SalesOrderCustomerAddress.Create(payload);
-
-            return new SalesOrderProcessed(SalesOrder, SalesOrderCustomer, SalesOrderCustomerAddress);
+            return Result.Ok(new SalesOrderValidated(result.IsSuccess, result.Reasons.Select(r => r.Message)));
         }
 
         public void UpdateCustomerAddressReference(string customerAddressReference)
@@ -105,58 +117,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             }
         }
 
-        public RstkSalesOrder ProcessRootstockHeader()
-        {
-            var rstkSalesOrder = RstkSalesOrder.Create();
-
-            rstkSalesOrder.SetRstk__soapi_mode__c("Add Both");
-            rstkSalesOrder.SetRstk__soapi_addorupdate__c(false);
-            rstkSalesOrder.SetRstk__soapi_custref__c(SalesOrder.CustomerReference);
-            rstkSalesOrder.SetRstk__soapi_salesdiv__c(SalesOrder.Division);
-            rstkSalesOrder.SetRstk__soapi_updatecustfields__c(true);
-            if (SalesOrder.CurrencyIsoCode != null) rstkSalesOrder.SetCurrencyIsoCode(SalesOrder.CurrencyIsoCode);
-            rstkSalesOrder.SetRstk__soapi_otype__r(ExternalReferenceId.Create("rstk__sootype__c", SalesOrder.Division));
-            rstkSalesOrder.SetRstk__soapi_orderdate__c(SalesOrder.OrderDate.ToString("yyyy-MM-dd"));
-            //if (SalesOrder.AllocationSentDate != DateTime.MinValue) rstkSalesOrder.SetAllocation_Sent_Date__c(SalesOrder.AllocationSentDate.ToString("yyyy-MM-dd"));
-            if (SalesOrder.ShipDate != DateTime.MinValue) rstkSalesOrder.SetShip_Date__c(SalesOrder.ShipDate.ToString("yyyy-MM-dd"));
-            //if(SalesOrder.ExpectedDeliveryDate != DateTime.MinValue) rstkSalesOrder.SetExpected_Delivery_Date__c(SalesOrder.ExpectedDeliveryDate.ToString("yyyy-MM-dd"));
-            if (SalesOrder.OrderReceivedDate != DateTime.MinValue)
-                rstkSalesOrder.SetOrder_Received_Date__c(SalesOrder.OrderReceivedDate.ToString("yyyy-MM-dd"));
-            if (SalesOrder.CustomerPO != null)
-                rstkSalesOrder.SetRstk__soapi_custpo__c(SalesOrder.CustomerPO);
-            rstkSalesOrder.SetRstk__soapi_socust__r(ExternalReferenceId.Create("rstk__socust__c", SalesOrder.Customer));
-            if (SalesOrder.CustomerAddresses.Acknowledgement?.AddressReference?.Reference != null)
-                rstkSalesOrder.SetRstk__soapi_ackaddr__r(ExternalReferenceId.Create("rstk__socaddr__c", SalesOrder.CustomerAddresses.Acknowledgement.AddressReference.Reference));
-            if (SalesOrder.CustomerAddresses.ShipTo?.AddressReference?.Reference != null)
-                rstkSalesOrder.SetRstk__soapi_shiptoaddr__r(ExternalReferenceId.Create("rstk__socaddr__c", SalesOrder.CustomerAddresses.ShipTo.AddressReference.Reference));
-            if (SalesOrder.ShipTo != null)
-                rstkSalesOrder.SetRstk__soapi_shiptoaddr__r(ExternalReferenceId.Create("rstk__socaddr__c", SalesOrder.ShipTo));
-            if (SalesOrder.CustomerAddresses.Installation?.AddressReference?.Reference != null)
-                rstkSalesOrder.SetRstk__soapi_instaddr__r(ExternalReferenceId.Create("rstk__socaddr__c", SalesOrder.CustomerAddresses.Installation.AddressReference.Reference));
-            if (SalesOrder.CustomerAddresses.BillTo?.AddressReference?.Reference != null)
-                rstkSalesOrder.SetRstk__soapi_billtoaddr__r(ExternalReferenceId.Create("rstk__socaddr__c", SalesOrder.CustomerAddresses.BillTo.AddressReference.Reference));
-            if (SalesOrder.ShippingCarrier != null)
-                rstkSalesOrder.SetRstk__soapi_carrier__r(ExternalReferenceId.Create("rstk__sycarrier__c", SalesOrder.ShippingCarrier));
-            if (SalesOrder.ShippingMethod != null)
-                rstkSalesOrder.SetRstk__soapi_shipvia__r(ExternalReferenceId.Create("rstk__syshipviatype__c", SalesOrder.ShippingMethod));
-            if (SalesOrder.TaxExempt == true) rstkSalesOrder.SetRstk__soapi_taxexempt__c(SalesOrder.TaxExempt);
-            if (SalesOrder.Notes != null) rstkSalesOrder.SetRstk__soapi_intcomment__c(SalesOrder.Notes);
-            rstkSalesOrder.SetRstk__soapi_async__c(false);
-            //if (SalesOrder.UploadGroup != null) rstkSalesOrder.SetRstk__soapi_upgroup__c(SalesOrder.UploadGroup);
-            if (SalesOrder.CCOrder != null) rstkSalesOrder.SetCC_Order__c(SalesOrder.CCOrder);
-            rstkSalesOrder.SetRstk__soapi_soprod__r(ExternalReferenceId.Create("rstk__soprod__c", $"{SalesOrder.Division}_{SalesOrder.LineItems[0].ItemNumber}"));
-            rstkSalesOrder.SetRstk__soapi_qtyorder__c(SalesOrder.LineItems[0].Quantity);
-            if (SalesOrder.LineItems[0].UnitPrice != null) rstkSalesOrder.SetRstk__soapi_price__c(SalesOrder.LineItems[0].UnitPrice);
-            if (SalesOrder.LineItems[0].Firm != null) rstkSalesOrder.SetRstk__soapi_firm__c(SalesOrder.LineItems[0].Firm);
-            if (SalesOrder.LineItems[0].AmountCoveredByInsurance != null) rstkSalesOrder.SetAmount_Covered_By_Insurance__c(SalesOrder.LineItems[0].AmountCoveredByInsurance);
-            if (SalesOrder.LineItems[0].GramsCoveredByInsurance != null) rstkSalesOrder.SetGrams_Covered_By_Insurance__c(SalesOrder.LineItems[0].GramsCoveredByInsurance);
-            if (SalesOrder.LineItems[0].RequiredLotToPick != null) rstkSalesOrder.SetRequired_Lot_To_Pick__c(SalesOrder.LineItems[0].RequiredLotToPick);
-            //if (SalesOrder.LineItems[0].DefaultShipFromDivision != null) rstkSalesOrder.SetRstk__soapi_shipsite__r(GenericExternalIdReference.Create("rstk__sysite__c",$"{SalesOrder.Division}_{SalesOrder.LineItems[0].DefaultShipFromDivision}"));
-            //if (SalesOrder.LineItems[0].DefaultShipFromLocationNo != null) rstkSalesOrder.SetRstk__soapi_shiplocid__r(GenericExternalIdReference.Create("rstk__sysite__c",$"{SalesOrder.Division}_{SalesOrder.LineItems[0].DefaultShipFromLocationNo}"));
-            //if(SalesOrder.ExternalRefNumber) rstkSalesOrder.SetExternal_Order_Reference__c(SalesOrder.ExternalRefNumber);
-
-            return rstkSalesOrder;
-        }
+      
 
         public RstkSalesOrderLineItem ProcessRootstockLineItem(int arrayIndex, dynamic CreatedSalesOrder)
         {

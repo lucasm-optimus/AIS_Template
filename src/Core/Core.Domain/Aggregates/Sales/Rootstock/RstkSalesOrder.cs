@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkSalesOrder
     {
@@ -47,51 +41,40 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public string rstk__soapi_shiplocnum__c { get; private set; }
         public string external_Order_Reference__c { get; private set; }
 
-        public static RstkSalesOrder Create()
+        public static RstkSalesOrder Create(SalesOrder salesOrder)
         {
-            return new RstkSalesOrder();
-        }
-
-        public void SetRstk__soapi_mode__c(string value) => rstk__soapi_mode__c = value;
-        public void SetRstk__soapi_addorupdate__c(bool value) => rstk__soapi_addorupdate__c = value;
-        public void SetRstk__soapi_custref__c(string value) => rstk__soapi_custref__c = value;
-        public void SetRstk__soapi_salesdiv__c(string value) => rstk__soapi_salesdiv__c = value;
-        public void SetRstk__soapi_updatecustfields__c(bool value) => rstk__soapi_updatecustfields__c = value;
-        public void SetCurrencyIsoCode(string value) => currencyIsoCode = value;
-        public void SetRstk__soapi_otype__r(ExternalReferenceId value) => rstk__soapi_otype__r = value;
-        public void SetRstk__soapi_orderdate__c(string value) => rstk__soapi_orderdate__c = value;
-        public void SetAllocation_Sent_Date__c(string value) => allocation_Sent_Date__c = value;
-        public void SetShip_Date__c(string value) => ship_Date__c = value;
-        public void SetExpected_Delivery_Date__c(string value) => expected_Delivery_Date__c = value;
-        public void SetOrder_Received_Date__c(string value) => order_Received_Date__c = value;
-        public void SetRstk__soapi_custpo__c(string value) => rstk__soapi_custpo__c = value;
-        public void SetRstk__soapi_socust__r(ExternalReferenceId value) => rstk__soapi_socust__r = value;
-        public void SetRstk__soapi_ackaddr__r(ExternalReferenceId value) => rstk__soapi_ackaddr__r = value;
-        public void SetRstk__soapi_shiptoaddr__r(ExternalReferenceId value) => rstk__soapi_shiptoaddr__r = value;
-        public void SetRstk__soapi_instaddr__r(ExternalReferenceId value) => rstk__soapi_instaddr__r = value;
-        public void SetRstk__soapi_billtoaddr__r(ExternalReferenceId value) => rstk__soapi_billtoaddr__r = value;
-        public void SetRstk__soapi_carrier__r(ExternalReferenceId value) => rstk__soapi_carrier__r = value;
-        public void SetRstk__soapi_shipvia__r(ExternalReferenceId value) => rstk__soapi_shipvia__r = value;
-        public void SetRstk__soapi_taxexempt__c(bool? value) => rstk__soapi_taxexempt__c = value;
-        public void SetRstk__soapi_intcomment__c(string value) => rstk__soapi_intcomment__c = value;
-        public void SetRstk__soapi_async__c(bool? value) => rstk__soapi_async__c = value;
-        public void SetRstk__soapi_upgroup__c(string value) => rstk__soapi_upgroup__c = value;
-        public void SetCC_Order__c(string value) => cc_Order__c = value;
-        public void SetRstk__soapi_soprod__r(ExternalReferenceId value) => rstk__soapi_soprod__r = value;
-        public void SetRstk__soapi_qtyorder__c(double value) => rstk__soapi_qtyorder__c = value;
-        public void SetRstk__soapi_price__c(double? value) => rstk__soapi_price__c = value;
-        public void SetRstk__soapi_firm__c(bool? value) => rstk__soapi_firm__c = value;
-        public void SetAmount_Covered_By_Insurance__c(double? value) => amount_Covered_By_Insurance__c = value;
-        public void SetGrams_Covered_By_Insurance__c(double? value) => grams_Covered_By_Insurance__c = value;
-        public void SetRequired_Lot_To_Pick__c(string value) => required_Lot_To_Pick__c = value;
-        public void SetRstk__soapi_shipsite__r(ExternalReferenceId value) => rstk__soapi_shipsite__r = value;
-        public void SetRstk__soapi_shiplocid__r(ExternalReferenceId value) => rstk__soapi_shiplocid__r = value;
-        public void SetRstk__soapi_shiplocnum__c(string value) => rstk__soapi_shiplocnum__c = value;
-        public void SetExternal_Order_Reference__c(string value) => external_Order_Reference__c = value;
-
-        public static string? GetCreatedRowId(dynamic payload)
-        {
-            return payload["recordId"];
+            return new RstkSalesOrder
+            {
+                rstk__soapi_mode__c = "Add Both",
+                rstk__soapi_addorupdate__c = false,
+                rstk__soapi_custref__c = salesOrder.CustomerReference,
+                rstk__soapi_salesdiv__c = salesOrder.Division,
+                rstk__soapi_updatecustfields__c = true,
+                currencyIsoCode = salesOrder.CurrencyIsoCode,
+                rstk__soapi_otype__r = ExternalReferenceId.Create("rstk__sootype__c", salesOrder.Division),
+                rstk__soapi_orderdate__c = salesOrder.OrderDate.ToString("yyyy-MM-dd"),
+                ship_Date__c = salesOrder.ShipDate != DateTime.MinValue ? salesOrder.ShipDate.ToString("yyyy-MM-dd") : null,
+                order_Received_Date__c = salesOrder.OrderReceivedDate != DateTime.MinValue ? salesOrder.OrderReceivedDate.ToString("yyyy-MM-dd") : null,
+                rstk__soapi_custpo__c = salesOrder.CustomerPO,
+                rstk__soapi_socust__r = ExternalReferenceId.Create("rstk__socust__c", salesOrder.Customer),
+                rstk__soapi_ackaddr__r = salesOrder.CustomerAddresses.Acknowledgement?.AddressReference?.Reference != null ? ExternalReferenceId.Create("rstk__socaddr__c", salesOrder.CustomerAddresses.Acknowledgement.AddressReference.Reference) : null,
+                rstk__soapi_shiptoaddr__r = salesOrder.CustomerAddresses.ShipTo?.AddressReference?.Reference != null ? ExternalReferenceId.Create("rstk__socaddr__c", salesOrder.CustomerAddresses.ShipTo.AddressReference.Reference) : null,
+                rstk__soapi_instaddr__r = salesOrder.CustomerAddresses.Installation?.AddressReference?.Reference != null ? ExternalReferenceId.Create("rstk__socaddr__c", salesOrder.CustomerAddresses.Installation.AddressReference.Reference) : null,
+                rstk__soapi_billtoaddr__r = salesOrder.CustomerAddresses.BillTo?.AddressReference?.Reference != null ? ExternalReferenceId.Create("rstk__socaddr__c", salesOrder.CustomerAddresses.BillTo.AddressReference.Reference) : null,
+                rstk__soapi_carrier__r = salesOrder.ShippingCarrier != null ? ExternalReferenceId.Create("rstk__sycarrier__c", salesOrder.ShippingCarrier) : null,
+                rstk__soapi_shipvia__r = salesOrder.ShippingMethod != null ? ExternalReferenceId.Create("rstk__syshipviatype__c", salesOrder.ShippingMethod) : null,
+                rstk__soapi_taxexempt__c = salesOrder.TaxExempt,
+                rstk__soapi_intcomment__c = salesOrder.Notes,
+                rstk__soapi_async__c = false,
+                cc_Order__c = salesOrder.CCOrder,
+                rstk__soapi_soprod__r = ExternalReferenceId.Create("rstk__soprod__c", $"{salesOrder.Division}_{salesOrder.LineItems[0].ItemNumber}"),
+                rstk__soapi_qtyorder__c = salesOrder.LineItems[0].Quantity,
+                rstk__soapi_price__c = salesOrder.LineItems[0].UnitPrice,
+                rstk__soapi_firm__c = salesOrder.LineItems[0].Firm,
+                amount_Covered_By_Insurance__c = salesOrder.LineItems[0].AmountCoveredByInsurance,
+                grams_Covered_By_Insurance__c = salesOrder.LineItems[0].GramsCoveredByInsurance,
+                required_Lot_To_Pick__c = salesOrder.LineItems[0].RequiredLotToPick
+            };
         }
     }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Events
 {
-    public record SalesOrderValidated(bool result, IEnumerable<string> messages) : IDomainEvent
+    public record SalesOrderValidated(bool result, IEnumerable<string> errorMessages) : IDomainEvent
     {
     }
 }

@@ -79,20 +79,20 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
 
             #region Validate Sales Orders
 
-            var salesOrderValidated = salesAgg.ValidateSalesOrder(payload);
+            var salesOrderValidated = salesAgg.ValidateSalesOrder(payload).Value;
             logger.LogInformation($"[{correlationId}] Validated sales order {payload.ECommOrderID}");
 
             if (!salesOrderValidated.result)
             {
                 logger.LogWarning($"[{correlationId}] Sales Order {payload.ECommOrderID} failed validation.");
-                return Result.Fail<SalesOrder>(salesOrderValidated.messages);
+                return Result.Fail<SalesOrder>(salesOrderValidated.errorMessages);
             }
 
             #endregion
 
             #region Create Sales Order
 
-            var salesOrderProcessed = salesAgg.CreateSalesOrder(payload, orderDefaults);
+            var salesOrderProcessed = salesAgg.ProcessOrder(payload, orderDefaults).Value;
             logger.LogInformation($"[{correlationId}] Created sales order {payload.ECommOrderID}");
 
             #endregion
