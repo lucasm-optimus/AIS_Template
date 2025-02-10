@@ -71,14 +71,11 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             var result = Result.Ok();
             logger.LogInformation($"[{correlationId}]  Processing sales order {payload.ECommOrderID}");
 
-            var salesAgg = SalesAgg.Create(payload.StoreName);
-            logger.LogInformation($"[{correlationId}] Created sales order aggregate for {payload.ECommOrderID}");
-
             #endregion
 
             #region Validate Sales Orders
 
-            var salesOrderValidated = salesAgg.ValidateSalesOrder(payload);
+            var salesOrderValidated = SalesAgg.ValidateSalesOrder(payload);
             logger.LogInformation($"[{correlationId}] Validated sales order {payload.ECommOrderID}");
 
             if (!salesOrderValidated.result)
@@ -91,7 +88,10 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
 
             #region Create Sales Order
 
-            var salesOrderProcessed = salesAgg.CreateSalesOrder(payload, orderDefaults);
+            var salesAgg = SalesAgg.Create(payload.StoreName);
+            logger.LogInformation($"[{correlationId}] Created sales order aggregate for {payload.ECommOrderID}");
+
+            var salesOrderProcessed = salesAgg.Create(payload, orderDefaults);
             logger.LogInformation($"[{correlationId}] Created sales order {payload.ECommOrderID}");
 
             #endregion

@@ -37,35 +37,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             return salesAgg;
         }
 
-        #endregion
-
-        #region Agg Methods 
-
-        public SalesOrderValidated ValidateSalesOrder(Models.Ecom.SalesOrder salesOrder)
-        {
-            List<string> errorMessages = new List<string>();
-
-            if (salesOrder.StoreName != Constants.Ecom.SalesOrder.StoreName_AphriaMed && salesOrder.StoreName != Constants.Ecom.SalesOrder.StoreName_SweetWater)
-            {
-                errorMessages.Add("Store name not recognized");
-            }
-            if (!ConfirmShippingInfoPopulated(salesOrder))
-            {
-                errorMessages.Add("Shipping Carrier or Shipping Method is blank");
-            }
-            if (!ConfirmOrderTotalMatchesPayments(salesOrder, out var totalPayment, out var orderTotal))
-            {
-                errorMessages.Add("Order total does not match payments");
-            }
-            if (!ConfirmPatientType(salesOrder))
-            {
-                errorMessages.Add("Patient type is not valid");
-            }
-
-            return new SalesOrderValidated(errorMessages.Count == 0, errorMessages);
-        }
-
-        public SalesOrderProcessed CreateSalesOrder(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public SalesOrderProcessed Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed)
             {
@@ -76,11 +48,38 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                 SalesOrder = CreateForSweetWater(payload, orderDefaults);
             }
 
-            SalesOrder.StoreName = payload.StoreName;
             SalesOrderCustomer = SalesOrderCustomer.Create(payload, orderDefaults);
             SalesOrderCustomerAddress = SalesOrderCustomerAddress.Create(payload);
 
             return new SalesOrderProcessed(SalesOrder, SalesOrderCustomer, SalesOrderCustomerAddress);
+        }
+
+        #endregion
+
+        #region Agg Methods 
+
+        public static SalesOrderValidated ValidateSalesOrder(Models.Ecom.SalesOrder payload)
+        {
+            List<string> errorMessages = new List<string>();
+
+            if (payload.StoreName != Constants.Ecom.SalesOrder.StoreName_AphriaMed && payload.StoreName != Constants.Ecom.SalesOrder.StoreName_SweetWater)
+            {
+                errorMessages.Add("Store name not recognized");
+            }
+            if (!ConfirmShippingInfoPopulated(payload))
+            {
+                errorMessages.Add("Shipping Carrier or Shipping Method is blank");
+            }
+            if (!ConfirmOrderTotalMatchesPayments(payload, out var totalPayment, out var orderTotal))
+            {
+                errorMessages.Add("Order total does not match payments");
+            }
+            if (!ConfirmPatientType(payload))
+            {
+                errorMessages.Add("Patient type is not valid");
+            }
+
+            return new SalesOrderValidated(errorMessages.Count == 0, errorMessages);
         }
 
         public void UpdateCustomerAddressReference(string customerAddressReference)
@@ -198,12 +197,12 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         #region Private Methods
 
-        private bool ConfirmShippingInfoPopulated(Models.Ecom.SalesOrder salesOrder)
+        private static bool ConfirmShippingInfoPopulated(Models.Ecom.SalesOrder salesOrder)
         {
             return salesOrder.ShippingCarrier != null && salesOrder.ShippingMethod != null;
         }
 
-        private bool ConfirmOrderTotalMatchesPayments(Models.Ecom.SalesOrder salesOrder, out double TotalPayment, out double OrderTotal)
+        private static bool ConfirmOrderTotalMatchesPayments(Models.Ecom.SalesOrder salesOrder, out double TotalPayment, out double OrderTotal)
         {
             var totalPayments = salesOrder.AmountPaidByCustomer + salesOrder.AmountPaidByBillTo;
             var orderTotal = salesOrder.ShippingCost - salesOrder.DiscountAmount + salesOrder.Taxes.Sum(t => t.Amount) + salesOrder.OrderLines.Sum(ol => ol.Quantity * ol.UnitPrice);
@@ -212,7 +211,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             return totalPayments == orderTotal;
         }
 
-        private bool ConfirmPatientType(Models.Ecom.SalesOrder salesOrder)
+        private static bool ConfirmPatientType(Models.Ecom.SalesOrder salesOrder)
         {
             var validPatientTypes = new List<string> { "Insured", "Non-Insured", "Veteran" };
             return validPatientTypes.Contains(salesOrder.PatientType);
@@ -222,6 +221,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             var salesOrder = new MedSalesOrder
             {
+                StoreName = payload.StoreName,
                 Division = orderDefaults.SweetWater.Division,
                 CustomerReference = payload.ECommOrderNo + orderDefaults.SweetWater.OrderReferenceSuffix,
                 ECommerceOrderID = payload.ECommOrderID,
@@ -283,6 +283,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             var salesOrder = new MedSalesOrder
             {
+                StoreName = payload.StoreName,
                 Division = orderDefaults.Medical.Division,
                 CustomerReference = payload.ECommOrderNo + orderDefaults.Medical.OrderReferenceSuffix,
                 ECommerceOrderID = payload.ECommOrderID,
