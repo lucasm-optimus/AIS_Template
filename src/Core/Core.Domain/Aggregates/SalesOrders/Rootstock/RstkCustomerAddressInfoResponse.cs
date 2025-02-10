@@ -25,7 +25,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 
         public static Result<RstkCustomerAddressInfoResponse> MapFromPayload(dynamic payload)
         {
-            if (payload.Count > 0)
+            if (payload != null && payload.Count > 0)
             {
                 return Result.Ok(new RstkCustomerAddressInfoResponse
                 {

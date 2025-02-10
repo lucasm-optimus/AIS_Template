@@ -33,6 +33,13 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 
         public static ResponseResult CreateSuccessResult(dynamic payload)
         {
+            if (payload["records"].Count == 0) { 
+                return new ResponseResult
+                {
+                    Success = false,
+                    RecordCount = Convert.ToInt32(payload["totalSize"])
+                };
+            }
             var response = new ResponseResult
             {
                 Success = true,
