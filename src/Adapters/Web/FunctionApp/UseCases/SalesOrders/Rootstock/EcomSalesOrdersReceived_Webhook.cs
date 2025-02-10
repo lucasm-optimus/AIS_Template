@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+using static Tilray.Integrations.Functions.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Ecom;
 
@@ -26,7 +27,7 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
         // Extract the correlation ID from the request headers
-        string correlationId = req.Headers["X-Correlation-ID"].FirstOrDefault() ?? Guid.NewGuid().ToString();
+        string correlationId = req.Headers["X-Correlation-ID"].FirstOrDefault() ?? Guid.Empty.ToString();
 
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Models.Ecom.SalesOrder>>(requestBody);
@@ -36,7 +37,7 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
         if (response.IsSuccess)
         {
             var salesOrders = response.Value.salesOrder;
-            var sender = serviceBusClient.CreateSender(Environment.GetEnvironmentVariable("TopicEcomSalesOrderRecieved"));
+            var sender = serviceBusClient.CreateSender(ServiceBus.Topics.EcomSalesOrderReceived);
 
             foreach (var salesOrder in salesOrders)
             {
