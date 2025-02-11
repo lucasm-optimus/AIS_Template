@@ -126,7 +126,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidItems.Any())
         {
-            var errorMessage = $"The following items could not be found: {string.Join(", ", items)}";
+            var errorMessage = $"The following items could not be found: {string.Join(", ", invalidItems)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
