@@ -37,19 +37,19 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         {
             return state switch
             {
-                "AB" => "Alberta",
-                "BC" => "British Columbia",
-                "MB" => "Manitoba",
-                "NB" => "New Brunswick",
-                "NL" => "Newfoundland",
-                "NS" => "Nova Scotia",
-                "ON" => "Ontario",
-                "PE" => "Prince Edward Island",
-                "QC" => "Quebec",
-                "SK" => "Saskatchewan",
-                "NT" => "Northwest Territories",
-                "NU" => "Nunavut",
-                "YT" => "Yukon",
+                "AB" => "ALBERTA",
+                "BC" => "BRITISH COLUMBIA",
+                "MB" => "MANITOBA",
+                "NB" => "NEW BRUNSWICK",
+                "NL" => "NEWFOUNDLAND",
+                "NS" => "NOVA SCOTIA",
+                "ON" => "ONTARIO",
+                "PE" => "PRINCE EDWARD ISLAND",
+                "QC" => "QUEBEC",
+                "SK" => "SASKATCHEWAN",
+                "NT" => "NORTHWEST TERRITORIES",
+                "NU" => "NUNAVUT",
+                "YT" => "YUKON",
                 _ => state,
             };
         }
