@@ -76,7 +76,14 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<IEnumerable<string>>> ValidateCustomers(IEnumerable<string> customers)
     {
-        var tasks = customers.Select(async customer =>
+        var invalidCustomers = customers
+            .Where(string.IsNullOrWhiteSpace)
+            .Select(_ => "Null")
+            .ToList();
+
+        var validCustomers = customers.Where(c => !string.IsNullOrWhiteSpace(c));
+
+        var tasks = validCustomers.Select(async customer =>
         {
             var result = await GetObjectByIdAsync<RootstockCustomer>(
                 customer,
@@ -87,7 +94,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         });
 
         var results = await Task.WhenAll(tasks);
-        var invalidCustomers = results.Where(c => c != null);
+        invalidCustomers.AddRange(results.Where(c => c != null));
 
         if (invalidCustomers.Any())
         {
@@ -101,6 +108,13 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<IEnumerable<string>>> ValidateItems(List<string> items)
     {
+        if (items.Count == 0)
+        {
+            var errorMessage = $"No Line Items are provided";
+            logger.LogError(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+
         var tasks = items.Select(async item =>
         {
             var itemResult = await GetObjectByIdAsync<RootstockItem>(item, RootstockQueries.GetItemByIdQuery, "rstk__peitem__c");
@@ -112,7 +126,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidItems.Any())
         {
-            var errorMessage = $"The following items could not be found: {string.Join(", ", invalidItems)}";
+            var errorMessage = $"The following items could not be found: {string.Join(", ", items)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -122,7 +136,20 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<IEnumerable<string>>> ValidateUploadGroup(IEnumerable<string> uploadGroups)
     {
-        var tasks = uploadGroups.Select(async uploadGroup =>
+        var nullUploadGroups = uploadGroups
+            .Where(string.IsNullOrWhiteSpace)
+            .ToList();
+
+        if(nullUploadGroups.Any())
+        {
+            var errorMessage = $"Some Upload Groups are null or empty";
+            logger.LogError(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+
+        var validUploadGroups = uploadGroups.Where(ug => !string.IsNullOrWhiteSpace(ug));
+
+        var tasks = validUploadGroups.Select(async uploadGroup =>
         {
             var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup, RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
             return uploadGroupResult.IsFailed || uploadGroupResult.Value != null ? uploadGroup : null;
