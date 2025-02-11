@@ -174,7 +174,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var result = await CreateAsync(rootstockOrder, "rstk__soapi__c");
         if (result.IsFailed)
         {
-            var error = $"Failed to create Sales Order. Error: {result.Errors}. Customer: {salesOrder.Customer}, UploadGroup: {salesOrder.UploadGroup}";
+            var error = $"Failed to create Sales Order. Error: {string.Join("; ", result.Errors.Select(e => e.Message))}. Customer: {salesOrder.Customer}, UploadGroup: {salesOrder.UploadGroup}";
             logger.LogError(error);
             return Result.Fail(error);
         }
@@ -196,7 +196,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
             if (result.IsFailed)
             {
-                errors.Add($"ItemNumber: {lineItem.ItemNumber}, Error: {result.Errors}");
+                errors.Add($"ItemNumber: {lineItem.ItemNumber}, Error: {string.Join("; ", result.Errors.Select(e => e.Message))}");
             }
             else
             {
