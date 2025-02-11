@@ -15,7 +15,7 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
         var result = await mediator.Send(new CreateSalesOrderInRootstockCommand(salesOrder));
         if (result.IsFailed)
         {
-            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));
+            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors.Select(e => e.Message)));
         }
     }
 }
