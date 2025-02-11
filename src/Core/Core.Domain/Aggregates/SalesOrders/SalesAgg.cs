@@ -246,7 +246,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         private static bool ConfirmOrderTotalMatchesPayments(Models.Ecom.SalesOrder salesOrder, out double TotalPayment, out double OrderTotal)
         {
             var totalPayments = salesOrder.AmountPaidByCustomer + salesOrder.AmountPaidByBillTo;
-            var orderTotal = salesOrder.ShippingCost - salesOrder.DiscountAmount + salesOrder.Taxes.Sum(t => t.Amount) + salesOrder.OrderLines.Sum(ol => ol.Quantity * ol.UnitPrice);
+            var orderTotal = (salesOrder.ShippingCost - salesOrder.DiscountAmount)
+                             + (salesOrder.Taxes?.Sum(t => t.Amount) ?? 0)
+                             + (salesOrder.OrderLines?.Sum(ol => ol.Quantity * ol.UnitPrice) ?? 0);
             TotalPayment = totalPayments;
             OrderTotal = orderTotal;
             return totalPayments == orderTotal;
