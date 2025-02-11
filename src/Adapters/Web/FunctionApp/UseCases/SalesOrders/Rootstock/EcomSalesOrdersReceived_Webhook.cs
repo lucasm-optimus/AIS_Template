@@ -45,7 +45,8 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
                 await sender.SendMessageAsync(message);
             }
 
-            return new OkObjectResult(salesOrders);
+            var responseMessage = $"Sales orders processed:{salesOrders.Count}, failed:{ecomSalesOrders.Count - salesOrders.Count}. {((ecomSalesOrders.Count - salesOrders.Count) > 0 ? "Check logs for failed sales orders." : "")}";
+            return new OkObjectResult(responseMessage);
         }
 
         return new OkObjectResult("No Sales order found.");

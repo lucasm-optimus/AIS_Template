@@ -2,6 +2,6 @@
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
-public record SalesOrdersProcessed(List<MedSalesOrder> salesOrder) : IDomainEvent
+public record SalesOrdersProcessed(List<MedSalesOrder> salesOrder, string message) : IDomainEvent
 {
 }
