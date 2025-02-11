@@ -28,40 +28,26 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             var tasks = request.SalesOrders.Select(async salesOrder =>
             {
                 var response = await ProcessIndividualSalesOrder(salesOrder, request.correlationId);
-                if (response.IsSuccess && response.Value != null)
+                if (response.IsSuccess)
                 {
                     salesOrders.Add(response.Value);
                 }
                 else
                 {
-                    failedSalesOrders.Add((response.Value, response.Reasons.Select(r => r.Message)));
+                    foreach (var message in response.Reasons.Select(r=>r.Message).ToList())
+                    {
+                        logger.LogWarning($"[{request.correlationId}] failed to process sales order:{salesOrder.ECommOrderID}, message: {message}");
+                    }
                 }
             });
 
             await Task.WhenAll(tasks);
 
-            #endregion
-
-            #region Logging process information
-
-            if (failedSalesOrders.Any())
-            {
-                logger.LogWarning($"[{request.correlationId}] Failed to process {failedSalesOrders.Count()} sales orders.");
-
-                foreach (var failedSalesOrder in failedSalesOrders)
-                {
-                    foreach (var message in failedSalesOrder.messages)
-                    {
-                        logger.LogWarning($"[{request.correlationId}] Sales Order {failedSalesOrder.salesOrder.ECommerceOrderID} failed to process: {message}");
-                    }
-                }
-            }
-
             logger.LogInformation($"[{request.correlationId}] Successfully processed {salesOrders.Count()} sales orders.");
 
             #endregion
 
-            return Result.Ok(new SalesOrdersProcessed(salesOrders));
+            return Result.Ok(new SalesOrdersProcessed(salesOrders, $"[{request.correlationId}] Successfully processed {salesOrders.Count()} sales orders."));
         }
 
         private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload, string correlationId)
