@@ -10,7 +10,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 {
     public class SalesOrderCustomer
     {
-        private SalesOrderCustomer() { }
+        #region Properties
 
         public string CustomerNo { get; private set; }
         public string AccountingDimension2 { get; private set; }
@@ -24,6 +24,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         public bool UseSFAddresses { get; private set; }
         public string DefaultProductType { get; private set; }
 
+        #endregion
+
+        #region Constructors
+
+        private SalesOrderCustomer() { }
         public static SalesOrderCustomer Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             return new SalesOrderCustomer
@@ -42,6 +47,10 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
             };
         }
 
+        #endregion
+
+        #region Public Methods
+
         public RstkCustomer GetRootstockCustomer()
         {
             return RstkCustomer.Create(
@@ -57,5 +66,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
                 terms: ExternalReferenceId.Create("rstk__syterms__c", PaymentTerms)
               );
         }
+
+        #endregion
     }
 }

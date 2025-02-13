@@ -13,7 +13,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<CustomerAddressCreated>> Handle(CreateCustomerAddressCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"[{request.CorrelationId}] Begin creating customer address for {request.CustomerAccountId}.");
+            logger.LogInformation($"Begin creating customer address for {request.CustomerAccountId}.");
 
             var customerInfoResult = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
 
@@ -24,11 +24,13 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 return Result.Fail<CustomerAddressCreated>(customerInfoResult.Errors);
             }
 
-            logger.LogInformation($"[{request.CorrelationId}] Getting next address sequence for customer {request.CustomerAccountNumber}.");
-            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(request.CustomerAccountNumber) ?? 1;
+            var customerInfo = customerInfoResult.Value;
 
-            logger.LogInformation($"[{request.CorrelationId}] Creating customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.");
-            var rootstockCustomerAddress = request.Address.GetRootstockCustomerAddress(request.CustomerAccountNumber);
+            logger.LogInformation($"Getting next address sequence for customer {customerInfo.CustomerId}.");
+            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(customerInfo.CustomerId) ?? 1;
+
+            logger.LogInformation($"Creating customer address {nextAddressSequence} for customer {customerInfo.CustomerId}.");
+            var rootstockCustomerAddress = request.Address.GetRootstockCustomerAddress(customerInfo.CustomerId, nextAddressSequence);
             var createdCustomerAddressResult = await rootstockService.CreateCustomerAddress(rootstockCustomerAddress);
 
             if (createdCustomerAddressResult.IsFailed)
@@ -38,7 +40,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 return Result.Fail<CustomerAddressCreated>(createdCustomerAddressResult.Errors);
             }
 
-            logger.LogInformation($"[{request.CorrelationId}] Getting customer address info for customer {request.CustomerAccountNumber}.");
+            logger.LogInformation($"Getting customer address info for customer {request.CustomerAccountNumber}.");
             var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
 
             if (customerAddressInfoResult.IsFailed)

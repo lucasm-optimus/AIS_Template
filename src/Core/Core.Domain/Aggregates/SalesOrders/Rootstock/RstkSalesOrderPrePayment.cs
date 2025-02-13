@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
-    public class RstkPrePayment
+    public class RstkSalesOrderPrePayment
     {
-        private RstkPrePayment() { }
+        #region Properties
 
         public ExternalReferenceId rstk__soppy_div__r { get; private set; }
         public string rstk__soppy_type__c { get; private set; }
@@ -21,20 +21,37 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public ExternalReferenceId rstk__soppy_ppyacct__r { get; private set; }
         public bool rstk__soppy_cctxn__c { get; private set; }
 
-        public static RstkPrePayment Create()
+        #endregion
+
+        #region Constructors
+
+        private RstkSalesOrderPrePayment() { }
+        public static Result<RstkSalesOrderPrePayment> Create(SalesOrderPrepayment soPrepayment)
         {
-            return new RstkPrePayment();
+            try
+            {
+                var prePayment = new RstkSalesOrderPrePayment
+                {
+                    rstk__soppy_div__r = ExternalReferenceId.Create("rstk__sydiv__c", soPrepayment.Division),
+                    rstk__soppy_type__c = soPrepayment.PrepaymentType,
+                    rstk__soppy_order__r = ExternalReferenceId.Create("rstk__sohdr__c", soPrepayment.OrderID),
+                    rstk__soppy_custno__r = ExternalReferenceId.Create("rstk__socust__c", soPrepayment.Customer),
+                    rstk__soppy_addrseq__r = ExternalReferenceId.Create("rstk__socaddr__c", soPrepayment.CustomerBillToAddressID),
+                    rstk__soppy_amount__c = soPrepayment.Amount,
+                    rstk__soppy_appmethod__c = soPrepayment.ApplicationMethod,
+                    rstk__soppy_sohdrcust__r = ExternalReferenceId.Create("rstk__socust__c", soPrepayment.SOCustomerNo),
+                    rstk__soppy_ppyacct__r = ExternalReferenceId.Create("rstk__syacc__c", $"{soPrepayment.Division}_{soPrepayment.PrepaymentAccount}"),
+                    rstk__soppy_cctxn__c = true
+                };
+
+                return Result.Ok(prePayment);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<RstkSalesOrderPrePayment>(e.Message);
+            }
         }
 
-        public void SetRstk__soppy_div__r(ExternalReferenceId value) => rstk__soppy_div__r = value;
-        public void SetRstk__soppy_type__c(string value) => rstk__soppy_type__c = value;
-        public void SetRstk__soppy_order__r(ExternalReferenceId value) => rstk__soppy_order__r = value;
-        public void SetRstk__soppy_custno__r(ExternalReferenceId value) => rstk__soppy_custno__r = value;
-        public void SetRstk__soppy_addrseq__r(ExternalReferenceId value) => rstk__soppy_addrseq__r = value;
-        public void SetRstk__soppy_amount__c(double value) => rstk__soppy_amount__c = value;
-        public void SetRstk__soppy_appmethod__c(string value) => rstk__soppy_appmethod__c = value;
-        public void SetRstk__soppy_sohdrcust__r(ExternalReferenceId value) => rstk__soppy_sohdrcust__r = value;
-        public void SetRstk__soppy_ppyacct__r(ExternalReferenceId value) => rstk__soppy_ppyacct__r = value;
-        public void SetRstk__soppy_cctxn__c(bool value) => rstk__soppy_cctxn__c = value;
+        #endregion
     }
 }

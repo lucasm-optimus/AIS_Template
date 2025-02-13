@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class MedSalesOrder : Entity
     {
-
         #region Constructors
 
         public MedSalesOrder() { LineItems = new(); }
@@ -78,9 +79,59 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         [JsonProperty("lineItems")]
         public List<SalesOrderLineItem> LineItems { get; set; }
-        
+
         [JsonProperty("storeName")]
         public string StoreName { get; set; }
+        public bool? BackgroundProcessing { get; set; }
+        public string CustomerAddressId { get; set; }
+        [JsonProperty("customerAddressReference")]
+        public string CustomerAddressReference { get; set; }
+        [JsonProperty("customerId ")]
+        public string CustomerId { get; set; }
+
+        #endregion
+
+        #region Public Methods
+
+        public void UpdateCustomerAddressReference(string customerAddressReference)
+        {
+            CustomerAddressReference = customerAddressReference;
+        }
+
+        public Result<SalesOrderPrepayment> HasPrepayment(string createdSalesOrderId, string prePaymentAccount)
+        {
+            if (StandardPrepayment != null)
+            {
+                return SalesOrderPrepayment.Create(StandardPrepayment, this.Customer, this.Division, createdSalesOrderId, prePaymentAccount);
+            }
+
+            return Result.Fail<SalesOrderPrepayment>("No prepayment found");
+        }
+
+        public void UpdateOrderId(string orderId)
+        {
+            OrderType = orderId;
+        }
+
+        public void UpdateShipViaId(string value)
+        {
+            ShippingMethod = value;
+        }
+
+        public void UpdateCarrierId(string value)
+        {
+            ShippingCarrier = value;
+        }
+
+        public void UpdateCustomerAddressId(string value)
+        {
+            CustomerAddressId = value;
+        }
+
+        public void UpdateCustomerId(string customerId)
+        {
+            CustomerId = customerId;
+        }
 
         #endregion
     }

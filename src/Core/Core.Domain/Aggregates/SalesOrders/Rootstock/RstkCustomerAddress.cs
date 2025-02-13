@@ -9,9 +9,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomerAddress
     {
-        private RstkCustomerAddress() { }
+        #region Properties
 
-        public ExternalReferenceId rstk__socaddr_custno__r { get; private set; }
+        public string rstk__socaddr_custno__c { get; private set; }
         public string External_Customer_Number__c { get; private set; }
         public string rstk__socaddr_name__c { get; private set; }
         public string rstk__socaddr_address1__c { get; private set; }
@@ -36,39 +36,65 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public double? rstk__socaddr_seq__c { get; private set; }
         public ExternalReferenceId rstk__socaddr_taxloc__r { get; private set; }
 
-        public static RstkCustomerAddress Create()
+        #endregion
+
+        #region Constructors
+        private RstkCustomerAddress() { }
+        public static RstkCustomerAddress Create(
+            ExternalReferenceId rstkSocaddrCustnoC,
+            string externalCustomerNumberC,
+            string rstkSocaddrNameC,
+            string rstkSocaddrAddress1C,
+            string rstkSocaddrAddress2C,
+            string rstkSocaddrCityC,
+            string rstkSocaddrCountryC,
+            string rstkSocaddrStateC,
+            string rstkSocaddrZipC,
+            string rstkSocaddrEmailC,
+            bool rstkSocaddrUseasackC,
+            bool rstkSocaddrUseasbilltoC,
+            bool rstkSocaddrUseasinstallC,
+            bool rstkSocaddrUseasshiptoC,
+            bool rstkSocaddrDefaultackC,
+            bool rstkSocaddrDefaultbilltoC,
+            bool rstkSocaddrDefaultinstallC,
+            bool rstkSocaddrDefaultshiptoC,
+            bool rstkSocaddrDefaultackUiC,
+            bool rstkSocaddrDefaultbilltoUiC,
+            bool rstkSocaddrDefaultinstallUiC,
+            bool rstkSocaddrDefaultshiptoUiC,
+            double? rstkSocaddrSeqC,
+            ExternalReferenceId rstkSocaddrTaxlocR)
         {
-            return new RstkCustomerAddress();
+            return new RstkCustomerAddress
+            {
+                rstk__socaddr_custno__c = rstkSocaddrCustnoC.rstk__externalid__c,
+                External_Customer_Number__c = externalCustomerNumberC,
+                rstk__socaddr_name__c = rstkSocaddrNameC,
+                rstk__socaddr_address1__c = rstkSocaddrAddress1C,
+                rstk__socaddr_address2__c = rstkSocaddrAddress2C,
+                rstk__socaddr_city__c = rstkSocaddrCityC,
+                rstk__socaddr_country__c = rstkSocaddrCountryC,
+                rstk__socaddr_state__c = rstkSocaddrStateC,
+                rstk__socaddr_zip__c = rstkSocaddrZipC,
+                rstk__socaddr_email__c = rstkSocaddrEmailC,
+                rstk__socaddr_useasack__c = rstkSocaddrUseasackC,
+                rstk__socaddr_useasbillto__c = rstkSocaddrUseasbilltoC,
+                rstk__socaddr_useasinstall__c = rstkSocaddrUseasinstallC,
+                rstk__socaddr_useasshipto__c = rstkSocaddrUseasshiptoC,
+                rstk__socaddr_defaultack__c = rstkSocaddrDefaultackC,
+                rstk__socaddr_defaultbillto__c = rstkSocaddrDefaultbilltoC,
+                rstk__socaddr_defaultinstall__c = rstkSocaddrDefaultinstallC,
+                rstk__socaddr_defaultshipto__c = rstkSocaddrDefaultshiptoC,
+                rstk__socaddr_defaultack_ui__c = rstkSocaddrDefaultackUiC,
+                rstk__socaddr_defaultbillto_ui__c = rstkSocaddrDefaultbilltoUiC,
+                rstk__socaddr_defaultinstall_ui__c = rstkSocaddrDefaultinstallUiC,
+                rstk__socaddr_defaultshipto_ui__c = rstkSocaddrDefaultshiptoUiC,
+                rstk__socaddr_seq__c = rstkSocaddrSeqC,
+                rstk__socaddr_taxloc__r = rstkSocaddrTaxlocR
+            };
         }
 
-        public void SetRstkSocaddrCustnoR(ExternalReferenceId value) => rstk__socaddr_custno__r = value;
-        public void SetExternalCustomerNumberC(string value) => External_Customer_Number__c = value;
-        public void SetRstkSocaddrNameC(string value) => rstk__socaddr_name__c = value;
-        public void SetRstkSocaddrAddress1C(string value) => rstk__socaddr_address1__c = value;
-        public void SetRstkSocaddrAddress2C(string value) => rstk__socaddr_address2__c = value;
-        public void SetRstkSocaddrCityC(string value) => rstk__socaddr_city__c = value;
-        public void SetRstkSocaddrCountryC(string value) => rstk__socaddr_country__c = value;
-        public void SetRstkSocaddrStateC(string value) => rstk__socaddr_state__c = value;
-        public void SetRstkSocaddrZipC(string value) => rstk__socaddr_zip__c = value;
-        public void SetRstkSocaddrEmailC(string value) => rstk__socaddr_email__c = value;
-        public void SetRstkSocaddrUseasackC(bool value) => rstk__socaddr_useasack__c = value;
-        public void SetRstkSocaddrUseasbilltoC(bool value) => rstk__socaddr_useasbillto__c = value;
-        public void SetRstkSocaddrUseasinstallC(bool value) => rstk__socaddr_useasinstall__c = value;
-        public void SetRstkSocaddrUseasshiptoC(bool value) => rstk__socaddr_useasshipto__c = value;
-        public void SetRstkSocaddrDefaultackC(bool value) => rstk__socaddr_defaultack__c = value;
-        public void SetRstkSocaddrDefaultbilltoC(bool value) => rstk__socaddr_defaultbillto__c = value;
-        public void SetRstkSocaddrDefaultinstallC(bool value) => rstk__socaddr_defaultinstall__c = value;
-        public void SetRstkSocaddrDefaultshiptoC(bool value) => rstk__socaddr_defaultshipto__c = value;
-        public void SetRstkSocaddrDefaultackUiC(bool value) => rstk__socaddr_defaultack_ui__c = value;
-        public void SetRstkSocaddrDefaultbilltoUiC(bool value) => rstk__socaddr_defaultbillto_ui__c = value;
-        public void SetRstkSocaddrDefaultinstallUiC(bool value) => rstk__socaddr_defaultinstall_ui__c = value;
-        public void SetRstkSocaddrDefaultshiptoUiC(bool value) => rstk__socaddr_defaultshipto_ui__c = value;
-        public void SetRstkSocaddrSeqC(double? value) => rstk__socaddr_seq__c = value;
-        public void SetRstkSocaddrTaxlocR(ExternalReferenceId value) => rstk__socaddr_taxloc__r = value;
-
-        public static string GetCreatedRowId(dynamic payload)
-        {
-            return payload.items[0]["id"];
-        }
+        #endregion
     }
 }

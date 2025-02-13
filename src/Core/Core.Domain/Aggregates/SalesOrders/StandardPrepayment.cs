@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,10 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class StandardPrepayment : Entity
     {
+        [JsonProperty("amountPaid")]
         public double AmountPaid { get; private set; }
+
+        [JsonProperty("prepaymentCustomer")]
         public string PrepaymentCustomer { get; private set; }
 
         private StandardPrepayment() { }

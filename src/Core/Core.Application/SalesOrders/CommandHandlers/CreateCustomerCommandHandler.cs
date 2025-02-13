@@ -13,7 +13,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<CustomerCreated>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"[{request.CorrelationId}] Begin creating customer {request.customer.CustomerNo}.");
+            logger.LogInformation($"Begin creating customer {request.customer.CustomerNo}.");
             var rootstockCustomer = request.customer.GetRootstockCustomer();
             var createdCustomerResult = await rootstockService.CreateCustomer(rootstockCustomer);
 
@@ -24,7 +24,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 return Result.Fail<CustomerCreated>(createdCustomerResult.Errors);
             }
 
-            logger.LogInformation($"[{request.CorrelationId}] Customer {request.customer.CustomerNo} created.");
+            logger.LogInformation($"Customer {request.customer.CustomerNo} created.");
             return Result.Ok(new CustomerCreated(createdCustomerResult.Value));
         }
     }

@@ -16,10 +16,9 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
         {
             #region Preparing variables
 
-            logger.LogInformation($"[{request.correlationId}] Begin processing {request.SalesOrders.Count()} sales orders.");
+            logger.LogInformation($"Begin processing {request.SalesOrders.Count()} sales orders.");
 
             var salesOrders = new List<MedSalesOrder>();
-            var failedSalesOrders = new List<(MedSalesOrder salesOrder, IEnumerable<string> messages)>();
 
             #endregion
 
@@ -27,70 +26,49 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
 
             var tasks = request.SalesOrders.Select(async salesOrder =>
             {
-                var response = await ProcessIndividualSalesOrder(salesOrder, request.correlationId);
+                var response = await ProcessIndividualSalesOrder(salesOrder);
                 if (response.IsSuccess)
                 {
                     salesOrders.Add(response.Value);
                 }
                 else
                 {
-                    foreach (var message in response.Reasons.Select(r=>r.Message).ToList())
+                    foreach (var message in response.Reasons.Select(r => r.Message).ToList())
                     {
-                        logger.LogWarning($"[{request.correlationId}] failed to process sales order:{salesOrder.ECommOrderID}, message: {message}");
+                        logger.LogWarning($"Failed to process sales order:{salesOrder.ECommOrderID}, message: {message}");
                     }
                 }
             });
 
             await Task.WhenAll(tasks);
 
-            logger.LogInformation($"[{request.correlationId}] Successfully processed {salesOrders.Count()} sales orders.");
+            logger.LogInformation($"Successfully processed {salesOrders.Count()} sales orders.");
 
             #endregion
 
-            return Result.Ok(new SalesOrdersProcessed(salesOrders, $"[{request.correlationId}] Successfully processed {salesOrders.Count()} sales orders."));
+            return Result.Ok(new SalesOrdersProcessed(salesOrders, $"Successfully processed {salesOrders.Count()} sales orders."));
         }
 
-        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload, string correlationId)
+        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload)
         {
-            #region Preparing Sales Agg
+            #region Preparing Variables
 
             var result = Result.Ok();
-            logger.LogInformation($"[{correlationId}]  Processing sales order {payload.ECommOrderID}");
+            logger.LogInformation($"Processing sales order {payload.ECommOrderID}");
 
             #endregion
 
-            #region Validate Sales Orders
+            #region Process Sales Order
 
-            var salesOrderValidatationResult = SalesAgg.ValidateSalesOrder(payload);
-            logger.LogInformation($"[{correlationId}] Validated sales order {payload.ECommOrderID}");
-
-            if (salesOrderValidatationResult.IsFailed)
-            {
-                logger.LogWarning($"[{correlationId}] Sales Order {payload.ECommOrderID} failed validation.");
-                return Result.Fail<MedSalesOrder>(salesOrderValidatationResult.Errors);
-            }
-
-            #endregion
-
-            #region Create Sales Order
-
-            var salesAggResult = SalesAgg.Create(payload.StoreName);
+            var salesAggResult = SalesAgg.Create(payload, orderDefaults);
             if (salesAggResult.IsFailed)
             {
-                logger.LogWarning($"[{correlationId}] Failed to create sales order aggregate for {payload.ECommOrderID}");
+                logger.LogWarning($"Failed to create sales order aggregate for {payload.ECommOrderID}");
                 return Result.Fail<MedSalesOrder>(salesAggResult.Errors);
             }
 
             var salesAgg = salesAggResult.Value;
-            logger.LogInformation($"[{correlationId}] Created sales order aggregate for {payload.ECommOrderID}");
-
-            var salesOrderProcessigResult = salesAgg.Process(payload, orderDefaults);
-            if (salesOrderProcessigResult.IsFailed)
-            {
-                logger.LogWarning($"[{correlationId}] Failed to process sales order {payload.ECommOrderID}");
-                return Result.Fail<MedSalesOrder>(salesOrderProcessigResult.Errors);
-            }
-            logger.LogInformation($"[{correlationId}] Created sales order {payload.ECommOrderID}");
+            logger.LogInformation($"Created sales order aggregate for {payload.ECommOrderID}");
 
             #endregion
 
@@ -99,34 +77,42 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             var customerInfoResult = await rootstockService.GetCustomerInfo(payload.CustomerAccountID);
             if (customerInfoResult.IsFailed)
             {
-                var response = await mediator.Send(new CreateCustomerCommand(salesOrderProcessigResult.Value.SalesOrderCustomer, correlationId));
+                var response = await mediator.Send(new CreateCustomerCommand(salesAgg.SalesOrderCustomer));
                 if (response.IsSuccess)
                 {
-                    logger.LogInformation($"[{correlationId}] Created customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
+                    salesAgg.SalesOrder.UpdateCustomerId(response.Value.recordId);
+                    logger.LogInformation($"Created customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
                 }
                 else
                 {
-                    logger.LogWarning($"[{correlationId}] Failed to create customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
+                    logger.LogWarning($"Failed to create customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
                     return Result.Fail<MedSalesOrder>(customerInfoResult.Errors);
                 }
             }
+            else
+            {
+                salesAgg.SalesOrder.UpdateCustomerId(customerInfoResult.Value.CustomerId);
+            }
 
-            var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountID, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
+            var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountNumber, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
             if (customerAddressInfoResult.IsFailed)
             {
-                var response = await mediator.Send(new CreateCustomerAddressCommand(salesOrderProcessigResult.Value.SalesOrderCustomerAddress, payload.CustomerAccountID, payload.CustomerAccountNumber, correlationId));
+                var response = await mediator.Send(new CreateCustomerAddressCommand(salesAgg.SalesOrderCustomerAddress, payload.CustomerAccountID, payload.CustomerAccountNumber));
                 if (response.IsSuccess)
                 {
                     var customerAddressInfo = response.Value.CustomerAddressInfo;
-                    salesAgg.UpdateCustomerAddressReference(customerAddressInfo.CustomerAddressID);
-                    logger.LogInformation($"[{correlationId}] Created customer address {customerAddressInfo.CustomerAddressID} for sales order {payload.ECommOrderID}");
+                    logger.LogInformation($"Created customer address {customerAddressInfo.CustomerAddressID} for sales order {payload.ECommOrderID}");
                 }
                 else
                 {
-                    var errorMessage = $"[{correlationId}] Failed to create customer address for sales order {payload.ECommOrderID} and customer no:{payload.CustomerAccountNumber}";
+                    var errorMessage = $"Failed to create customer address for sales order {payload.ECommOrderID} and customer no:{payload.CustomerAccountNumber}";
                     logger.LogWarning(errorMessage);
                     return Result.Fail<MedSalesOrder>(response.Errors);
                 }
+            }
+            else
+            {
+                salesAgg.SalesOrder.UpdateCustomerAddressReference(customerAddressInfoResult.Value.CustomerAddressID);
             }
 
             #endregion

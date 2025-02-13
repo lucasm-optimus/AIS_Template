@@ -6,9 +6,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomer
     {
-        private RstkCustomer()
-        {
-        }
+        #region Properties
 
         public string rstk__socust_custno__c { get; private set; }
         public string rstk__socust_sf_account__c { get; private set; }
@@ -21,6 +19,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public bool rstk__socust_maintcurrind__c { get; private set; }
         public ExternalReferenceId rstk__socust_terms__r { get; private set; }
 
+        #endregion
+
+        #region Constructors
+
+        private RstkCustomer() { }
         public static RstkCustomer Create(
             string custNo,
             string sfAccount,
@@ -47,5 +50,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
                 rstk__socust_terms__r = terms
             };
         }
+
+        #endregion
     }
 }

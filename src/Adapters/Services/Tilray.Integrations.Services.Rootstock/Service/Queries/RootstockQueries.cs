@@ -1,4 +1,5 @@
-﻿namespace Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿
+namespace Tilray.Integrations.Services.Rootstock.Service.Queries;
 
 internal static class RootstockQueries
 {
@@ -31,7 +32,7 @@ internal static class RootstockQueries
             WHERE id = '{0}'";
 
 
-    internal const string GetCustomerBySfAccountQuery = @"SELECT rstk__socust_custno__c, name FROM rstk__socust__c WHERE rstk__socust_sf_account__c = '{0}'";
+    internal const string GetCustomerBySfAccountQuery = @"SELECT rstk__socust_custno__c, name, id FROM rstk__socust__c WHERE rstk__socust_sf_account__c = '{0}'";
 
     internal const string GetShipToCustomerAddressInfoQuery = @"SELECT rstk__socaddr_custno__r.rstk__socust_custno__c, rstk__socaddr_name__c, rstk__externalid__c, rstk__socaddr_locationref__c FROM rstk__socaddr__c WHERE rstk__socaddr_custno__r.rstk__socust_custno__c = ':{0}' AND rstk__socaddr_defaultshipto__c = true";
 
@@ -45,11 +46,16 @@ internal static class RootstockQueries
 
     internal const string GetAllCustomerAddressByCustomerNo = @"SELECT ID FROM rstk__socaddr__c WHERE rstk__socaddr_custno__r.rstk__socust_custno__c = '{0}'";
 
-    internal const string GetMaxAddressSequenceByCustomerNo = @"SELECT MAX(rstk__socaddr_seq__c) MaxSequenceNum FROM rstk__socaddr__c WHERE rstk__socaddr_custno__r.rstk__socust_custno__c = '{0}'";
+    internal const string GetMaxAddressSequenceByCustomerNo = @"SELECT MAX(rstk__socaddr_seq__c) MaxSequenceNum FROM rstk__socaddr__c WHERE rstk__socaddr_custno__c = '{0}'";
 
     internal const string GetNewlyCreatedCustomerAddress = @"SELECT ID, rstk__externalid__c, Name, External_Customer_Number__c FROM rstk__socaddr__c WHERE ID = '{0}'";
 
     internal const string GetNewlyCreatedSalesOrderByRecordId = @"SELECT rstk__soapi_sohdr__r.rstk__sohdr_order__c, rstk__soapi_sohdr__r.rstk__externalid__c, rstk__soapi_sohdr__r.rstk__sohdr_custref__c, rstk__soapi_sohdr__c FROM rstk__soapi__c WHERE id = '{0}'";
 
     internal const string GetListofCustomerReferencesByCustomerReferences = @"SELECT rstk__sohdr_custref__c FROM rstk__sohdr__c WHERE rstk__sohdr_custref__c IN ('{0}')";
+
+    internal const string GetIdByExternalReferenceId = @"select id from {0} where {1} = '{2}'"; // {0} = TableName, {1} = ColumnName, {2} = ExternalId
+    
+    internal const string GetSoHdrFromSoApi = @"SELECT  rstk__soapi_sohdr__c  FROM rstk__soapi__c WHERE id='{0}'";//soapi record id
 }
+ 

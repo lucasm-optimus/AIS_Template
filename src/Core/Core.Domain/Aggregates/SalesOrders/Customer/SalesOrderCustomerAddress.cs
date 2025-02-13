@@ -10,7 +10,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 {
     public class SalesOrderCustomerAddress
     {
-        private SalesOrderCustomerAddress() { }
+        #region Properties
 
         public string Name { get; set; }
         public string Address1 { get; set; }
@@ -30,8 +30,73 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         public bool IsDefaultAcknowledgement { get; set; }
         public ExternalReferenceId TaxLocation { get; set; }
         public string Storefront { get; set; }
-        public double CustomerNextAddressSequence { get; set; }
 
+        #endregion
+
+        #region Constructors
+
+        private SalesOrderCustomerAddress() { }
+        public static SalesOrderCustomerAddress Create(Models.Ecom.SalesOrder payload)
+        {
+            return new SalesOrderCustomerAddress
+            {
+                Address1 = payload.ShipToAddress1,
+                Address2 = payload.ShipToAddress2,
+                City = payload.ShipToCity,
+                State = payload.ShipToState,
+                Zip = payload.ShipToZip,
+                Country = payload.ShipToCountry,
+                Email = payload.ShipToEmail,
+                IsShipTo = true,
+                IsDefaultShipTo = true,
+                IsBillTo = true,
+                IsDefaultBillTo = true,
+                IsInstallation = true,
+                IsDefaultInstallation = true,
+                IsAcknowledgement = true,
+                IsDefaultAcknowledgement = true,
+                TaxLocation = ExternalReferenceId.Create("rstk__sotax__c", GetTaxLocation(payload.ShipToState)),
+                Storefront = payload.StoreName
+            };
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public RstkCustomerAddress GetRootstockCustomerAddress(string CustomerId, int customerNextAddressSequence)
+        {
+            return RstkCustomerAddress.Create(
+                rstkSocaddrCustnoC: ExternalReferenceId.Create("rstk__socust__c", CustomerId),
+                externalCustomerNumberC: $"{CustomerId}_{customerNextAddressSequence}",
+                rstkSocaddrNameC: Name,
+                rstkSocaddrAddress1C: Address1,
+                rstkSocaddrAddress2C: Address2,
+                rstkSocaddrCityC: City,
+                rstkSocaddrCountryC: Country,
+                rstkSocaddrStateC: State,
+                rstkSocaddrZipC: Zip,
+                rstkSocaddrEmailC: Email,
+                rstkSocaddrUseasackC: IsAcknowledgement,
+                rstkSocaddrUseasbilltoC: IsBillTo,
+                rstkSocaddrUseasinstallC: IsInstallation,
+                rstkSocaddrUseasshiptoC: IsShipTo,
+                rstkSocaddrDefaultackC: IsDefaultAcknowledgement,
+                rstkSocaddrDefaultbilltoC: IsDefaultBillTo,
+                rstkSocaddrDefaultinstallC: IsDefaultInstallation,
+                rstkSocaddrDefaultshiptoC: IsDefaultShipTo,
+                rstkSocaddrDefaultackUiC: IsDefaultAcknowledgement,
+                rstkSocaddrDefaultbilltoUiC: IsDefaultBillTo,
+                rstkSocaddrDefaultinstallUiC: IsDefaultInstallation,
+                rstkSocaddrDefaultshiptoUiC: IsDefaultShipTo,
+                rstkSocaddrSeqC: customerNextAddressSequence,
+                rstkSocaddrTaxlocR: TaxLocation
+            );
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private static string GetTaxLocation(string state)
         {
@@ -54,62 +119,6 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
             };
         }
 
-        public static SalesOrderCustomerAddress Create(Models.Ecom.SalesOrder order)
-        {
-            return new SalesOrderCustomerAddress
-            {
-                Address1 = order.ShipToAddress1,
-                Address2 = order.ShipToAddress2,
-                City = order.ShipToCity,
-                State = order.ShipToState,
-                Zip = order.ShipToZip,
-                Country = order.ShipToCountry,
-                Email = order.ShipToEmail,
-                IsShipTo = true,
-                IsDefaultShipTo = true,
-                IsBillTo = true,
-                IsDefaultBillTo = true,
-                IsInstallation = true,
-                IsDefaultInstallation = true,
-                IsAcknowledgement = true,
-                IsDefaultAcknowledgement = true,
-                TaxLocation = ExternalReferenceId.Create("rstk__sotax__c", GetTaxLocation(order.ShipToState)),
-                Storefront = order.StoreName
-            };
-        }
-
-        public void SetCustomerNextAddressSequence(double sequence) => CustomerNextAddressSequence = sequence;
-        public void SetName(string name) => Name = name;
-
-        public RstkCustomerAddress GetRootstockCustomerAddress(string CustomerAccountNumber)
-        {
-            var address = RstkCustomerAddress.Create();
-            address.SetRstkSocaddrCustnoR(ExternalReferenceId.Create("rstk__socust__c", CustomerAccountNumber));
-            address.SetExternalCustomerNumberC($"{CustomerAccountNumber}_{CustomerNextAddressSequence}");
-            address.SetRstkSocaddrNameC(Name);
-            address.SetRstkSocaddrAddress1C(Address1);
-            address.SetRstkSocaddrAddress2C(Address2);
-            address.SetRstkSocaddrCityC(City);
-            address.SetRstkSocaddrCountryC(Country);
-            address.SetRstkSocaddrStateC(State);
-            address.SetRstkSocaddrZipC(Zip);
-            address.SetRstkSocaddrEmailC(Email);
-            address.SetRstkSocaddrUseasackC(IsAcknowledgement);
-            address.SetRstkSocaddrUseasbilltoC(IsBillTo);
-            address.SetRstkSocaddrUseasinstallC(IsInstallation);
-            address.SetRstkSocaddrUseasshiptoC(IsShipTo);
-            address.SetRstkSocaddrDefaultackC(IsDefaultAcknowledgement);
-            address.SetRstkSocaddrDefaultbilltoC(IsDefaultBillTo);
-            address.SetRstkSocaddrDefaultinstallC(IsDefaultInstallation);
-            address.SetRstkSocaddrDefaultshiptoC(IsDefaultShipTo);
-            address.SetRstkSocaddrDefaultackUiC(IsDefaultAcknowledgement);
-            address.SetRstkSocaddrDefaultbilltoUiC(IsDefaultBillTo);
-            address.SetRstkSocaddrDefaultinstallUiC(IsDefaultInstallation);
-            address.SetRstkSocaddrDefaultshiptoUiC(IsDefaultShipTo);
-            address.SetRstkSocaddrSeqC(CustomerNextAddressSequence);
-            address.SetRstkSocaddrTaxlocR(TaxLocation);
-
-            return address;
-        }
+        #endregion
     }
 }

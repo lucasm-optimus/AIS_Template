@@ -27,5 +27,10 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             return JsonConvert.SerializeObject(new { name = rstk__externalid__c });
         }
+
+        public static string GetJsonString(string type,string externalId)
+        {
+            return "{\"" + type + "\":\"" + externalId + "\"}";
+        }
     }
 }

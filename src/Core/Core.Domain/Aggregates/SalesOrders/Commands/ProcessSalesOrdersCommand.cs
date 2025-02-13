@@ -3,7 +3,7 @@ using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands
 {
-    public record ProcessSalesOrdersCommand(List<Models.Ecom.SalesOrder> SalesOrders, string correlationId) : ICommand<SalesOrdersProcessed>
+    public record ProcessSalesOrdersCommand(List<Models.Ecom.SalesOrder> SalesOrders) : ICommand<SalesOrdersProcessed>
     {
     }
 }

@@ -9,7 +9,7 @@ using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands
 {
-    public record CreateCustomerCommand(SalesOrderCustomer customer, string CorrelationId) : ICommand<CustomerCreated>
+    public record CreateCustomerCommand(SalesOrderCustomer customer) : ICommand<CustomerCreated>
     {
     }
 }

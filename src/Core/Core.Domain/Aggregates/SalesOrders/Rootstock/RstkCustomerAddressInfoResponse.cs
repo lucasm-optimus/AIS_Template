@@ -9,7 +9,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkCustomerAddressInfoResponse
     {
-        private RstkCustomerAddressInfoResponse() { }
+        #region Properties
 
         [JsonProperty("customerID")]
         public string CustomerID { get; private set; }
@@ -23,15 +23,25 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         [JsonProperty("locationReference")]
         public string LocationReference { get; private set; }
 
+        #endregion
+
+        #region Constructors
+
+        private RstkCustomerAddressInfoResponse() { }
+
+        #endregion
+
+        #region Public Methods
+
         public static Result<RstkCustomerAddressInfoResponse> MapFromPayload(dynamic records)
         {
             if (records != null && records.Count > 0)
             {
                 return Result.Ok(new RstkCustomerAddressInfoResponse
                 {
-                    CustomerID = records[0]["id"],
+                    CustomerID = records[0]["ID"],
                     CustomerAddressID = records[0]["rstk__externalid__c"],
-                    Name = records[0]["name"],
+                    Name = records[0]["Name"],
                     LocationReference = records[0]["External_Customer_Number__c"]
                 });
             }
@@ -53,5 +63,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
                 return 1;
             }
         }
+
+        #endregion
     }
 }

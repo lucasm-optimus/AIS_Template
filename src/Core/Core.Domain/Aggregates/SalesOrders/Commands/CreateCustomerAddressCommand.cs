@@ -8,7 +8,7 @@ using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands
 {
-    public record CreateCustomerAddressCommand(SalesOrderCustomerAddress Address, string CustomerAccountId, string CustomerAccountNumber, string CorrelationId) : ICommand<CustomerAddressCreated>
+    public record CreateCustomerAddressCommand(SalesOrderCustomerAddress Address, string CustomerAccountId, string CustomerAccountNumber) : ICommand<CustomerAddressCreated>
     {
     }
 }
