@@ -14,7 +14,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
             {
                 logger.LogInformation($"[{request.CorrelationId}] Sales order already exists for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 // check the return value
-                return Result.Fail($"[{request.CorrelationId}] Sales order already exists for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                return Result.Ok();
             }
 
             // Get OrderType Id
