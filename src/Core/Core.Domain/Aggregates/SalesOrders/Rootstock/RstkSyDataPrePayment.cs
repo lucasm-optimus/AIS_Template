@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+
+
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
+{
+    public class RstkSyDataPrePayment
+    {
+        public string rstk__sydata_txntype__c { get; private set; }
+        public double rstk__sydata_ordpayamt__c { get; private set; }
+        public string rstk__sydata_ordpayid__c { get; private set; }
+        public string rstk__sydata_sogateway__c { get; private set; }
+        public string rstk__sydata_sohdr__c { get; private set; }
+
+        private RstkSyDataPrePayment() { }
+
+        public static Result<RstkSyDataPrePayment> Create(CCPrepayment ccPrepayment)
+        {
+            try
+            {
+                var syDatPrePayment = new RstkSyDataPrePayment
+                {
+                    rstk__sydata_txntype__c = "Sales Order Payment Authorization",
+                    rstk__sydata_ordpayamt__c = ccPrepayment.AmountPrepaidByCC,
+                    rstk__sydata_ordpayid__c = ccPrepayment.PrepaidCCTransactionID,
+                    rstk__sydata_sogateway__c = ccPrepayment.PaymentGatewayId
+                };
+
+                return Result.Ok(syDatPrePayment);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<RstkSyDataPrePayment>(e.Message);
+            }
+        }
+
+        public void UpdateSoHdrId(string salesOrderHeaderExternalId)
+        {
+            rstk__sydata_sohdr__c = salesOrderHeaderExternalId;
+        }
+    }
+}

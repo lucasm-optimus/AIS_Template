@@ -53,8 +53,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                     Customer = standardPrepayment.PrepaymentCustomer,
                     UseDefaultBillToAddress = true,
                     SOCustomerNo = soCustomerNo,
-                    //PrepaymentAccount = prePaymentAccount,
-                    PrepaymentAccount = "20011700",
+                    PrepaymentAccount = prePaymentAccount,
                     Division = division,
                     Amount = standardPrepayment.AmountPaid,
                 };

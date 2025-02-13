@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
 
@@ -376,6 +377,11 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     public async Task<Result<string?>> CreatePrePayment(RstkSalesOrderPrePayment prePayment)
     {
         return await PostRootstockDataAsync(Constants.Rootstock.TableNames.Prepayment, prePayment);
+    }
+
+    public async Task<Result<string?>> CreatePrePayment(RstkSyDataPrePayment prePayment)
+    {
+        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SyData, prePayment);
     }
 
     public async Task<bool> SalesOrderExists(string customerReferenceNumber)

@@ -2,6 +2,7 @@
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -107,20 +108,34 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                     await rootstockService.CreateSalesOrderLineItem(currentLineItem);
                 }
 
-                //Prepayment - Process
-                //if (request.SalesOrder.CCPrepayment != null)
-                //{
-                //    await rootstockService.CreatePrePayment(salesAgg.CCPrePayment);
-                //    logger.LogInformation($"[{request.CorrelationId}] Created rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
-                //}
+                //Standard Prepayment
+                var prePaymentResult = salesAgg.SalesOrder.HasPrepayment(createdSoHdrResult.Value, "20011700");
+                if (prePaymentResult.IsSuccess)
+                {
+                    var createdRootstockSoPrepayment = RstkSalesOrderPrePayment.Create(prePaymentResult.Value);
+                    if (createdRootstockSoPrepayment.IsFailed)
+                    {
+                        logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                    }
 
-                //Standard Prepayment If insurance payment is not made
-                //var prePaymentResult = salesAgg.SalesOrder.HasPrepayment();
-                //if (request.SalesOrder.StandardPrepayment != null)
-                //{
-                //    await rootstockService.CreatePrePayment(rstkPrePaymentResult.Value);
-                //    logger.LogInformation($"[{request.CorrelationId}] Created rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
-                //}
+                    await rootstockService.CreatePrePayment(createdRootstockSoPrepayment.Value);
+                    logger.LogInformation($"[{request.CorrelationId}] Created rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                }
+
+                // Sy Data Prepayment -  CC order
+                var syDataPrePaymentResult = salesAgg.HasSyDataPrePayment(createdSoHdrResult.Value);
+                if (syDataPrePaymentResult.IsSuccess)
+                {
+                    var createdPrePaymentResult = await rootstockService.CreatePrePayment(syDataPrePaymentResult.Value);
+                    if (createdPrePaymentResult.IsFailed)
+                    {
+                        logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                    }
+
+                    logger.LogInformation($"[{request.CorrelationId}] Created rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                }
 
                 return Result.Ok(new SalesOrderCreated());
             }

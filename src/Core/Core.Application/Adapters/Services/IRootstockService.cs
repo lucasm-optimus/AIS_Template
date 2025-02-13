@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
@@ -18,6 +19,7 @@ public interface IRootstockService
     Task<Result<string?>> CreateSalesOrder(RstkSalesOrder salesOrder);
     Task<Result<string?>> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
     Task<Result<string?>> CreatePrePayment(RstkSalesOrderPrePayment rstkPrePayment);
+    Task<Result<string?>> CreatePrePayment(RstkSyDataPrePayment prePayment);
     Task<bool> SalesOrderExists(string customerReferenceNumber);
     Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId);
     Task<Result<string>> GetSoHdr(string soapiId);

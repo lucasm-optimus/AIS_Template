@@ -19,6 +19,7 @@ public static class Constants
             public const string CustomerAddress = "rstk__socaddr__c";
             public const string SalesOrder = "rstk__soapi__c";
             public const string Prepayment = "rstk__soppy__c";
+            public const string SyData = "rstk__sydata__c";
         }
     }
 }

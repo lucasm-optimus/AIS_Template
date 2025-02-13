@@ -18,6 +18,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         [JsonProperty("ccPaymentGateway")]
         public string CCPaymentGateway { get; private set; }
 
+        public string PaymentGatewayId { get; set; }
+
         private CCPrepayment() { }
 
         private CCPrepayment(double amountPrepaidByCC, string prepaidCCTransactionID, string ccPaymentGateway)
