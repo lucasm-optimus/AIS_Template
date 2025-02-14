@@ -16,6 +16,8 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
         {
             logger.LogInformation($"Begin creating customer address for {request.CustomerAccountId}.");
 
+            #region Get Customer Information
+
             var customerInfoResult = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
 
             if (customerInfoResult.IsFailed)
@@ -26,6 +28,24 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
             }
 
             var customerInfo = customerInfoResult.Value;
+
+            #endregion
+
+            #region Update foreign keys
+
+            var result = Result.Ok();
+            var taxResult = await rootstockService.GetIdFromExternalColumnReference("rstk__sotax__c", "rstk__externalid__c", request.Address.TaxLocation);
+            if (taxResult.IsFailed)
+            {
+                var errorMessage = $"Failed to get tax location id for {request.Address.TaxLocation}.";
+                logger.LogError(errorMessage);
+                result.WithError(errorMessage);
+            }
+            request.Address.UpdateTaxLocation(taxResult.Value);
+
+            #endregion
+
+            #region Create customer address
 
             logger.LogInformation($"Getting next address sequence for customer {customerInfo.CustomerId}.");
             var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(customerInfo.CustomerId) ?? 1;
@@ -57,6 +77,8 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError(errorMessage);
                 return Result.Fail<CustomerAddressCreated>(customerAddressInfoResult.Errors);
             }
+
+            #endregion
 
             return Result.Ok(new CustomerAddressCreated(customerAddressInfoResult.Value, customerInfo));
         }

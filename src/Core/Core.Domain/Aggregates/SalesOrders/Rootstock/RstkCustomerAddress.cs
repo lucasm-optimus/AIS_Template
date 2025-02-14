@@ -35,7 +35,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public bool rstk__socaddr_defaultinstall_ui__c { get; private set; }
         public bool rstk__socaddr_defaultshipto_ui__c { get; private set; }
         public double? rstk__socaddr_seq__c { get; private set; }
-        public ExternalReferenceId rstk__socaddr_taxloc__r { get; private set; }
+        public string rstk__socaddr_taxloc__c { get; private set; }
 
         #endregion
 
@@ -66,7 +66,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
                     rstk__socaddr_defaultinstall__c = salesOrderCustomerAddress.IsDefaultInstallation,
                     rstk__socaddr_defaultshipto__c = salesOrderCustomerAddress.IsDefaultShipTo,
                     rstk__socaddr_seq__c = customerNextAddressSequence,
-                    rstk__socaddr_taxloc__r = salesOrderCustomerAddress.TaxLocation
+                    rstk__socaddr_taxloc__c = salesOrderCustomerAddress.TaxLocation
                 };
 
                 return Result.Ok(rootstockCustomerAddress);

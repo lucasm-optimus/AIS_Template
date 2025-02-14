@@ -28,7 +28,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         public bool IsDefaultInstallation { get; set; }
         public bool IsAcknowledgement { get; set; }
         public bool IsDefaultAcknowledgement { get; set; }
-        public ExternalReferenceId TaxLocation { get; set; }
+        public string TaxLocation { get; set; }
         public string Storefront { get; set; }
 
         #endregion
@@ -57,7 +57,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
                     IsDefaultInstallation = true,
                     IsAcknowledgement = true,
                     IsDefaultAcknowledgement = true,
-                    TaxLocation = ExternalReferenceId.Create("rstk__sotax__c", GetTaxLocation(payload.ShipToState)),
+                    TaxLocation = GetTaxLocation(payload.ShipToState),
                     Storefront = payload.StoreName
                 };
 
@@ -92,6 +92,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
                 "YT" => "YUKON",
                 _ => state,
             };
+        }
+
+        public void UpdateTaxLocation(string value)
+        {
+            TaxLocation = value;
         }
 
         #endregion

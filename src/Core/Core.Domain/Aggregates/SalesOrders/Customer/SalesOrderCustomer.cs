@@ -57,5 +57,29 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         }
 
         #endregion
+
+        #region Public Methods
+
+        public void UpdateCustomerClass(string value)
+        {
+            CustomerClass = value;
+        }
+
+        public void UpdateAccountingDimension1(string value)
+        {
+            AccountingDimension1 = value;
+        }
+
+        public void UpdateAccountingDimension2(string value)
+        {
+            AccountingDimension2 = value;
+        }
+
+        public void UpdatePaymentTerms(string value)
+        {
+            PaymentTerms = value;
+        }
+
+        #endregion
     }
 }
