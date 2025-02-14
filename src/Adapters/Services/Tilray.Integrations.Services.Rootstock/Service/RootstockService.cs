@@ -241,7 +241,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
         else
         {
-            string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')"; ;
+            string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')";
             logger.LogError($"Failed to fetch. Error: {errorMessage}");
             return Result.Fail(errorMessage);
         }
@@ -289,10 +289,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     public async Task<Result> CreateSalesOrderAsync(SalesOrder salesOrder)
     {
-        var headerResult = await CreateSalesOrderHeaderAsync(salesOrder);
-        return headerResult.IsFailed
-            ? Result.Fail(headerResult.Errors)
-            : await CreateSalesOrderLinesAsync(salesOrder, headerResult.Value);
+        var salesOrderHeaderResult = await CreateSalesOrderHeaderAsync(salesOrder);
+        return salesOrderHeaderResult.IsFailed
+            ? Result.Fail(salesOrderHeaderResult.Errors)
+            : await CreateSalesOrderLinesAsync(salesOrder, salesOrderHeaderResult.Value);
     }
 
     public async Task<Result<string?>> CreateCustomer(RstkCustomer customer)
