@@ -9,6 +9,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class SalesOrderLineItem : Entity
     {
+        #region Properties
+
         [JsonProperty("itemNumber")]
         public string ItemNumber { get; private set; }
 
@@ -49,6 +51,10 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         public string CurrencyIsoCode { get; private set; }
         public string ProductId { get; set; }
 
+        #endregion
+
+        #region Constructors
+
         private SalesOrderLineItem() { }
 
         public static SalesOrderLineItem Create(string itemNumber, double quantity, double unitPrice, string requiredLotToPick, double? amountCoveredByInsurance, double? gramsCoveredByInsurance, bool? firm, string location, string id)
@@ -71,5 +77,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             ProductId = value;
         }
+
+        #endregion
     }
 }

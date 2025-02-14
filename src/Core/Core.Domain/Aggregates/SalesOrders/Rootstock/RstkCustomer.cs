@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
@@ -24,31 +25,30 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         #region Constructors
 
         private RstkCustomer() { }
-        public static RstkCustomer Create(
-            string custNo,
-            string sfAccount,
-            ExternalReferenceId cclass,
-            ExternalReferenceId dimval,
-            ExternalReferenceId dimval2,
-            string dfltProdType,
-            bool prodInd,
-            bool serviceInd,
-            bool maintCurrInd,
-            ExternalReferenceId terms)
+        public static Result<RstkCustomer> Create(SalesOrderCustomer salesOrderCustomer)
         {
-            return new RstkCustomer
+            try
             {
-                rstk__socust_custno__c = custNo,
-                rstk__socust_sf_account__c = sfAccount,
-                rstk__socust_cclass__r = cclass,
-                rstk__socust_dimval__r = dimval,
-                rstk__socust_dimval2__r = dimval2,
-                rstk__socust_dfltprodtype__c = dfltProdType,
-                rstk__socust_prodind__c = prodInd,
-                rstk__socust_serviceind__c = serviceInd,
-                rstk__socust_maintcurrind__c = maintCurrInd,
-                rstk__socust_terms__r = terms
-            };
+                var rootstockCustomer = new RstkCustomer
+                {
+                    rstk__socust_custno__c = salesOrderCustomer.CustomerNo,
+                    rstk__socust_sf_account__c = salesOrderCustomer.SFAccountID,
+                    rstk__socust_cclass__r = ExternalReferenceId.Create("rstk__socclass__c", salesOrderCustomer.CustomerClass),
+                    rstk__socust_dimval__r = ExternalReferenceId.Create("rstk__sydim__c", salesOrderCustomer.AccountingDimension1),
+                    rstk__socust_dimval2__r = ExternalReferenceId.Create("rstk__sydim__c", salesOrderCustomer.AccountingDimension2),
+                    rstk__socust_dfltprodtype__c = salesOrderCustomer.DefaultProductType,
+                    rstk__socust_prodind__c = salesOrderCustomer.CustomerBuysProduct,
+                    rstk__socust_serviceind__c = salesOrderCustomer.CustomerBuysService,
+                    rstk__socust_maintcurrind__c = salesOrderCustomer.PlaceOrdersInTheCustomerCurrency,
+                    rstk__socust_terms__r = ExternalReferenceId.Create("rstk__syterms__c", salesOrderCustomer.PaymentTerms)
+                };
+
+                return Result.Ok(rootstockCustomer);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<RstkCustomer>(e.Message);
+            }
         }
 
         #endregion

@@ -29,16 +29,27 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             try
             {
                 var salesOrderCreatedResult = MedSalesOrder.Create(payload, orderDefaults);
-                if (salesOrderCreatedResult.IsSuccess)
+                if (salesOrderCreatedResult.IsFailed)
                 {
-                    salesAgg.SalesOrder = salesOrderCreatedResult.Value;
-                    salesAgg.SalesOrderCustomer = SalesOrderCustomer.Create(payload, orderDefaults);
-                    salesAgg.SalesOrderCustomerAddress = SalesOrderCustomerAddress.Create(payload);
-
-                    return Result.Ok(salesAgg);
+                    return Result.Fail<SalesAgg>(salesOrderCreatedResult.Errors);
                 }
+                salesAgg.SalesOrder = salesOrderCreatedResult.Value;
 
-                return Result.Fail<SalesAgg>(salesOrderCreatedResult.Errors);
+                var salesOrderCustomerCreatedResult = SalesOrderCustomer.Create(payload, orderDefaults);
+                if (salesOrderCustomerCreatedResult.IsFailed)
+                {
+                    return Result.Fail<SalesAgg>(salesOrderCustomerCreatedResult.Errors);
+                }
+                salesAgg.SalesOrderCustomer = salesOrderCustomerCreatedResult.Value;
+
+                var salesOrderCustomerAddressCreatedResult = SalesOrderCustomerAddress.Create(payload);
+                if (salesOrderCustomerAddressCreatedResult.IsFailed)
+                {
+                    return Result.Fail<SalesAgg>(salesOrderCustomerAddressCreatedResult.Errors);
+                }
+                salesAgg.SalesOrderCustomerAddress = salesOrderCustomerAddressCreatedResult.Value;
+
+                return Result.Ok(salesAgg);
             }
             catch (Exception e)
             {
@@ -74,7 +85,6 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                     result.WithErrors(lineResult.Errors);
                 }
             }
-
             if (result.IsFailed)
             {
                 return Result.Fail<SalesAgg>(result.Errors);

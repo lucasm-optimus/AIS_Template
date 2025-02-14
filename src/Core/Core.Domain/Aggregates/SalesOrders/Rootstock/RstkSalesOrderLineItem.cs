@@ -8,6 +8,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
     public class RstkSalesOrderLineItem
     {
+        #region Properties
+
         public string rstk__soapi_mode__c { get; private set; }
         public string rstk__soapi_sohdr__c { get; private set; }
         public string rstk__soapi_soprod__c { get; private set; }
@@ -24,6 +26,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public string rstk__soapi_shiplocnum__c { get; private set; }
         public string currencyIsoCode { get; private set; }
 
+        #endregion
+
+        #region Constructors
 
         private RstkSalesOrderLineItem() { }
         public static Result<RstkSalesOrderLineItem> Create(MedSalesOrder salesOrder, SalesOrderLineItem lineItem)
@@ -54,9 +59,15 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         public void UpdateSoHdr(string value)
         {
             rstk__soapi_sohdr__c = value;
         }
+        
+        #endregion
     }
 }

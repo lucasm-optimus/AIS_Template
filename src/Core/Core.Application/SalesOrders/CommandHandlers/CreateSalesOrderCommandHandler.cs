@@ -10,12 +10,18 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<SalesOrderCreated>> Handle(CreateSalesOrderCommand request, CancellationToken cancellationToken)
         {
+            #region Validation
+
             if (await rootstockService.SalesOrderExists(request.SalesOrder.CustomerReference))
             {
                 logger.LogInformation($"[{request.CorrelationId}] Sales order already exists for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 // check the return value
                 return Result.Ok();
             }
+
+            #endregion
+
+            #region Update foreign keys
 
             // Get OrderType Id
             var orderTypeResult = await rootstockService.GetIdFromExternalColumnReference("rstk__sootype__c", "rstk__externalid__c", $"{request.SalesOrder.Division}_{request.SalesOrder.OrderType}");
@@ -66,6 +72,9 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 item.UpdateProductId(customerProdResult.Value);
             }
 
+            #endregion
+
+            #region Create Sales Order
 
             // Create Sales Agg
             logger.LogInformation($"[{request.CorrelationId}] Creating rootstock sales order started for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
@@ -160,6 +169,8 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Creating rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
                 return Result.Fail($"[{request.CorrelationId}] Creating rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
             }
+
+            #endregion
         }
     }
 }

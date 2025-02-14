@@ -4,6 +4,8 @@ namespace Tilray.Integrations.Core.Models.Ecom
 {
     public class SalesOrderLine
     {
+        #region Properties
+
         [JsonProperty("product")]
         public string Product { get; internal set; }
 
@@ -31,6 +33,10 @@ namespace Tilray.Integrations.Core.Models.Ecom
         [JsonProperty("id")]
         public string Id { get; internal set; }
 
+        #endregion
+
+        #region Constructors
+
         public static SalesOrderLine Create(string product, double quantity, double unitPrice, string lot, double coveredByInsurance, double gramsCoveredByInsurance, string obeersku, string fulfillloc, string id)
         {
             return new SalesOrderLine
@@ -46,5 +52,7 @@ namespace Tilray.Integrations.Core.Models.Ecom
                 Id = id
             };
         }
+
+        #endregion
     }
 }

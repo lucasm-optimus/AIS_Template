@@ -3,6 +3,7 @@ using Tilray.Integrations.Core.Application.Ecom.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -14,8 +15,16 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
         public async Task<Result<CustomerCreated>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
             logger.LogInformation($"Begin creating customer {request.customer.CustomerNo}.");
-            var rootstockCustomer = request.customer.GetRootstockCustomer();
-            var createdCustomerResult = await rootstockService.CreateCustomer(rootstockCustomer);
+            var rootstockCustomerResult = RstkCustomer.Create(request.customer);
+
+            if (rootstockCustomerResult.IsFailed)
+            {
+                var errorMessage = $"Failed to create customer {request.customer.CustomerNo}.";
+                logger.LogError(errorMessage);
+                return Result.Fail<CustomerCreated>(rootstockCustomerResult.Errors);
+            }
+
+            var createdCustomerResult = await rootstockService.CreateCustomer(rootstockCustomerResult.Value);
 
             if (createdCustomerResult.IsFailed)
             {

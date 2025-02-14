@@ -3,6 +3,7 @@ using Tilray.Integrations.Core.Application.Ecom.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {
@@ -30,8 +31,15 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
             var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(customerInfo.CustomerId) ?? 1;
 
             logger.LogInformation($"Creating customer address {nextAddressSequence} for customer {customerInfo.CustomerId}.");
-            var rootstockCustomerAddress = request.Address.GetRootstockCustomerAddress(customerInfo.CustomerId, nextAddressSequence);
-            var createdCustomerAddressResult = await rootstockService.CreateCustomerAddress(rootstockCustomerAddress);
+            var rootstockCustomerAddressResult = RstkCustomerAddress.Create(request.Address, customerInfo.CustomerId, nextAddressSequence);
+
+            if (rootstockCustomerAddressResult.IsFailed)
+            {
+                var errorMessage = $"Failed to create customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.";
+                logger.LogError(errorMessage);
+                return Result.Fail<CustomerAddressCreated>(rootstockCustomerAddressResult.Errors);
+            }
+            var createdCustomerAddressResult = await rootstockService.CreateCustomerAddress(rootstockCustomerAddressResult.Value);
 
             if (createdCustomerAddressResult.IsFailed)
             {
@@ -50,7 +58,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 return Result.Fail<CustomerAddressCreated>(customerAddressInfoResult.Errors);
             }
 
-            return Result.Ok(new CustomerAddressCreated(customerAddressInfoResult.Value, customerInfoResult.Value));
+            return Result.Ok(new CustomerAddressCreated(customerAddressInfoResult.Value, customerInfo));
         }
     }
 }
