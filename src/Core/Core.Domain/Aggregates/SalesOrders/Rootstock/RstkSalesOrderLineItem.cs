@@ -43,7 +43,6 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
                     rstk__soapi_updatecustfields__c = true,
                     rstk__soapi_async__c = salesOrder.BackgroundProcessing ?? false,
                     rstk__soapi_upgroup__c = lineItem.UploadGroup,
-                    //rstk__soapi_shiplocnum__c = lineItem.DefaultShipFromLocationNo.ToString(),
                     currencyIsoCode = lineItem.CurrencyIsoCode ?? null
                 };
 
