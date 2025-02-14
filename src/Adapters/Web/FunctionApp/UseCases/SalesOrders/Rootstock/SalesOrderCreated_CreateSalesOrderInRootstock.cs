@@ -1,3 +1,5 @@
+using Tilray.Integrations.Core.Common.Stream;
+
 namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
 public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, ILogger<SalesOrderCreated_CreateSalesOrderInRootstock> logger)
@@ -7,7 +9,7 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
     /// </summary>
     [Function(nameof(SalesOrderCreated_CreateSalesOrderInRootstock))]
     public async Task Run(
-        [ServiceBusTrigger("%TopicSalesOrderCreated%", "%SubscriptionCreateMedSalesOrderInRootStock%", Connection = "ServiceBusConnectionString")]
+        [ServiceBusTrigger(TOPICS.SalesOrderCreated, SUBSCRIPTIONS.CreateSalesOrderInRootStock, Connection = "ServiceBusConnectionString")]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {

@@ -14,11 +14,17 @@ public class SharepointStartup : IStartupRegister
 
         services.AddScoped<ISharepointService, SharepointService>();
 
-        var options = new ClientSecretCredentialOptions { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
+        if (settings != null &&
+            !string.IsNullOrWhiteSpace(settings.TenantId) &&
+            !string.IsNullOrWhiteSpace(settings.ClientId) &&
+            !string.IsNullOrWhiteSpace(settings.ClientSecret) &&
+            settings.Scopes != null && settings.Scopes.Length > 0)
+        {
+            var options = new ClientSecretCredentialOptions { AuthorityHost = AzureAuthorityHosts.AzurePublicCloud };
+            var clientSecretCredential = new ClientSecretCredential(settings.TenantId, settings.ClientId, settings.ClientSecret, options);
 
-        ClientSecretCredential clientSecretCredential = new(settings.TenantId, settings.ClientId, settings.ClientSecret, options);
-
-        services.AddSingleton(new GraphServiceClient(clientSecretCredential, settings.Scopes));
+            services.AddSingleton(new GraphServiceClient(clientSecretCredential, settings.Scopes));
+        }
 
         services.AddAutoMapper(typeof(SharepointInvoiceMapper));
         return services;
