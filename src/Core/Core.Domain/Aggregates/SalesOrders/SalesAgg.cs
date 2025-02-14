@@ -1,12 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 using Tilray.Integrations.Core.Models.Ecom;
-using static Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Constants.Ecom;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
@@ -17,14 +13,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         public MedSalesOrder SalesOrder { get; private set; }
         public SalesOrderCustomer SalesOrderCustomer { get; private set; }
         public SalesOrderCustomerAddress SalesOrderCustomerAddress { get; private set; }
-        public SalesOrderPrepayment SalesOrderPrepayment { get; private set; }
 
-        public RstkCustomer RootstockCustomer { get; private set; }
-        public RstkCustomerAddress RootstockCustomerAddress { get; private set; }
         public RstkSalesOrder RootstockSalesOrder { get; private set; }
         public List<RstkSalesOrderLineItem> RootstockOrderLines { get; set; }
-        public RstkSalesOrderPrePayment PrePayment { get; private set; }
-        public RstkSyDataPrePayment SyDataPrePayment { get; private set; }
 
         #endregion
 
@@ -86,7 +77,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
             for (var i = 1; i < salesOrder.LineItems.Count; i++)
             {
-                var lineResult = RstkSalesOrderLineItem.Create(salesOrder: salesOrder, lineItem: salesOrder.LineItems[i]);
+                var lineResult = RstkSalesOrderLineItem.Create(salesOrder, salesOrder.LineItems[i]);
                 if (lineResult.IsFailed)
                 {
                     return Result.Fail<SalesAgg>(lineResult.Errors);
@@ -94,27 +85,13 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                 salesAgg.RootstockOrderLines.Add(lineResult.Value);
             }
 
-            if (salesOrder.CCPrepayment != null)
+            var ccPrepaymentAddedResult = salesAgg.SalesOrder.AddCCPrePayment();
+            if (ccPrepaymentAddedResult.IsFailed)
             {
-                var rsoPrePaymentResult = RstkSyDataPrePayment.Create(salesOrder.CCPrepayment);
-                if (rsoPrePaymentResult.IsFailed)
-                {
-                    return Result.Fail<SalesAgg>(rsoPrePaymentResult.Errors);
-                }
-                salesAgg.SyDataPrePayment = rsoPrePaymentResult.Value;
+                return ccPrepaymentAddedResult;
             }
 
             return Result.Ok(salesAgg);
-        }
-
-        public Result<RstkSyDataPrePayment> HasSyDataPrePayment(string soHdrId)
-        {
-            if (SyDataPrePayment != null)
-            {
-                SyDataPrePayment.UpdateSoHdrId(soHdrId);
-                return Result.Ok(SyDataPrePayment);
-            }
-            return Result.Fail<RstkSyDataPrePayment>("No SyDataPrePayment found");
         }
 
         #endregion
@@ -253,11 +230,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                 LineItems = new List<SalesOrderLineItem>()
             };
 
-            if (payload.AmountPaidByCustomer != null && payload.AmountPaidByCustomer != 0)
+            if (payload.AmountPaidByCustomer != 0)
             {
                 salesOrder.CCPrepayment = CCPrepayment.Create(payload.AmountPaidByCustomer, payload.PrepaymentTransactionID, orderDefaults.Medical.PaymentGateway);
             }
-            if (payload.AmountPaidByBillTo != null & payload.AmountPaidByBillTo != 0)
+            if (payload.AmountPaidByBillTo != 0)
             {
                 salesOrder.StandardPrepayment = StandardPrepayment.Create(payload.AmountPaidByBillTo, payload.CustomerAccountNumber);
             }

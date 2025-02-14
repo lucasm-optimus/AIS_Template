@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
@@ -88,10 +89,38 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         public string CustomerAddressReference { get; set; }
         [JsonProperty("customerId ")]
         public string CustomerId { get; set; }
+        public RstkSyDataPrePayment SyDataPrePayment { get; private set; }
 
         #endregion
 
         #region Public Methods
+
+        public Result AddCCPrePayment()
+        {
+            if (CCPrepayment != null)
+            {
+                var rsoPrePaymentResult = RstkSyDataPrePayment.Create(CCPrepayment);
+                if (rsoPrePaymentResult.IsFailed)
+                {
+                    return Result.Fail(rsoPrePaymentResult.Errors);
+                }
+
+                SyDataPrePayment = rsoPrePaymentResult.Value;
+                return Result.Ok();
+            }
+
+            return Result.Fail("No CC prepayment found");
+        }
+
+        public Result<RstkSyDataPrePayment> HasSyDataPrePayment(string soHdrId)
+        {
+            if (SyDataPrePayment != null)
+            {
+                SyDataPrePayment.UpdateSoHdrId(soHdrId);
+                return Result.Ok(SyDataPrePayment);
+            }
+            return Result.Fail<RstkSyDataPrePayment>("No SyDataPrePayment found");
+        }
 
         public void UpdateCustomerAddressReference(string customerAddressReference)
         {
@@ -102,7 +131,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             if (StandardPrepayment != null)
             {
-                return SalesOrderPrepayment.Create(StandardPrepayment, this.Customer, this.Division, createdSalesOrderId, prePaymentAccount);
+                return SalesOrderPrepayment.Create(StandardPrepayment.AmountPaid, this.CustomerId, this.Division, createdSalesOrderId, prePaymentAccount, this.CustomerAddressId);
+            }
+            if (CCPrepayment != null)
+            {
+                return SalesOrderPrepayment.Create(CCPrepayment.AmountPrepaidByCC, this.CustomerId, this.Division, createdSalesOrderId, prePaymentAccount, this.CustomerAddressId);
             }
 
             return Result.Fail<SalesOrderPrepayment>("No prepayment found");

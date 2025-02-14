@@ -41,7 +41,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         private SalesOrderPrepayment() { }
 
-        public static Result<SalesOrderPrepayment> Create(StandardPrepayment standardPrepayment, string soCustomerNo, string division, string createdSalesOrderId, string prePaymentAccount)
+        public static Result<SalesOrderPrepayment> Create(double amount, string customerId, string division, string createdSalesOrderId, string prePaymentAccount, string customerBillToAddressId)
         {
             try
             {
@@ -50,12 +50,13 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
                     ApplicationMethod = "Maximum Amount",
                     PrepaymentType = "Sales Order",
                     OrderID = createdSalesOrderId,
-                    Customer = standardPrepayment.PrepaymentCustomer,
+                    Customer = customerId,
                     UseDefaultBillToAddress = true,
-                    SOCustomerNo = soCustomerNo,
+                    SOCustomerNo = customerId,
                     PrepaymentAccount = prePaymentAccount,
                     Division = division,
-                    Amount = standardPrepayment.AmountPaid,
+                    Amount = amount,
+                    CustomerBillToAddressID = customerBillToAddressId
                 };
 
                 return Result.Ok(prePayment);
