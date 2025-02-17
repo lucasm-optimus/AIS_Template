@@ -37,6 +37,11 @@ public static class Helpers
         return new StringContent(ToString(entity), Encoding.UTF8, "application/json");
     }
 
+    public static string GetErrorMessage<T>(IEnumerable<T> items)
+    {
+        return string.Join(", ", items.Select(item => item?.ToString() ?? string.Empty));
+    }
+
     public static string ConvertToCsv<T>(IEnumerable<T> data)
     {
         var properties = typeof(T).GetProperties();

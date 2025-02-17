@@ -99,7 +99,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidCustomers.Any())
         {
-            var errorMessage = $"The following customers could not be found: {string.Join(", ", invalidCustomers)}";
+            var errorMessage = $"The following customers could not be found: {Helpers.GetErrorMessage(invalidCustomers)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -127,7 +127,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidItems.Any())
         {
-            var errorMessage = $"The following items could not be found: {string.Join(", ", invalidItems)}";
+            var errorMessage = $"The following items could not be found: {Helpers.GetErrorMessage(invalidItems)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -161,7 +161,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidUploadGroups.Any())
         {
-            var errorMessage = $"The following upload groups have already been used: {string.Join(", ", invalidUploadGroups)}";
+            var errorMessage = $"The following upload groups have already been used: {Helpers.GetErrorMessage(invalidUploadGroups)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -207,7 +207,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         return errors.Count == 0
             ? Result.Ok()
-            : Result.Fail($"Failed to create the following line items: {string.Join("; ", errors)}");
+            : Result.Fail($"Failed to create the following line items: {Helpers.GetErrorMessage(errors)}");
     }
 
     private async Task<Result<string>> PostRootstockDataAsync(string objectName, object obj)

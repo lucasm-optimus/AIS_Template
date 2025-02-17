@@ -109,7 +109,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             if (result.IsFailed)
             {
                 errorsGrpo.AddRange(obeerInvoice.Import.Items.Select(item =>
-                    ErrorFactory.CreateGrpoLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
+                    ErrorFactory.CreateGrpoLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
             }
         }
     }
@@ -151,7 +151,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
         if (result.IsFailed)
         {
             errorsNonPO.AddRange(obeerInvoice.Import.Items.Select(item =>
-                ErrorFactory.CreateNonPOLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), string.Join(", ", result.Errors))));
+                ErrorFactory.CreateNonPOLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
         }
     }
 

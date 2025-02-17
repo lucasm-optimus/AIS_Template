@@ -9,7 +9,7 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
     /// </summary>
     [Function(nameof(SalesOrderCreated_CreateSalesOrderInRootstock))]
     public async Task Run(
-        [ServiceBusTrigger(TOPICS.SalesOrderCreated, SUBSCRIPTIONS.CreateSalesOrderInRootStock, Connection = "ServiceBusConnectionString")]
+        [ServiceBusTrigger(Topics.SalesOrderCreated, Subscriptions.CreateSalesOrderInRootStock, Connection = "ServiceBusConnectionString")]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
@@ -17,7 +17,7 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
         var result = await mediator.Send(new CreateSalesOrderInRootstockCommand(salesOrder));
         if (result.IsFailed)
         {
-            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors.Select(e => e.Message)));
+            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
         }
     }
 }

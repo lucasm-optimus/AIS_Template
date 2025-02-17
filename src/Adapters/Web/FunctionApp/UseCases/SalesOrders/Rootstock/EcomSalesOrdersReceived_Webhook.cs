@@ -26,7 +26,7 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
         if (response.IsSuccess)
         {
             var salesOrders = response.Value.salesOrder;
-            var sender = serviceBusClient.CreateSender(TOPICS.EcomSalesOrderReceived);
+            var sender = serviceBusClient.CreateSender(Topics.EcomSalesOrderReceived);
 
             foreach (var salesOrder in salesOrders)
             {

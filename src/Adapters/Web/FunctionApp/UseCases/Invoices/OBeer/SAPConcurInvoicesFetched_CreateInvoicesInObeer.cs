@@ -14,7 +14,7 @@ public class SAPConcurInvoicesFetched_CreateInvoicesInObeer(IMediator mediator, 
         var result = await mediator.Send(new CreateInvoicesInObeerCommand(message.Body.ToString()));
         if (result.IsFailed)
         {
-            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", result.Errors));
+            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
         }
     }
 }
