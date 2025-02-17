@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.18.4" />
   </ItemGroup>
 
   <ItemGroup>
