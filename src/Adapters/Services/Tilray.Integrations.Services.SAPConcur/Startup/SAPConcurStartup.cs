@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.SAPConcur.Startup;
+﻿using Tilray.Integrations.Services.SAPConcur.Service.MappingProfiles;
+
+namespace Tilray.Integrations.Services.SAPConcur.Startup;
 
 /// <summary>
 /// This classe is responsible for registering the SAPConcurService in the DI container.
@@ -20,6 +22,7 @@ public class SAPConcurStartup : IStartupRegister
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }).AddHttpMessageHandler<SAPConcurAuthHandler>();
 
+        services.AddAutoMapper(typeof(SAPConcurExpenseMapper));
         return services;
     }
 }

@@ -1,11 +1,7 @@
-﻿using System.Text;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+﻿namespace Tilray.Integrations.Services.Rootstock.Service;
 
-namespace Tilray.Integrations.Services.Rootstock.Service;
-
-public class RootstockService(HttpClient httpClient, RootstockSettings rootstockSettings, IMapper mapper,
-    ILogger<RootstockService> logger) : IRootstockService
+public class RootstockService(HttpClient httpClient, RootstockSettings rootstockSettings, RootstockGLAccountsSettings glAccountsSettings,
+    IMapper mapper, ILogger<RootstockService> logger) : IRootstockService
 {
     #region Constants
 
@@ -73,6 +69,67 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var id = JObject.Parse(responseBody)?["id"]?.ToString();
 
         return Result.Ok(id ?? string.Empty);
+    }
+
+    private async Task<Result<string>> GetChatterGroupIdAsync(string groupName)
+    {
+        var response = await httpClient.GetAsync($"{QueryUrl}?q={string.Format(RootstockQueries.GetChatterGroupIdQuery, groupName)}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            string errorMessage = Helpers.GetErrorFromResponse(response);
+            logger.LogError($"Failed to fetch Chatter Group ID. Error: {errorMessage}");
+            return Result.Fail<string>(errorMessage);
+        }
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        if (string.IsNullOrWhiteSpace(jsonResponse))
+            return Result.Fail<string>("Failed to fetch Chatter Group ID");
+
+        var records = JObject.Parse(jsonResponse)?["records"] as JArray;
+        var groupId = records?.FirstOrDefault()?["Id"]?.ToString();
+
+        return string.IsNullOrEmpty(groupId)
+            ? Result.Fail<string>("Chatter Group ID not found")
+            : Result.Ok(groupId);
+    }
+
+    private async Task<Result> PostChatterMessageAsync(string message, string groupName)
+    {
+        var groupResult = await GetChatterGroupIdAsync(groupName);
+        if (groupResult.IsFailed)
+        {
+            logger.LogError("Failed to post to Chatter group {GroupName}: {Errors}", groupName, groupResult.Errors);
+            return groupResult.ToResult();
+        }
+
+        var content = new
+        {
+            body = new
+            {
+                messageSegments = new object[] {
+                    new { type = "Text", text = $"{message}\n" },
+                    new { type = "Mention", id = groupResult.Value }
+                }
+            },
+            feedElementType = "FeedItem",
+            subjectId = groupResult.Value
+        };
+
+        var response = await httpClient.PostAsync(
+            "/services/data/v59.0/chatter/feed-elements",
+            Helpers.CreateStringContent(content)
+        );
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = Helpers.GetErrorFromResponse(response);
+            logger.LogError("Chatter post failed for {GroupName}: {Error}", groupName, error);
+            return Result.Fail(error);
+        }
+
+        logger.LogInformation("Posted message to Chatter group {GroupName}", groupName);
+        return Result.Ok();
     }
 
     private async Task<Result<IEnumerable<string>>> ValidateCustomers(IEnumerable<string> customers)
@@ -408,6 +465,68 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return responseResult.IsFailed
             ? Result.Fail<string>(responseResult.Errors)
             : Result.Ok(responseResult.Value[0]["rstk__soapi_sohdr__c"].Value);
+    }
+
+    private (RootstockJournalEntry Debit, RootstockJournalEntry Credit) CreateJournalPair(CompanyReference company,
+        Expense expense)
+    {
+        return expense switch
+        {
+            { IsTaxExpense: true } => RootstockJournalEntry.CreateTaxPair(company, expense, expense.IsNegative,
+                rootstockSettings.IntegrationUserName, glAccountsSettings),
+            { IsQstsExpense: true } => RootstockJournalEntry.CreateQSTSPair(company, expense, expense.IsNegative,
+                rootstockSettings.IntegrationUserName, glAccountsSettings),
+            _ => RootstockJournalEntry.CreateExpensePair(company, expense, expense.IsNegative,
+                rootstockSettings.IntegrationUserName, glAccountsSettings)
+        };
+    }
+
+    private async Task ProcessExpensesAsync(IEnumerable<Expense> expenses, CompanyReference company, ExpensesProcessed expensesProcessed)
+    {
+        foreach (var expense in expenses)
+        {
+            var (debit, credit) = CreateJournalPair(company, expense);
+            await ProcessJournalEntryAsync(debit, expense, company, expensesProcessed);
+            await ProcessJournalEntryAsync(credit, expense, company, expensesProcessed);
+        }
+    }
+
+    private async Task ProcessJournalEntryAsync(RootstockJournalEntry journalEntry, Expense expense, CompanyReference company, ExpensesProcessed expensesProcessed)
+    {
+        var result = await CreateAsync(journalEntry, "rstkf__jeato__c");
+        if (result.IsFailed)
+        {
+            logger.LogError("Failed to create Journal Entry: {Errors}", Helpers.GetErrorMessage(result.Errors));
+            expensesProcessed.ExpenseErrors.Add(ExpenseError.Create(company.Rootstock_Company__c, company.Company_Name__c, journalEntry.rstkf__jeato_date__c, journalEntry.rstkf__jeato_desc__c,
+                $"{expense.ReportEntryDescription} {expense.JournalPayerPaymentTypeName}", journalEntry.rstkf__jeato_acct__c, journalEntry.rstkf__jeato_dramt__c, journalEntry.rstkf__jeato_cramt__c,
+                journalEntry.rstkf__jeato_uploadgroup__c, Helpers.GetErrorMessage(result.Errors)));
+        }
+    }
+    public async Task<Result<ExpensesProcessed>> CreateJournalEntryAsync(IEnumerable<Expense> expenses)
+    {
+        var expensesProcessed = new ExpensesProcessed();
+        var companyResult = await GetAllCompanyReferencesAsync();
+
+        if (companyResult.IsFailed)
+            return Result.Fail<ExpensesProcessed>(companyResult.Errors);
+
+        foreach (var company in companyResult.Value)
+        {
+            expensesProcessed.CompanyReference = company;
+            var companyExpenses = expenses.Where(e => e.CleanCompanyCode == company.Concur_Company__c).ToList();
+
+            if (company.CanProcessExpenses && companyExpenses.Count > 0)
+                await ProcessExpensesAsync(companyExpenses, company, expensesProcessed);
+        }
+
+        return Result.Ok(expensesProcessed);
+    }
+
+    public async Task<Result> PostExpensesChatterMessageAsync(string companyNumber, int errorCount)
+    {
+        var message = $"The latest Journal Entry Upload for Expenses produced {errorCount} errors.";
+        var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
+        return await PostChatterMessageAsync(message, groupName);
     }
 
     #endregion

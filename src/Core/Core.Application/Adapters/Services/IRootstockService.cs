@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
+using Tilray.Integrations.Core.Domain.Aggregates.Expenses.Events;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
@@ -23,4 +23,6 @@ public interface IRootstockService
     Task<bool> SalesOrderExists(string customerReferenceNumber);
     Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId);
     Task<Result<string>> GetSoHdr(string soapiId);
+    Task<Result<ExpensesProcessed>> CreateJournalEntryAsync(IEnumerable<Expense> expenses);
+    Task<Result> PostExpensesChatterMessageAsync(string companyNumber, int errorCount);
 }

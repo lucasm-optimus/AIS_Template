@@ -19,3 +19,8 @@ global using Tilray.Integrations.Core.Common.Models;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
 global using Tilray.Integrations.Services.Rootstock.Service.Models;
 global using AutoMapper;
+global using System.Text;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses.Events;
+global using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;

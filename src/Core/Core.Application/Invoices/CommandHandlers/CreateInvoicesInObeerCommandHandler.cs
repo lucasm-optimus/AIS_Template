@@ -1,10 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Application.Adapters.Storage;
-using Tilray.Integrations.Core.Common.Extensions;
-using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
-
-namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
+﻿namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
 
 public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMediator mediator,
     ILogger<CreateInvoicesInObeerCommandHandler> logger, IBlobService blobService) : ICommandHandler<CreateInvoicesInObeerCommand, InvoicesProcessed>

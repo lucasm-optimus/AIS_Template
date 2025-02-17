@@ -9,8 +9,11 @@ public class RootstockStartup : IStartupRegister
 {
     public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
     {
-        var settings = configuration.GetSection("RootstockAPI").Get<RootstockSettings>();
-        services.AddSingleton(settings ?? new RootstockSettings());
+        var rootstockSettings = configuration.GetSection("RootstockAPI").Get<RootstockSettings>();
+        services.AddSingleton(rootstockSettings ?? new RootstockSettings());
+
+        var glAccountsSettings = configuration.GetSection("RootstockGLAccounts").Get<RootstockGLAccountsSettings>();
+        services.AddSingleton(glAccountsSettings ?? new RootstockGLAccountsSettings());
 
         services.AddTransient<RootstockAuthHandler>();
         services.AddHttpClient<RootstockAuthHandler>();

@@ -13,4 +13,6 @@ public class SAPConcurSettings
     public string ClientSecret { get; set; }
     public string RefreshToken { get; set; }
     public int InvoicesFetchDurationInMinutes { get; set; }
+    public int ExpensesFetchDurationInMinutes { get; set; }
+    public string ExtractDefinitionName { get; set; }
 }

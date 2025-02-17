@@ -67,7 +67,7 @@ public class LoggingMiddleware(ILogger logger) : IFunctionsWorkerMiddleware
             }
             else
             {
-                context.GetInvocationResult().Value = errorMessage;
+                context.GetInvocationResult().Value = null;
             }
         }
     }

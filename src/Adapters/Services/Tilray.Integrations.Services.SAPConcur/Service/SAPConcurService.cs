@@ -1,8 +1,7 @@
-﻿using Tilray.Integrations.Core.Common.Extensions;
+﻿namespace Tilray.Integrations.Services.SAPConcur.Service;
 
-namespace Tilray.Integrations.Services.SAPConcur.Service;
-
-public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger) : ISAPConcurService
+public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger,
+    IMapper mapper) : ISAPConcurService
 {
     #region Private methods
 
@@ -68,6 +67,33 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         return result;
     }
 
+    private async Task<Result<IEnumerable<Definition>>> GetExtractDefinitionsAsync()
+    {
+        var result = await GetAsync<IEnumerable<Definition>>("/api/expense/extract/v1.0/");
+        if (result.IsFailed)
+            return Result.Fail<IEnumerable<Definition>>(result.Errors);
+
+        var filteredDefinitions = result.Value?.Where(d => d.Name == sapConcurSettings.ExtractDefinitionName);
+        if (filteredDefinitions == null || !filteredDefinitions.Any())
+            return Result.Fail<IEnumerable<Definition>>($"No extract definition found with name {sapConcurSettings.ExtractDefinitionName}");
+
+        return Result.Ok(filteredDefinitions);
+    }
+
+    private async Task<Result<IEnumerable<Job>>> GetJobsAsync()
+    {
+        var extractDefinitionsResult = await GetExtractDefinitionsAsync();
+        if (extractDefinitionsResult.IsFailed) { return Result.Fail<IEnumerable<Job>>(extractDefinitionsResult.Errors); }
+
+        var jobsResult = await GetAsync<IEnumerable<Job>>(extractDefinitionsResult.Value.FirstOrDefault().JobLink);
+        if (jobsResult.IsFailed) { return Result.Fail<IEnumerable<Job>>(jobsResult.Errors); }
+
+        return jobsResult.Value
+            .Where(job => DateTime.TryParse(job.StopTime, out var stopTime) && stopTime > DateTime.UtcNow.AddMinutes(-sapConcurSettings.ExpensesFetchDurationInMinutes))
+            .OrderBy(job => DateTime.Parse(job.StopTime))
+            .ToList();
+    }
+
     #endregion
 
     #region Public methods
@@ -112,6 +138,47 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
 
         logger.LogInformation($"GetInvoices: Successfully fetched {invoices.Count()} invoices. InvoiceIds: {string.Join(", ", invoices.Select(data => data.ID))}");
         return Result.Ok(invoices);
+    }
+
+    public async Task<Result<IEnumerable<ExpenseDetails>>> GetExpenseFilesAsync()
+    {
+        var expenseDetailsList = new List<ExpenseDetails>();
+        var jobsResult = await GetJobsAsync();
+        if (jobsResult.IsFailed) { return Result.Fail(jobsResult.Errors); }
+
+        foreach (var job in jobsResult.Value)
+        {
+            var expenseContent = new List<Expense>();
+            using var fileStream = await client.GetStreamAsync(job.FileLink);
+            using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+
+            foreach (var entry in archive.Entries)
+            {
+                if (!entry.Name.Contains("CES_SAE")) continue;
+
+                await using var stream = entry.Open();
+                using var reader = new StreamReader(stream);
+                var expenseFile = await reader.ReadToEndAsync();
+
+                var content = expenseFile
+                    .Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                    .Select(line => line.Split('|', StringSplitOptions.RemoveEmptyEntries))
+                    .Where(parts => parts.Length > 2 && int.TryParse(parts[2], out int number) && number != 0);
+
+                var detailRecords = content
+                    .Where(record => record.Length > 0 && record[0] == "DETAIL")
+                    .Select(record => mapper.Map<Expense>(record));
+
+                expenseContent.AddRange(detailRecords);
+            }
+
+            if (expenseContent.Count != 0)
+            {
+                expenseDetailsList.Add(ExpenseDetails.Create(job.StopTime, expenseContent));
+            }
+        }
+
+        return Result.Ok(expenseDetailsList.AsEnumerable());
     }
 
     #endregion
