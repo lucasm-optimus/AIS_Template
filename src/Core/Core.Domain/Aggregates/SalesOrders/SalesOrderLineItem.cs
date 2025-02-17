@@ -9,6 +9,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class SalesOrderLineItem : Entity
     {
+        #region Properties
+
         [JsonProperty("itemNumber")]
         public string ItemNumber { get; private set; }
 
@@ -39,15 +41,13 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         [JsonProperty("uploadGroup")]
         public string UploadGroup { get; private set; }
 
-        [JsonProperty("defaultShipFromDivision")]
-        public ExternalReferenceId DefaultShipFromDivision { get; private set; }
-
-        [JsonProperty("defaultShipFromLocationNo")]
-        public ExternalReferenceId DefaultShipFromLocationNo { get; private set; }
-
         [JsonProperty("currencyIsoCode")]
         public string CurrencyIsoCode { get; private set; }
         public string ProductId { get; set; }
+
+        #endregion
+
+        #region Constructors
 
         private SalesOrderLineItem() { }
 
@@ -71,5 +71,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             ProductId = value;
         }
+
+        #endregion
     }
 }

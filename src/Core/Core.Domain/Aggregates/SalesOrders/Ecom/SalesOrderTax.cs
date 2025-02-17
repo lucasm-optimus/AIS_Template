@@ -4,6 +4,8 @@ namespace Tilray.Integrations.Core.Models.Ecom
 {
     public class SalesOrderTax
     {
+        #region Properties
+
         [JsonProperty("taxType")]
         public string TaxType { get; internal set; }
 
@@ -12,6 +14,10 @@ namespace Tilray.Integrations.Core.Models.Ecom
 
         [JsonProperty("coveredByInsurance")]
         public bool CoveredByInsurance { get; internal set; }
+
+        #endregion
+
+        #region Constructors
 
         public static SalesOrderTax Create(string taxType, double amount, bool coveredByInsurance)
         {
@@ -22,5 +28,7 @@ namespace Tilray.Integrations.Core.Models.Ecom
                 CoveredByInsurance = coveredByInsurance
             };
         }
+
+        #endregion
     }
 }

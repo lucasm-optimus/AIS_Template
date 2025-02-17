@@ -110,7 +110,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         if (digestsResult.IsFailed)
         {
             logger.LogError("GetInvoices: Failed to retrieve invoice digests: {Errors}",
-                string.Join("; ", digestsResult.Errors));
+                Helpers.GetErrorMessage(digestsResult.Errors));
             return Result.Fail<IEnumerable<Invoice>>(digestsResult.Errors);
         }
 
@@ -136,7 +136,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             .Where(r => r.IsSuccess && r.Value != null)
             .Select(r => r.Value);
 
-        logger.LogInformation($"GetInvoices: Successfully fetched {invoices.Count()} invoices. InvoiceIds: {string.Join(", ", invoices.Select(data => data.ID))}");
+        logger.LogInformation($"GetInvoices: Successfully fetched {invoices.Count()} invoices. InvoiceIds: {Helpers.GetErrorMessage(invoices.Select(data => data.ID))}");
         return Result.Ok(invoices);
     }
 

@@ -38,7 +38,7 @@ public static class StartupExtensions
         {
             builder.Configuration.AddAzureKeyVault(
                 new Uri(keyVaultUri),
-                new DefaultAzureCredential(), new PrefixKeyVaultSecretManager("IntegrationsFunctions"));
+                new DefaultAzureCredential(), new PrefixKeyVaultSecretManager("AISFunctions"));
         }
 
         builder.Services.RegisterStartupClasses(configuration);

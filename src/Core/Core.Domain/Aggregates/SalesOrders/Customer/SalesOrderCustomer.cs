@@ -29,42 +29,55 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         #region Constructors
 
         private SalesOrderCustomer() { }
-        public static SalesOrderCustomer Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public static Result<SalesOrderCustomer> Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
-            return new SalesOrderCustomer
+            try
             {
-                CustomerNo = payload.CustomerAccountNumber,
-                AccountingDimension2 = $"{orderDefaults.Medical.Division}_{orderDefaults.Medical.Customer.AccountingDimension2Suffix}{payload.ShipToState}",
-                PaymentTerms = $"{orderDefaults.Medical.Customer.PaymentTerms}",
-                CustomerBuysProduct = true,
-                AccountingDimension1 = $"{orderDefaults.Medical.Division}_{(payload.PatientType == "Veteran" ? orderDefaults.Medical.Customer.AccountingDimension1Veteran : orderDefaults.Medical.Customer.AccountingDimension1Civilian)}",
-                CustomerClass = orderDefaults.Medical.Customer.CustomerClass,
-                SFAccountID = payload.CustomerAccountID,
-                CustomerBuysService = true,
-                PlaceOrdersInTheCustomerCurrency = true,
-                UseSFAddresses = false,
-                DefaultProductType = "All"
-            };
+                var salesOrderCustomer = new SalesOrderCustomer
+                {
+                    CustomerNo = payload.CustomerAccountNumber,
+                    AccountingDimension2 = $"{orderDefaults.Medical.Division}_{orderDefaults.Medical.Customer.AccountingDimension2Suffix}{payload.ShipToState}",
+                    PaymentTerms = $"{orderDefaults.Medical.Customer.PaymentTerms}",
+                    CustomerBuysProduct = true,
+                    AccountingDimension1 = $"{orderDefaults.Medical.Division}_{(payload.PatientType == "Veteran" ? orderDefaults.Medical.Customer.AccountingDimension1Veteran : orderDefaults.Medical.Customer.AccountingDimension1Civilian)}",
+                    CustomerClass = orderDefaults.Medical.Customer.CustomerClass,
+                    SFAccountID = payload.CustomerAccountID,
+                    CustomerBuysService = true,
+                    PlaceOrdersInTheCustomerCurrency = true,
+                    UseSFAddresses = false,
+                    DefaultProductType = "All"
+                };
+
+                return Result.Ok(salesOrderCustomer);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<SalesOrderCustomer>(e.Message);
+            }
         }
 
         #endregion
 
         #region Public Methods
 
-        public RstkCustomer GetRootstockCustomer()
+        public void UpdateCustomerClass(string value)
         {
-            return RstkCustomer.Create(
-                custNo: CustomerNo,
-                sfAccount: SFAccountID,
-                cclass: ExternalReferenceId.Create("rstk__socclass__c", CustomerClass),
-                dimval: ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension1),
-                dimval2: ExternalReferenceId.Create("rstk__sydim__c", AccountingDimension2),
-                dfltProdType: DefaultProductType,
-                prodInd: CustomerBuysProduct,
-                serviceInd: CustomerBuysService,
-                maintCurrInd: PlaceOrdersInTheCustomerCurrency,
-                terms: ExternalReferenceId.Create("rstk__syterms__c", PaymentTerms)
-              );
+            CustomerClass = value;
+        }
+
+        public void UpdateAccountingDimension1(string value)
+        {
+            AccountingDimension1 = value;
+        }
+
+        public void UpdateAccountingDimension2(string value)
+        {
+            AccountingDimension2 = value;
+        }
+
+        public void UpdatePaymentTerms(string value)
+        {
+            PaymentTerms = value;
         }
 
         #endregion

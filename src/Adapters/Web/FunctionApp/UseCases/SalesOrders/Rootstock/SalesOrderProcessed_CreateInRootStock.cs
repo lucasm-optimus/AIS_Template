@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
+using Tilray.Integrations.Core.Common.Stream;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
-using static Tilray.Integrations.Functions.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Rootstock;
 
@@ -16,7 +16,7 @@ public class SalesOrderProcessed_CreateInRootStock(IMediator mediator, ILogger<S
     /// <param name="log"></param>
 
     [Function(nameof(SalesOrderProcessed_CreateInRootStock))]
-    public async Task Run([ServiceBusTrigger(ServiceBus.Topics.EcomSalesOrderReceived, ServiceBus.Subscriptions.CreateSalesOrderInRootStock, Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
+    public async Task Run([ServiceBusTrigger(Topics.EcomSalesOrderReceived, Subscriptions.CreateMedSalesOrderInRootStock, Connection = "ServiceBusConnectionString")] ServiceBusReceivedMessage message, ServiceBusMessageActions messageActions)
     {
         try
         {

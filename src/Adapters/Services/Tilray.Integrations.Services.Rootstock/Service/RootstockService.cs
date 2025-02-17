@@ -156,7 +156,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidCustomers.Any())
         {
-            var errorMessage = $"The following customers could not be found: {string.Join(", ", invalidCustomers)}";
+            var errorMessage = $"The following customers could not be found: {Helpers.GetErrorMessage(invalidCustomers)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -184,7 +184,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidItems.Any())
         {
-            var errorMessage = $"The following items could not be found: {string.Join(", ", invalidItems)}";
+            var errorMessage = $"The following items could not be found: {Helpers.GetErrorMessage(invalidItems)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -218,7 +218,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (invalidUploadGroups.Any())
         {
-            var errorMessage = $"The following upload groups have already been used: {string.Join(", ", invalidUploadGroups)}";
+            var errorMessage = $"The following upload groups have already been used: {Helpers.GetErrorMessage(invalidUploadGroups)}";
             logger.LogError(errorMessage);
             return Result.Fail(errorMessage);
         }
@@ -264,7 +264,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         return errors.Count == 0
             ? Result.Ok()
-            : Result.Fail($"Failed to create the following line items: {string.Join("; ", errors)}");
+            : Result.Fail($"Failed to create the following line items: {Helpers.GetErrorMessage(errors)}");
     }
 
     private async Task<Result<string>> PostRootstockDataAsync(string objectName, object obj)
@@ -298,7 +298,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
         else
         {
-            string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')"; ;
+            string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')";
             logger.LogError($"Failed to fetch. Error: {errorMessage}");
             return Result.Fail(errorMessage);
         }
@@ -346,10 +346,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     public async Task<Result> CreateSalesOrderAsync(SalesOrder salesOrder)
     {
-        var headerResult = await CreateSalesOrderHeaderAsync(salesOrder);
-        return headerResult.IsFailed
-            ? Result.Fail(headerResult.Errors)
-            : await CreateSalesOrderLinesAsync(salesOrder, headerResult.Value);
+        var salesOrderHeaderResult = await CreateSalesOrderHeaderAsync(salesOrder);
+        return salesOrderHeaderResult.IsFailed
+            ? Result.Fail(salesOrderHeaderResult.Errors)
+            : await CreateSalesOrderLinesAsync(salesOrder, salesOrderHeaderResult.Value);
     }
 
     public async Task<Result<string?>> CreateCustomer(RstkCustomer customer)

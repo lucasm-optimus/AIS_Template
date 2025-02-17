@@ -9,11 +9,17 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class StandardPrepayment : Entity
     {
+        #region Properties
+
         [JsonProperty("amountPaid")]
         public double AmountPaid { get; private set; }
 
         [JsonProperty("prepaymentCustomer")]
         public string PrepaymentCustomer { get; private set; }
+
+        #endregion
+
+        #region Constructors
 
         private StandardPrepayment() { }
 
@@ -27,5 +33,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             return new StandardPrepayment(amountPaid, prepaymentCustomer);
         }
+
+        #endregion
     }
 }

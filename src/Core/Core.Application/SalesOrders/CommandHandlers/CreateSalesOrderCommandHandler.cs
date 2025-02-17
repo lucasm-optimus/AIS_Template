@@ -10,12 +10,18 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
     {
         public async Task<Result<SalesOrderCreated>> Handle(CreateSalesOrderCommand request, CancellationToken cancellationToken)
         {
+            #region Validation
+
             if (await rootstockService.SalesOrderExists(request.SalesOrder.CustomerReference))
             {
                 logger.LogInformation($"[{request.CorrelationId}] Sales order already exists for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 // check the return value
-                return Result.Fail($"[{request.CorrelationId}] Sales order already exists for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                return Result.Ok();
             }
+
+            #endregion
+
+            #region Update foreign keys
 
             // Get OrderType Id
             var orderTypeResult = await rootstockService.GetIdFromExternalColumnReference("rstk__sootype__c", "rstk__externalid__c", $"{request.SalesOrder.Division}_{request.SalesOrder.OrderType}");
@@ -24,7 +30,6 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Getting order type id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 return Result.Fail($"[{request.CorrelationId}] Getting order type id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
             }
-
             request.SalesOrder.UpdateOrderId(orderTypeResult.Value);
 
             // Get ShipVia Id
@@ -34,7 +39,6 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Getting ship via id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 return Result.Fail($"[{request.CorrelationId}] Getting ship via id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
             }
-
             request.SalesOrder.UpdateShipViaId(shipViaResult.Value);
 
             // Get carrier Id
@@ -44,7 +48,6 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Getting carrier id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 return Result.Fail($"[{request.CorrelationId}] Getting carrier id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
             }
-
             request.SalesOrder.UpdateCarrierId(carrierResult.Value);
 
             // Get Customer address id
@@ -54,9 +57,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Getting customer address id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 return Result.Fail($"[{request.CorrelationId}] Getting customer address id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
             }
-
             request.SalesOrder.UpdateCustomerAddressId(customerAddressResult.Value);
-
 
             // Get product ids
             foreach (var item in request.SalesOrder.LineItems)
@@ -71,7 +72,9 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 item.UpdateProductId(customerProdResult.Value);
             }
 
+            #endregion
 
+            #region Create Sales Order
 
             // Create Sales Agg
             logger.LogInformation($"[{request.CorrelationId}] Creating rootstock sales order started for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
@@ -108,27 +111,49 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                     await rootstockService.CreateSalesOrderLineItem(currentLineItem);
                 }
 
-                //Standard Prepayment
-                var prePaymentResult = salesAgg.SalesOrder.HasPrepayment(createdSoHdrResult.Value, "20011700");
-                if (prePaymentResult.IsSuccess)
+                // Sy Data Prepayment -  CC order
+                var syDataPrePaymentResult = salesAgg.SalesOrder.HasSyDataPrePayment(createdSoHdrResult.Value);
+                if (syDataPrePaymentResult.IsSuccess)
                 {
-                    var createdRootstockSoPrepayment = RstkSalesOrderPrePayment.Create(prePaymentResult.Value);
-                    if (createdRootstockSoPrepayment.IsFailed)
+                    var createdPrePaymentResult = await rootstockService.CreatePrePayment(syDataPrePaymentResult.Value);
+                    if (createdPrePaymentResult.IsFailed)
                     {
                         logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                         return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                     }
 
-                    await rootstockService.CreatePrePayment(createdRootstockSoPrepayment.Value);
                     logger.LogInformation($"[{request.CorrelationId}] Created rootstock prepayment for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                 }
 
-                // Sy Data Prepayment -  CC order
-                var syDataPrePaymentResult = salesAgg.HasSyDataPrePayment(createdSoHdrResult.Value);
-                if (syDataPrePaymentResult.IsSuccess)
+                //Standard Prepayment
+                var prePaymentResult = salesAgg.SalesOrder.HasPrepayment(createdSoHdrResult.Value, "20011700");
+                if (prePaymentResult.IsSuccess)
                 {
-                    var createdPrePaymentResult = await rootstockService.CreatePrePayment(syDataPrePaymentResult.Value);
-                    if (createdPrePaymentResult.IsFailed)
+                    // get division id
+                    var divisionResult = await rootstockService.GetIdFromExternalColumnReference("rstk__sydiv__c", "rstk__externalid__c", request.SalesOrder.Division);
+                    if (divisionResult.IsFailed)
+                    {
+                        logger.LogError($"[{request.CorrelationId}] Getting division id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                        return Result.Fail($"[{request.CorrelationId}] Getting division id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                    }
+
+                    // get payment account id
+                    var paymentAccountResult = await rootstockService.GetIdFromExternalColumnReference("rstk__syacc__c", "rstk__externalid__c", $"{request.SalesOrder.Division}_{prePaymentResult.Value.PrepaymentAccount}");
+                    if (paymentAccountResult.IsFailed)
+                    {
+                        logger.LogError($"[{request.CorrelationId}] Getting payment account id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                        return Result.Fail($"[{request.CorrelationId}] Getting payment account id failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                    }
+
+                    var soPrepaymentResult = RstkSalesOrderPrePayment.Create(prePaymentResult.Value, divisionResult.Value, paymentAccountResult.Value);
+                    if (soPrepaymentResult.IsFailed)
+                    {
+                        logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                        return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
+                    }
+
+                    var createdPrepaymentResult = await rootstockService.CreatePrePayment(soPrepaymentResult.Value);
+                    if (createdPrepaymentResult.IsFailed)
                     {
                         logger.LogError($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
                         return Result.Fail($"[{request.CorrelationId}] Creating rootstock prepayment failed for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID}.");
@@ -144,6 +169,8 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 logger.LogError($"[{request.CorrelationId}] Creating rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
                 return Result.Fail($"[{request.CorrelationId}] Creating rootstock sales order header for ECommerceOrderID:{request.SalesOrder.ECommerceOrderID} failed.");
             }
+
+            #endregion
         }
     }
 }

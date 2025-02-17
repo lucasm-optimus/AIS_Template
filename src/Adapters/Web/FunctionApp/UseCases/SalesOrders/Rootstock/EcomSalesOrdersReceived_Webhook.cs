@@ -1,15 +1,7 @@
-using Azure.Messaging.ServiceBus;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Common.Stream;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
-using static Tilray.Integrations.Functions.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Ecom;
 
@@ -34,7 +26,7 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
         if (response.IsSuccess)
         {
             var salesOrders = response.Value.salesOrder;
-            var sender = serviceBusClient.CreateSender(ServiceBus.Topics.EcomSalesOrderReceived);
+            var sender = serviceBusClient.CreateSender(Topics.EcomSalesOrderReceived);
 
             foreach (var salesOrder in salesOrders)
             {

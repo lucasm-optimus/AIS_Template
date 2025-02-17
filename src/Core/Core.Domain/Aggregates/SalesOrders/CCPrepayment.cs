@@ -9,6 +9,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 {
     public class CCPrepayment : Entity
     {
+        #region Properties
+
         [JsonProperty("amountPrepaidByCC")]
         public double AmountPrepaidByCC { get; private set; }
 
@@ -20,7 +22,9 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         public string PaymentGatewayId { get; set; }
 
-        private CCPrepayment() { }
+        #endregion
+
+        #region Constructors
 
         private CCPrepayment(double amountPrepaidByCC, string prepaidCCTransactionID, string ccPaymentGateway)
         {
@@ -33,5 +37,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             return new CCPrepayment(amountPrepaidByCC, prepaidCCTransactionID, ccPaymentGateway);
         }
+
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
 {
@@ -34,65 +35,46 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
         public bool rstk__socaddr_defaultinstall_ui__c { get; private set; }
         public bool rstk__socaddr_defaultshipto_ui__c { get; private set; }
         public double? rstk__socaddr_seq__c { get; private set; }
-        public ExternalReferenceId rstk__socaddr_taxloc__r { get; private set; }
+        public string rstk__socaddr_taxloc__c { get; private set; }
 
         #endregion
 
         #region Constructors
         private RstkCustomerAddress() { }
-        public static RstkCustomerAddress Create(
-            ExternalReferenceId rstkSocaddrCustnoC,
-            string externalCustomerNumberC,
-            string rstkSocaddrNameC,
-            string rstkSocaddrAddress1C,
-            string rstkSocaddrAddress2C,
-            string rstkSocaddrCityC,
-            string rstkSocaddrCountryC,
-            string rstkSocaddrStateC,
-            string rstkSocaddrZipC,
-            string rstkSocaddrEmailC,
-            bool rstkSocaddrUseasackC,
-            bool rstkSocaddrUseasbilltoC,
-            bool rstkSocaddrUseasinstallC,
-            bool rstkSocaddrUseasshiptoC,
-            bool rstkSocaddrDefaultackC,
-            bool rstkSocaddrDefaultbilltoC,
-            bool rstkSocaddrDefaultinstallC,
-            bool rstkSocaddrDefaultshiptoC,
-            bool rstkSocaddrDefaultackUiC,
-            bool rstkSocaddrDefaultbilltoUiC,
-            bool rstkSocaddrDefaultinstallUiC,
-            bool rstkSocaddrDefaultshiptoUiC,
-            double? rstkSocaddrSeqC,
-            ExternalReferenceId rstkSocaddrTaxlocR)
+        public static Result<RstkCustomerAddress> Create(SalesOrderCustomerAddress salesOrderCustomerAddress, string customerId, int customerNextAddressSequence)
         {
-            return new RstkCustomerAddress
+            try
             {
-                rstk__socaddr_custno__c = rstkSocaddrCustnoC.rstk__externalid__c,
-                External_Customer_Number__c = externalCustomerNumberC,
-                rstk__socaddr_name__c = rstkSocaddrNameC,
-                rstk__socaddr_address1__c = rstkSocaddrAddress1C,
-                rstk__socaddr_address2__c = rstkSocaddrAddress2C,
-                rstk__socaddr_city__c = rstkSocaddrCityC,
-                rstk__socaddr_country__c = rstkSocaddrCountryC,
-                rstk__socaddr_state__c = rstkSocaddrStateC,
-                rstk__socaddr_zip__c = rstkSocaddrZipC,
-                rstk__socaddr_email__c = rstkSocaddrEmailC,
-                rstk__socaddr_useasack__c = rstkSocaddrUseasackC,
-                rstk__socaddr_useasbillto__c = rstkSocaddrUseasbilltoC,
-                rstk__socaddr_useasinstall__c = rstkSocaddrUseasinstallC,
-                rstk__socaddr_useasshipto__c = rstkSocaddrUseasshiptoC,
-                rstk__socaddr_defaultack__c = rstkSocaddrDefaultackC,
-                rstk__socaddr_defaultbillto__c = rstkSocaddrDefaultbilltoC,
-                rstk__socaddr_defaultinstall__c = rstkSocaddrDefaultinstallC,
-                rstk__socaddr_defaultshipto__c = rstkSocaddrDefaultshiptoC,
-                rstk__socaddr_defaultack_ui__c = rstkSocaddrDefaultackUiC,
-                rstk__socaddr_defaultbillto_ui__c = rstkSocaddrDefaultbilltoUiC,
-                rstk__socaddr_defaultinstall_ui__c = rstkSocaddrDefaultinstallUiC,
-                rstk__socaddr_defaultshipto_ui__c = rstkSocaddrDefaultshiptoUiC,
-                rstk__socaddr_seq__c = rstkSocaddrSeqC,
-                rstk__socaddr_taxloc__r = rstkSocaddrTaxlocR
-            };
+                var rootstockCustomerAddress = new RstkCustomerAddress
+                {
+                    rstk__socaddr_custno__c = customerId,
+                    External_Customer_Number__c = $"{customerId}_{customerNextAddressSequence}",
+                    rstk__socaddr_name__c = salesOrderCustomerAddress.Name,
+                    rstk__socaddr_address1__c = salesOrderCustomerAddress.Address1,
+                    rstk__socaddr_address2__c = salesOrderCustomerAddress.Address2,
+                    rstk__socaddr_city__c = salesOrderCustomerAddress.City,
+                    rstk__socaddr_country__c = salesOrderCustomerAddress.Country,
+                    rstk__socaddr_state__c = salesOrderCustomerAddress.State,
+                    rstk__socaddr_zip__c = salesOrderCustomerAddress.Zip,
+                    rstk__socaddr_email__c = salesOrderCustomerAddress.Email,
+                    rstk__socaddr_useasack__c = salesOrderCustomerAddress.IsAcknowledgement,
+                    rstk__socaddr_useasbillto__c = salesOrderCustomerAddress.IsBillTo,
+                    rstk__socaddr_useasinstall__c = salesOrderCustomerAddress.IsInstallation,
+                    rstk__socaddr_useasshipto__c = salesOrderCustomerAddress.IsShipTo,
+                    rstk__socaddr_defaultack__c = salesOrderCustomerAddress.IsDefaultAcknowledgement,
+                    rstk__socaddr_defaultbillto__c = salesOrderCustomerAddress.IsDefaultBillTo,
+                    rstk__socaddr_defaultinstall__c = salesOrderCustomerAddress.IsDefaultInstallation,
+                    rstk__socaddr_defaultshipto__c = salesOrderCustomerAddress.IsDefaultShipTo,
+                    rstk__socaddr_seq__c = customerNextAddressSequence,
+                    rstk__socaddr_taxloc__c = salesOrderCustomerAddress.TaxLocation
+                };
+
+                return Result.Ok(rootstockCustomerAddress);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail<RstkCustomerAddress>(e.Message);
+            }
         }
 
         #endregion

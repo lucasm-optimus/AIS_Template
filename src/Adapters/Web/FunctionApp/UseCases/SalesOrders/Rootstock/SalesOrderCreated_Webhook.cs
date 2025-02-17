@@ -15,7 +15,7 @@ public class SalesOrderCreated_Webhook(IMediator mediator, ILogger<SalesOrderCre
         var result = await mediator.Send(new ValidateSalesOrderQuery(salesOrders));
 
         return result.IsFailed
-            ? new SalesOrderOutput { SalesOrder = null, Result = new BadRequestObjectResult(string.Join(", ", result.Errors.Select(e => e.Message))) }
+            ? new SalesOrderOutput { SalesOrder = [], Result = new BadRequestObjectResult(Helpers.GetErrorMessage(result.Errors)) }
             : new SalesOrderOutput { SalesOrder = result.Value, Result = new OkObjectResult("Sales Order(s) are being processed") };
     }
 }
