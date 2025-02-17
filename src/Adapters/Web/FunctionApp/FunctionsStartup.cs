@@ -9,13 +9,11 @@ namespace Tilray.Integrations.Functions
     {
         public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
         {
-            var orderDefaults  = configuration.GetSection("OrderDefaults").Get<OrderDefaultsSettings>();
+            var orderDefaults = configuration.GetSection("OrderDefaults").Get<OrderDefaultsSettings>();
             if (orderDefaults != null)
             {
                 services.AddSingleton(orderDefaults);
             }
-
-            services.AddSingleton(options => { return new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnectionString")); });
 
             return services;
         }
