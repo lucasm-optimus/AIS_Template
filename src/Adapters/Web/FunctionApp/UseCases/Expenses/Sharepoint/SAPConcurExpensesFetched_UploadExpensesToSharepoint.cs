@@ -12,7 +12,7 @@ public class SAPConcurExpensesFetched_UploadExpensesToSharepoint(ILogger<SAPConc
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(message.Body.ToString().ToObject<UploadExpensesToSharepointCommand>());
+        var result = await mediator.Send(new UploadExpensesToSharepointCommand(message.Body.ToString()));
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));

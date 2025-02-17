@@ -9,7 +9,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
     {
         return typeof(T) switch
         {
-            Type invoice when invoice == typeof(Invoice) => sharepointSettings.InvoicesSubFolderPath,
+            Type invoice when invoice == typeof(SharepointInvoice) => sharepointSettings.InvoicesSubFolderPath,
             Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
             Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
             Type error when error == typeof(ExpenseError) => sharepointSettings.ExpensesErrorsSubFolderPath,
@@ -25,8 +25,8 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
         return expenseType switch
         {
-            ExpenseType.Cash => $"{basePath}{companyName}{expensesFolder}/Expenses_Cash_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
-            ExpenseType.Company => $"{basePath}{companyName}{expensesFolder}/Expenses_Company_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
+            ExpenseType.Cash => $"{basePath}/{companyName}/{expensesFolder}/Expenses_Cash_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
+            ExpenseType.Company => $"{basePath}/{companyName}/{expensesFolder}/Expenses_Company_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
             _ => $"{basePath}/General/Expenses/Expenses_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv"
         };
     }
@@ -99,7 +99,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
                 invoice.LineItems.LineItem.Select((lineItem, index) =>
                 new { invoice, lineItem, LineItemNumber = index + 1 })
                     )
-            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber)));
+            .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber))).ToList();
 
         return await UploadFileAsync(sharepointInvoices, companyReference);
     }

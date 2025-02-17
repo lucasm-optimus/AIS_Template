@@ -7,7 +7,7 @@ public class GetExpensesFromSAPConcur(ILogger<GetExpensesFromSAPConcur> logger, 
     /// </summary>
     [Function("GetExpensesFromSAPConcur")]
     [ServiceBusOutput(Topics.SAPConcurExpensesFetched, Connection = "ServiceBusConnectionString")]
-    public async Task<IEnumerable<string>> Run([TimerTrigger("%GetExpensesFromSAPConcurCRON%", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task<IEnumerable<string>> Run([TimerTrigger("%GetExpensesFromSAPConcurCRON%")] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetAllExpenses());
         if (result.IsSuccess)

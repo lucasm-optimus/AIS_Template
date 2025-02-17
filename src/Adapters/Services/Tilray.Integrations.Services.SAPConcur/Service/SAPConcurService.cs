@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.SAPConcur.Service;
+﻿using Tilray.Integrations.Services.SAPConcur.Service.Models;
+
+namespace Tilray.Integrations.Services.SAPConcur.Service;
 
 public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger,
     IMapper mapper) : ISAPConcurService
@@ -71,12 +73,23 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     {
         var result = await GetAsync<IEnumerable<Definition>>("/api/expense/extract/v1.0/");
         if (result.IsFailed)
+        {
+            logger.LogError("Failed to get extract definitions: {Errors}", Helpers.GetErrorMessage(result.Errors));
             return Result.Fail<IEnumerable<Definition>>(result.Errors);
+        }
 
         var filteredDefinitions = result.Value?.Where(d => d.Name == sapConcurSettings.ExtractDefinitionName);
         if (filteredDefinitions == null || !filteredDefinitions.Any())
             return Result.Fail<IEnumerable<Definition>>($"No extract definition found with name {sapConcurSettings.ExtractDefinitionName}");
 
+        if (filteredDefinitions?.Any() != true)
+        {
+            logger.LogError("No extract definition found with name {DefinitionName}",
+                sapConcurSettings.ExtractDefinitionName);
+            return Result.Ok<IEnumerable<Definition>>([]);
+        }
+
+        logger.LogInformation("Found {DefinitionCount} matching definitions", filteredDefinitions.Count());
         return Result.Ok(filteredDefinitions);
     }
 
@@ -85,13 +98,25 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         var extractDefinitionsResult = await GetExtractDefinitionsAsync();
         if (extractDefinitionsResult.IsFailed) { return Result.Fail<IEnumerable<Job>>(extractDefinitionsResult.Errors); }
 
-        var jobsResult = await GetAsync<IEnumerable<Job>>(extractDefinitionsResult.Value.FirstOrDefault().JobLink);
-        if (jobsResult.IsFailed) { return Result.Fail<IEnumerable<Job>>(jobsResult.Errors); }
+        var definition = extractDefinitionsResult.Value.FirstOrDefault() ?? new();
+        var jobsResult = await GetAsync<IEnumerable<Job>>(definition.JobLink);
+        if (jobsResult.IsFailed)
+        {
+            logger.LogError("Failed to retrieve jobs from {JobLink}: {Errors}", definition.JobLink, Helpers.GetErrorMessage(jobsResult.Errors));
+            return Result.Fail<IEnumerable<Job>>(jobsResult.Errors); }
 
-        return jobsResult.Value
+        var filteredJobs = jobsResult.Value
             .Where(job => DateTime.TryParse(job.StopTime, out var stopTime) && stopTime > DateTime.UtcNow.AddMinutes(-sapConcurSettings.ExpensesFetchDurationInMinutes))
             .OrderBy(job => DateTime.Parse(job.StopTime))
             .ToList();
+
+        if(filteredJobs.Count != 0)
+            logger.LogInformation("Found {JobCount} jobs within last {Minutes} minutes",
+                filteredJobs.Count, sapConcurSettings.ExpensesFetchDurationInMinutes);
+        else
+            logger.LogInformation("No jobs found within last {Minutes} minutes", sapConcurSettings.ExpensesFetchDurationInMinutes);
+
+        return filteredJobs;
     }
 
     #endregion
@@ -148,6 +173,8 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
 
         foreach (var job in jobsResult.Value)
         {
+            logger.LogInformation("Processing job {JobId} (StopTime: {StopTime})", job.Id, job.StopTime);
+
             var expenseContent = new List<Expense>();
             using var fileStream = await client.GetStreamAsync(job.FileLink);
             using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
@@ -160,24 +187,33 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
                 using var reader = new StreamReader(stream);
                 var expenseFile = await reader.ReadToEndAsync();
 
-                var content = expenseFile
-                    .Split("\n", StringSplitOptions.RemoveEmptyEntries)
-                    .Select(line => line.Split('|', StringSplitOptions.RemoveEmptyEntries))
-                    .Where(parts => parts.Length > 2 && int.TryParse(parts[2], out int number) && number != 0);
+                var parts = expenseFile.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                if(int.TryParse(parts[2], out int number) && number != 0)
+                {
+                    var content = expenseFile
+                        .Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(line => line.Split('|', StringSplitOptions.RemoveEmptyEntries));
 
-                var detailRecords = content
-                    .Where(record => record.Length > 0 && record[0] == "DETAIL")
-                    .Select(record => mapper.Map<Expense>(record));
+                    var detailRecords = content
+                        .Where(record => record.Length > 0 && record[0] == "DETAIL")
+                        .Select(record => mapper.Map<Expense>(record));
 
-                expenseContent.AddRange(detailRecords);
+                    expenseContent.AddRange(detailRecords);
+                }
             }
 
             if (expenseContent.Count != 0)
             {
+                logger.LogInformation("Adding {ExpenseCount} expenses for job {JobId}", expenseContent.Count, job.Id);
                 expenseDetailsList.Add(ExpenseDetails.Create(job.StopTime, expenseContent));
+            }
+            else
+            {
+                logger.LogWarning("No valid expense content found in job {JobId}", job.Id);
             }
         }
 
+        logger.LogInformation("Retrieved {ExpenseDetailCount} expense details", expenseDetailsList.Count);
         return Result.Ok(expenseDetailsList.AsEnumerable());
     }
 

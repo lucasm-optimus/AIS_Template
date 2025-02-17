@@ -14,6 +14,8 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
+        logger.LogInformation("Uploading all expenses to SharePoint. Total Expenses: {TotalExpenses}, StopTime: {StopTime}",
+            expenseDetails.Expenses.Count(), expenseDetails.StopTime);
         await sharepointService.UploadExpensesAsync(expenseDetails.Expenses, expenseDetails.StopTime);
 
         var companyReferencesResult = await rootstockService.GetAllCompanyReferencesAsync();
@@ -22,6 +24,9 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
 
         foreach (var companyReference in companyReferencesResult.Value)
         {
+            logger.LogInformation("Processing company: {CompanyName} ({CompanyCode}0",
+                companyReference.Company_Name__c, companyReference.Concur_Company__c);
+
             foreach (var expenseType in Enum.GetValues<ExpenseType>())
             {
                 var expenses = expenseDetails.Expenses
@@ -29,10 +34,14 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
                                (expenseType == ExpenseType.Cash ? e.IsCashExpense : e.IsCompanyExpense))
                     .ToList();
 
-                if (expenses.Count > 0)
+                if (expenses.Count == 0)
                 {
-                    await sharepointService.UploadExpensesAsync(expenses, expenseDetails.StopTime, companyReference, expenseType);
+                    logger.LogInformation("No {ExpenseType} expenses for company {CompanyName} ({CompanyCode}).",
+                        expenseType, companyReference.Company_Name__c, companyReference.Concur_Company__c);
+                    continue;
                 }
+
+                await sharepointService.UploadExpensesAsync(expenses, expenseDetails.StopTime, companyReference, expenseType);
             }
         }
 

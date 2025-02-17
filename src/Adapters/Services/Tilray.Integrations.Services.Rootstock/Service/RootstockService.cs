@@ -501,6 +501,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
                 $"{expense.ReportEntryDescription} {expense.JournalPayerPaymentTypeName}", journalEntry.rstkf__jeato_acct__c, journalEntry.rstkf__jeato_dramt__c, journalEntry.rstkf__jeato_cramt__c,
                 journalEntry.rstkf__jeato_uploadgroup__c, Helpers.GetErrorMessage(result.Errors)));
         }
+        else
+        {
+            logger.LogInformation("Created Journal Entry in Rootstock. RecordId: {RecordId}", result.Value);
+        }
     }
     public async Task<Result<ExpensesProcessed>> CreateJournalEntryAsync(IEnumerable<Expense> expenses)
     {

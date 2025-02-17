@@ -8,6 +8,9 @@ public class GetAllExpensesQueryHandler(ISAPConcurService sapConcurService, IBlo
         if (expensesResult.IsFailed)
             return Result.Fail<IEnumerable<string>>(expensesResult.Errors);
 
+        if(expensesResult.Value?.Any() != true)
+            return Result.Ok<IEnumerable<string>>([]);
+
         var blobList = await Task.WhenAll(expensesResult.Value.Select(expense =>
             blobService.UploadBlobContentAsync(expense, "expense")));
 

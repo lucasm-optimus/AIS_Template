@@ -12,7 +12,7 @@ public class SAPConcurExpensesFetched_CreateJournalEntriesInRootstock(ILogger<SA
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(message.Body.ToString().ToObject<CreateJournalEntriesInRootstockCommand>());
+        var result = await mediator.Send(new CreateJournalEntriesInRootstockCommand(message.Body.ToString()));
         if (result.IsFailed)
         {
             await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
