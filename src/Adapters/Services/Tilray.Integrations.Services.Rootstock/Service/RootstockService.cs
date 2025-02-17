@@ -391,7 +391,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return responseResult.Value.Count > 0;
     }
 
-
     public async Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId)
     {
         var formattedQuery = string.Format(RootstockQueries.GetIdByExternalReferenceId, objectName, externalIdColumnName, externalId);

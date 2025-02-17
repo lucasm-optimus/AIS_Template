@@ -1,8 +1,8 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Tilray.Integrations.Core.Application.Adapters.Stream;
 using Tilray.Integrations.Core.Common.Startup;
+using Tilray.Integrations.Core.Common.Stream;
 using Tilray.Integrations.Stream.Bus.Services;
 
 namespace Tilray.Integrations.Services.Rootstock.Startup;
@@ -19,7 +19,7 @@ public class ServiceBusStartup : IStartupRegister
             throw new Exception("ServiceBus settings not found in configuration.");
 
         services.AddSingleton(new ServiceBusClient(settings.ConnectionString));
-        services.AddSingleton<IStreamService, StreamService>();
+        services.AddKeyedSingleton<IStream, AzureServiceBusService>(nameof(AzureServiceBusService));
 
         return services;
     }

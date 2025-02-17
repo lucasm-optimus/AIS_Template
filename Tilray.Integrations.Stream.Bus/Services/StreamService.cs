@@ -1,10 +1,10 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Application.Adapters.Stream;
+using Tilray.Integrations.Core.Common.Stream;
 
 namespace Tilray.Integrations.Stream.Bus.Services
 {
-    public class StreamService(ServiceBusClient client) : IStreamService
+    public class AzureServiceBusService(ServiceBusClient client) : IStream
     {
         public async Task SendEventAsync<T>(T notification, string queueName)
         {
