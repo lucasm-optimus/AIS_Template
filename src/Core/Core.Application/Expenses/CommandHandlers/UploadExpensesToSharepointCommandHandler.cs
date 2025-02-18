@@ -7,6 +7,7 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
     {
         string expensesContent = await blobService.DownloadBlobContentAsync(request.ExpenseDetailsBlobName);
         var expenseDetails = expensesContent.ToObject<ExpenseDetails>();
+        logger.LogInformation("Total {TotalExpenses} Expenses received , StopTime: {StopTime}", expenseDetails.Expenses.Count(), expenseDetails.StopTime);
 
         if (expenseDetails.Expenses?.Any() != true)
         {
@@ -14,9 +15,11 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
-        logger.LogInformation("Uploading all expenses to SharePoint. Total Expenses: {TotalExpenses}, StopTime: {StopTime}",
-            expenseDetails.Expenses.Count(), expenseDetails.StopTime);
-        await sharepointService.UploadExpensesAsync(expenseDetails.Expenses, expenseDetails.StopTime);
+        var result = Result.Ok();
+        logger.LogInformation("Uploading all expenses to SharePoint.");
+        var uploadAllResult = await sharepointService.UploadExpensesAsync(expenseDetails.Expenses, expenseDetails.StopTime);
+        if (uploadAllResult.IsFailed)
+            result.WithErrors(uploadAllResult.Errors);
 
         var companyReferencesResult = await rootstockService.GetAllCompanyReferencesAsync();
         if (companyReferencesResult.IsFailed)
@@ -24,9 +27,6 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
 
         foreach (var companyReference in companyReferencesResult.Value)
         {
-            logger.LogInformation("Processing company: {CompanyName} ({CompanyCode}0",
-                companyReference.Company_Name__c, companyReference.Concur_Company__c);
-
             foreach (var expenseType in Enum.GetValues<ExpenseType>())
             {
                 var expenses = expenseDetails.Expenses
@@ -36,15 +36,19 @@ public class UploadExpensesToSharepointCommandHandler(ISharepointService sharepo
 
                 if (expenses.Count == 0)
                 {
-                    logger.LogInformation("No {ExpenseType} expenses for company {CompanyName} ({CompanyCode}).",
+                    logger.LogInformation("No {ExpenseType} expenses for Company {CompanyName} with ConcurCompanyCode ({CompanyCode}).",
                         expenseType, companyReference.Company_Name__c, companyReference.Concur_Company__c);
                     continue;
                 }
 
-                await sharepointService.UploadExpensesAsync(expenses, expenseDetails.StopTime, companyReference, expenseType);
+                logger.LogInformation("Uploading {ExpensesCount} {ExpenseType} expenses for Company {CompanyName} with ConcurCompanyCode ({CompanyCode}).",
+                    expenses.Count, expenseType, companyReference.Company_Name__c, companyReference.Concur_Company__c);
+                var uploadResult = await sharepointService.UploadExpensesAsync(expenses, expenseDetails.StopTime, companyReference, expenseType);
+                if (uploadResult.IsFailed)
+                    result.WithErrors(uploadResult.Errors);
             }
         }
 
-        return Result.Ok();
+        return result;
     }
 }

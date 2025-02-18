@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Services.SAPConcur.Service.Models;
-
-namespace Tilray.Integrations.Services.SAPConcur.Service;
+﻿namespace Tilray.Integrations.Services.SAPConcur.Service;
 
 public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger,
     IMapper mapper) : ISAPConcurService
@@ -79,17 +77,13 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         }
 
         var filteredDefinitions = result.Value?.Where(d => d.Name == sapConcurSettings.ExtractDefinitionName);
-        if (filteredDefinitions == null || !filteredDefinitions.Any())
-            return Result.Fail<IEnumerable<Definition>>($"No extract definition found with name {sapConcurSettings.ExtractDefinitionName}");
-
         if (filteredDefinitions?.Any() != true)
         {
-            logger.LogError("No extract definition found with name {DefinitionName}",
-                sapConcurSettings.ExtractDefinitionName);
+            logger.LogError("No extract definition found with name {DefinitionName}", sapConcurSettings.ExtractDefinitionName);
             return Result.Ok<IEnumerable<Definition>>([]);
         }
 
-        logger.LogInformation("Found {DefinitionCount} matching definitions", filteredDefinitions.Count());
+        logger.LogInformation("Found the extract definition with name {DefinitionName}", sapConcurSettings.ExtractDefinitionName);
         return Result.Ok(filteredDefinitions);
     }
 
@@ -102,7 +96,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
         var jobsResult = await GetAsync<IEnumerable<Job>>(definition.JobLink);
         if (jobsResult.IsFailed)
         {
-            logger.LogError("Failed to retrieve jobs from {JobLink}: {Errors}", definition.JobLink, Helpers.GetErrorMessage(jobsResult.Errors));
+            logger.LogError("Failed to retrieve jobs from {JobLink}: Error: {Errors}", definition.JobLink, Helpers.GetErrorMessage(jobsResult.Errors));
             return Result.Fail<IEnumerable<Job>>(jobsResult.Errors); }
 
         var filteredJobs = jobsResult.Value
@@ -110,12 +104,13 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             .OrderBy(job => DateTime.Parse(job.StopTime))
             .ToList();
 
-        if(filteredJobs.Count != 0)
-            logger.LogInformation("Found {JobCount} jobs within last {Minutes} minutes",
-                filteredJobs.Count, sapConcurSettings.ExpensesFetchDurationInMinutes);
-        else
-            logger.LogInformation("No jobs found within last {Minutes} minutes", sapConcurSettings.ExpensesFetchDurationInMinutes);
+        if (filteredJobs?.Count == 0)
+        {
+            logger.LogInformation("No jobs found within the last {Minutes} minutes", sapConcurSettings.ExpensesFetchDurationInMinutes);
+            return Result.Ok<IEnumerable<Job>>([]);
+        }
 
+        logger.LogInformation("Found {JobCount} jobs within the last {Minutes} minutes", filteredJobs.Count, sapConcurSettings.ExpensesFetchDurationInMinutes);
         return filteredJobs;
     }
 
@@ -209,7 +204,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             }
             else
             {
-                logger.LogWarning("No valid expense content found in job {JobId}", job.Id);
+                logger.LogWarning("No valid expenses found for job {JobId}", job.Id);
             }
         }
 

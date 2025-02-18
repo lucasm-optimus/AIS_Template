@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Text;
 using Tilray.Integrations.Core.Application.Adapters.Storage;
@@ -6,7 +7,7 @@ using Tilray.Integrations.Storage.Blob.Startup;
 
 namespace Tilray.Integrations.Storage.Blob;
 
-internal class BlobService(BlobServiceClient blobServiceClient, BlobSettings blobSettings) : IBlobService
+internal class BlobService(BlobServiceClient blobServiceClient, BlobSettings blobSettings, ILogger<BlobService> logger) : IBlobService
 {
     #region Private members
 
@@ -40,6 +41,8 @@ internal class BlobService(BlobServiceClient blobServiceClient, BlobSettings blo
     {
         var blobClient = await GetBlobClientAsync(blobName);
         var downloadResponse = await blobClient.DownloadContentAsync();
+        logger.LogInformation("Successfully downloaded blob content for: {BlobName}", blobName);
+
         return downloadResponse.Value.Content.ToString();
     }
 

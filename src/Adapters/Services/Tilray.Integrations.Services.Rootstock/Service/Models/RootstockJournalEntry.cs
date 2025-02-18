@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
-
-namespace Tilray.Integrations.Services.Rootstock.Service.Models;
+﻿namespace Tilray.Integrations.Services.Rootstock.Service.Models;
 
 public class RootstockJournalEntry
 {

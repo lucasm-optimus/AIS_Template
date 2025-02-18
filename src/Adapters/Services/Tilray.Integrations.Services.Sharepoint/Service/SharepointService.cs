@@ -140,11 +140,13 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
             if (uploadedFile?.Id == null)
             {
-                logger.LogError("UploadFileAsync: File upload failed");
-                return Result.Fail("UploadFileAsync: File upload failed");
+                string errorMessage = $"UploadFileAsync: File upload failed for {typeof(T).Name}";
+                logger.LogError(errorMessage);
+                return Result.Fail(errorMessage);
             }
         }
 
+        logger.LogInformation("UploadFileAsync: {ObjectName} uploaded. Upload Path {UploadPath}", typeof(T).Name, uploadPath);
         return Result.Ok();
     }
 
