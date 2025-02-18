@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;

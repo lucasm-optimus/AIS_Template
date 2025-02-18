@@ -15,7 +15,6 @@ global using Polly.Retry;
 global using Polly;
 global using System.Net;
 global using System.Net.Http.Headers;
-global using Tilray.Integrations.Core.Common.Models;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
 global using Tilray.Integrations.Services.Rootstock.Service.Models;
 global using AutoMapper;

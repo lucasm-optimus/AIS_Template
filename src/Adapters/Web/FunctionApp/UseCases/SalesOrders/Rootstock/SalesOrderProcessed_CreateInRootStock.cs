@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Common.Stream;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
+using Tilray.Integrations.Core.Application.Constants;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 
 namespace Tilray.Integrations.Functions.UseCases.Rootstock;

@@ -18,7 +18,7 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator)
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Models.Ecom.SalesOrder>>(requestBody);
+        var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Domain.Aggregates.SalesOrders.Ecom.SalesOrder>>(requestBody);
 
         FluentResults.Result<SalesOrdersProcessed> response = await mediator.Send(new ProcessSalesOrdersCommand(ecomSalesOrders));
 

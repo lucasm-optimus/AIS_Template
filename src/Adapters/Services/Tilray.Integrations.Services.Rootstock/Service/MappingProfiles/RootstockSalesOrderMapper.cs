@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Rootstock.Service.MappingProfiles;
+﻿using Address = Tilray.Integrations.Services.Rootstock.Service.Models.Address;
+
+namespace Tilray.Integrations.Services.Rootstock.Service.MappingProfiles;
 
 public class RootstockSalesOrderMapper : Profile
 {

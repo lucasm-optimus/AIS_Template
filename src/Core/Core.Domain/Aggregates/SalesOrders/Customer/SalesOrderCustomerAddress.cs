@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
 {
@@ -36,7 +30,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         #region Constructors
 
         private SalesOrderCustomerAddress() { }
-        public static Result<SalesOrderCustomerAddress> Create(Models.Ecom.SalesOrder payload)
+        public static Result<SalesOrderCustomerAddress> Create(SalesOrder payload)
         {
             try
             {

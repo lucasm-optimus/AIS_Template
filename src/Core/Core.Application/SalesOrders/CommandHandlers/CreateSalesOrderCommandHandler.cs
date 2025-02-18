@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
-namespace Tilray.Integrations.Core.Application.Rootstock.Commands
+namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class CreateSalesOrderCommandHandler(IRootstockService rootstockService, ILogger<CreateSalesOrderCommandHandler> logger) : ICommandHandler<CreateSalesOrderCommand, SalesOrderCreated>
     {
@@ -160,7 +159,7 @@ namespace Tilray.Integrations.Core.Application.Rootstock.Commands
                 var currentLineItem = salesAgg.RootstockOrderLines[i];
                 currentLineItem.UpdateSoHdr(soHdrId);
                 var createSalesOrderLineItemResult = await rootstockService.CreateSalesOrderLineItem(currentLineItem);
-                
+
                 if (createSalesOrderLineItemResult.IsFailed)
                     return Result.Fail(createSalesOrderLineItemResult.Errors);
             }

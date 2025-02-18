@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
@@ -43,7 +42,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             return Result.Ok(new SalesOrdersProcessed(succesSalesOrders, failedSalesOrders));
         }
 
-        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload)
+        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload)
         {
             logger.LogInformation($"Processing sales order {payload.ECommOrderID}");
 
@@ -72,7 +71,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             return Result.Ok(salesAgg.SalesOrder);
         }
 
-        private async Task<Result> EnsureCustomerExists(Models.Ecom.SalesOrder payload, SalesAgg salesAgg)
+        private async Task<Result> EnsureCustomerExists(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload, SalesAgg salesAgg)
         {
             var customerInfoResult = await rootstockService.GetCustomerInfo(payload.CustomerAccountID);
             if (customerInfoResult.IsFailed)
@@ -97,7 +96,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             return Result.Ok();
         }
 
-        private async Task<Result> EnsureCustomerAddressExists(Models.Ecom.SalesOrder payload, SalesAgg salesAgg)
+        private async Task<Result> EnsureCustomerAddressExists(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload, SalesAgg salesAgg)
         {
             var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountNumber, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
             if (customerAddressInfoResult.IsFailed)

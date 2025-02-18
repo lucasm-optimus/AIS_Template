@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Tilray.Integrations.Core.Models.Ecom
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom
 {
     public class SalesOrderLine
     {

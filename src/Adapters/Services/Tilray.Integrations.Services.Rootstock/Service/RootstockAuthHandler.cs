@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Rootstock.Service;
+﻿using Tilray.Integrations.Core.Application.Models;
+
+namespace Tilray.Integrations.Services.Rootstock.Service;
 
 /// <summary>
 /// A <see cref="DelegatingHandler"/> which adds the Authentication header onto outgoing Rootstock HTTP requests.

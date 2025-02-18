@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Tilray.Integrations.Core.Application.Ecom.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
 using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Rootstock.Commands
 {

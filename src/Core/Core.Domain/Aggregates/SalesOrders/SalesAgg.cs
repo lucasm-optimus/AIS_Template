@@ -1,10 +1,7 @@
 ﻿using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Core.Models.Ecom;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
 {
     public class SalesAgg : AggRoot
     {
@@ -23,7 +20,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         private SalesAgg() { }
 
-        public static Result<SalesAgg> Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public static Result<SalesAgg> Create(Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             var salesAgg = new SalesAgg();
             try

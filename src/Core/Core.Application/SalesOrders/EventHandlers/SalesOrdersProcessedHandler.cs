@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Tilray.Integrations.Core.Application.Constants;
 using Tilray.Integrations.Core.Common.Stream;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
