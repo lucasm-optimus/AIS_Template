@@ -29,6 +29,7 @@
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Tilray.Integrations.Stream.Bus\Tilray.Integrations.Stream.Bus.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
