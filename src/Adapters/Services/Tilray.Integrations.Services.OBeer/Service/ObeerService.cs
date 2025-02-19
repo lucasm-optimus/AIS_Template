@@ -13,7 +13,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
     {
         string apiUrl = $"api?APICommand={obeerSettings.APICommand}&EncompassID={obeerSettings.EncompassId}&APIToken={obeerSettings.APIToken}";
 
-        var content = new StringContent(JsonConvert.SerializeObject(obeerInvoice), Encoding.UTF8, "application/json");
+        var content = Helpers.CreateStringContent(obeerInvoice);
 
         HttpResponseMessage response = await client.PostAsync(apiUrl, content);
         if (response.IsSuccessStatusCode)

@@ -26,16 +26,15 @@ public static class Helpers
         return JsonConvert.DeserializeObject<T>(jsonString);
     }
 
-    public static string ToString<T>(T entity)
+    public static string ToJsonString<T>(this T entity)
     {
         entity.ThrowIfNull();
-
         return JsonConvert.SerializeObject(entity);
     }
 
-    public static StringContent CreateStringContent<T>(T entity)
+    public static StringContent CreateStringContent<T>(this T entity)
     {
-        return new StringContent(ToString(entity), Encoding.UTF8, "application/json");
+        return new StringContent(entity.ToJsonString(), Encoding.UTF8, "application/json");
     }
 
     public static DateTime? ParseDate(string date)

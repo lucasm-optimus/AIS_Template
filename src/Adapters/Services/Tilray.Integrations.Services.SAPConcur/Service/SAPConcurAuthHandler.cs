@@ -58,7 +58,7 @@ namespace Tilray.Integrations.Services.SAPConcur.Service
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
+            var tokenResponse = content.ToObject<TokenResponse>();
             _accessToken = tokenResponse.access_token;
         }
 

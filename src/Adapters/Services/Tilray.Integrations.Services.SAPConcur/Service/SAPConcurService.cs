@@ -27,7 +27,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             return Result.Fail<T>($"Failed to fetch invoice(s) with requestUri {requestUri}. Error: {errorMessage}");
         }
 
-        var result = JsonConvert.DeserializeObject<T>(content);
+        var result = content.ToObject<T>();
 
         return result == null
             ? Result.Fail<T>("Failed to deserialize API response")
