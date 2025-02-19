@@ -22,7 +22,7 @@ resource serviceBusTopic 'Microsoft.ServiceBus/namespaces/topics@2024-01-01' =  
 
 
 // Authorization Rules as a separate resource
-module subs './7.ServicebusTopicSubscription.bicep' = [ for topic in topicsAndSubscriptions: {
+module subs './7.servicebusTopicSubscription.bicep' = [ for topic in topicsAndSubscriptions: {
   name: '${topic.name}-subs'
   params: {
     servicebusNamespaceName: pserviceBusNamespaceName
