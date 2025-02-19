@@ -1,4 +1,4 @@
-name: Deploy .NET to Azure Functions
+name: Deploy .NET to Test Azure Functions
 
 on:
   push:
