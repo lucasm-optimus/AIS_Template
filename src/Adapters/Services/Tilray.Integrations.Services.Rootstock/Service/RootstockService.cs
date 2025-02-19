@@ -180,7 +180,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (items.Count == 0)
         {
             var errorMessage = $"No Line Items are provided";
-            logger.LogError(errorMessage);
+            logger.LogWarning(errorMessage);
             return Result.Fail(errorMessage);
         }
 
@@ -212,7 +212,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (nullUploadGroups.Any())
         {
             var errorMessage = $"Some Upload Groups are null or empty";
-            logger.LogError(errorMessage);
+            logger.LogWarning(errorMessage);
             return Result.Fail(errorMessage);
         }
 
