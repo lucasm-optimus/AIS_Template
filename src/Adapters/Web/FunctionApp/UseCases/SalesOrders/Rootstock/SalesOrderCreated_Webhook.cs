@@ -2,7 +2,7 @@ using Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock.Models;
 
 namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
-public class SalesOrderCreated_Webhook(IMediator mediator, ILogger<SalesOrderCreated_Webhook> logger)
+public class SalesOrderCreated_Webhook(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for validating the sales order.

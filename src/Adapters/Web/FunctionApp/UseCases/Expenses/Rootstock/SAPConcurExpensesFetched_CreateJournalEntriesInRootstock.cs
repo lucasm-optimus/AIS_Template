@@ -2,8 +2,7 @@ using Tilray.Integrations.Core.Application.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Expenses.Rootstock;
 
-public class SAPConcurExpensesFetched_CreateJournalEntriesInRootstock(ILogger<SAPConcurExpensesFetched_CreateJournalEntriesInRootstock> logger,
-    IMediator mediator)
+public class SAPConcurExpensesFetched_CreateJournalEntriesInRootstock(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for creating journal entries in Rootstock.

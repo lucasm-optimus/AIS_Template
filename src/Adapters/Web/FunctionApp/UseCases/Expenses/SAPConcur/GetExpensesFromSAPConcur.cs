@@ -2,7 +2,7 @@ using Tilray.Integrations.Core.Application.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Expenses.SAPConcur;
 
-public class GetExpensesFromSAPConcur(ILogger<GetExpensesFromSAPConcur> logger, IMediator mediator)
+public class GetExpensesFromSAPConcur(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for fetching expenses from SAP Concur.

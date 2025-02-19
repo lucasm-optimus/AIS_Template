@@ -2,7 +2,7 @@ using Tilray.Integrations.Core.Application.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
-public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, ILogger<SalesOrderCreated_CreateSalesOrderInRootstock> logger)
+public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for creating the sales order in Rootstock.

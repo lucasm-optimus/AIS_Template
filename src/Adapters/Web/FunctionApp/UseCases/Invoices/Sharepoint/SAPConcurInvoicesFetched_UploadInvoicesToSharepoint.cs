@@ -2,7 +2,7 @@ using Tilray.Integrations.Core.Application.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Invoices.Sharepoint;
 
-public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator mediator, ILogger<SAPConcurInvoicesFetched_UploadInvoicesToSharepoint> logger)
+public class SAPConcurInvoicesFetched_UploadInvoicesToSharepoint(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for uploading invoices file to Sharepoint.

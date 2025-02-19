@@ -2,8 +2,7 @@ using Tilray.Integrations.Core.Application.Constants;
 
 namespace Tilray.Integrations.Functions.UseCases.Expenses.Sharepoint;
 
-public class SAPConcurExpensesFetched_UploadExpensesToSharepoint(ILogger<SAPConcurExpensesFetched_UploadExpensesToSharepoint> logger,
-    IMediator mediator)
+public class SAPConcurExpensesFetched_UploadExpensesToSharepoint(IMediator mediator)
 {
     /// <summary>
     /// This function is responsible for uploading expenses to Sharepoint.
