@@ -50,7 +50,7 @@ public static class Helpers
 
     public static string GetErrorMessage<T>(IEnumerable<T> items)
     {
-        return string.Join(", ", items.Select(item => item?.ToString() ?? string.Empty));
+        return string.Join(", ", items.Select(item => item is IError error ? error.Message : item?.ToString() ?? string.Empty));
     }
 
     public static string ConvertToCsv<T>(IEnumerable<T> data, string[] ignoredProperties = null)

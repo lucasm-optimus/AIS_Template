@@ -13,11 +13,19 @@ public class SalesOrderCreated_CreateSalesOrderInRootstock(IMediator mediator, I
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var salesOrder = message.Body.ToString().ToObject<SalesOrder>();
-        var result = await mediator.Send(new CreateSalesOrderInRootstockCommand(salesOrder));
-        if (result.IsFailed)
+        try
         {
-            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
+            var salesOrder = message.Body.ToString().ToObject<SalesOrder>();
+            var result = await mediator.Send(new CreateSalesOrderInRootstockCommand(salesOrder));
+            if (result.IsFailed)
+            {
+                await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
+            }
+        }
+        catch (Exception ex)
+        {
+            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: ex.Message, deadLetterErrorDescription: ex.InnerException?.Message);
+            throw;
         }
     }
 }

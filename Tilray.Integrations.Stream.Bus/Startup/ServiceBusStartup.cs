@@ -15,10 +15,11 @@ public class ServiceBusStartup : IStartupRegister
     public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
     {
         var settings = configuration.GetSection("ServiceBus").Get<ServiceBusSettings>();
-        if (settings == null)
-            throw new Exception("ServiceBus settings not found in configuration.");
+        if (settings != null && !string.IsNullOrWhiteSpace(settings.ConnectionString))
+        {
+            services.AddSingleton(new ServiceBusClient(settings.ConnectionString));
+        }
 
-        services.AddSingleton(new ServiceBusClient(settings.ConnectionString));
         services.AddKeyedSingleton<IStream, AzureServiceBusService>(nameof(AzureServiceBusService));
 
         return services;

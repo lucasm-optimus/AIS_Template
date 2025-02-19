@@ -14,10 +14,18 @@ public class SAPConcurExpensesFetched_UploadExpensesToSharepoint(ILogger<SAPConc
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var result = await mediator.Send(new UploadExpensesToSharepointCommand(message.Body.ToString()));
-        if (result.IsFailed || result.Errors.Count > 0)
+        try
         {
-            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
+            var result = await mediator.Send(new UploadExpensesToSharepointCommand(message.Body.ToString()));
+            if (result.IsFailed || result.Errors.Count > 0)
+            {
+                await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
+            }
+        }
+        catch (Exception ex)
+        {
+            await messageActions.DeadLetterMessageAsync(message, deadLetterReason: ex.Message, deadLetterErrorDescription: ex.InnerException?.Message);
+            throw;
         }
     }
 }
