@@ -51,7 +51,7 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
+          value: '~8'
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -60,6 +60,10 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet'
+        }
+        {
+          name: 'WEBSITE_PLATFORM'
+          value: '64bit'
         }
       ]
     }
