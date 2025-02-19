@@ -3,6 +3,7 @@ name: Deploy .NET to Azure Functions
 on:
   push:
     branches: ["dev"]
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-tilray-it-ais-test-cace-01'   # Replace with your Azure Functions App name
@@ -45,7 +46,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-        slot-name: 'production' # Optional: Deploy to a specific slot
 
     - name: 'Logout from Azure'
       run: az logout

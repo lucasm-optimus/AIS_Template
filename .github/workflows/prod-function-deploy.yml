@@ -3,6 +3,7 @@ name: Deploy .NET to Azure Functions
 on:
   push:
     branches: ["prod"]
+  workflow_dispatch:
 
 
 env:
@@ -46,7 +47,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-        slot-name: 'production' # Optional: Deploy to a specific slot
 
     - name: 'Logout from Azure'
       run: az logout
