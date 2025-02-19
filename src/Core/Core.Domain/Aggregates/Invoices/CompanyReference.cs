@@ -13,4 +13,5 @@ public class CompanyReference
     public bool CanProcessExpenses =>
         Rootstock_Company__c != null &&
         Expenses__c;
+    public bool CanProcessInvoicesForObeer => OBeer_Invoices__c;
 }

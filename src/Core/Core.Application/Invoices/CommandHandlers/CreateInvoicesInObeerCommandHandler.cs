@@ -11,7 +11,7 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
         logger.LogInformation("Total {InvoiceCount} invoices for company {CompanyName} received",
             invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c);
 
-        if (!invoiceGroup.Company.OBeer_Invoices__c)
+        if (!invoiceGroup.Company.CanProcessInvoicesForObeer)
         {
             logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
                 invoiceGroup.Company.Company_Name__c);

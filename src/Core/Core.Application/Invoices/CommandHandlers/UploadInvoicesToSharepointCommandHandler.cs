@@ -14,7 +14,7 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
-        if (!invoiceGroup.Company.OBeer_Invoices__c)
+        if (!invoiceGroup.Company.CanProcessInvoicesForObeer)
         {
             logger.LogInformation("Skipping SharePoint upload: Company {CompanyName} is not configured to process invoices for Obeer.",
                 invoiceGroup.Company.Company_Name__c);
