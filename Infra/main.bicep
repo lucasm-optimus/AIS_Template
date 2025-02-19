@@ -57,14 +57,6 @@ param pserviceBusNamespaceName string
 @description('Service Bus Namespace SKU Name')
 param pserviceBusNamespaceskuName string 
 
-@allowed([
-  'Basic'
-  'Standard'
-  'Premium'
-])
-@description('Service Bus Namespace SKU Tier')
-param pserviceBusNamespaceskuTier string 
-
 @description('Service Bus Namespace SKU Capacity')
 param pserviceBusNamespaceskuCapacity int
 
@@ -180,7 +172,6 @@ module serviceBusModule './modules/5.servicebus.bicep' = {
     pserviceBusNamespaceName: pserviceBusNamespaceName
     pserviceBusNamespaceskuCapacity: pserviceBusNamespaceskuCapacity
     pserviceBusNamespaceskuName: pserviceBusNamespaceskuName
-    pserviceBusNamespaceskuTier: pserviceBusNamespaceskuTier
     ptags: {}
   }
 }

@@ -38,9 +38,6 @@
     "pserviceBusNamespaceskuName": {
       "value": "Standard"
     },
-    "pserviceBusNamespaceskuTier": {
-      "value": "Standard"
-    },
     "pserviceBusNamespaceskuCapacity": {
       "value": 1
     },
