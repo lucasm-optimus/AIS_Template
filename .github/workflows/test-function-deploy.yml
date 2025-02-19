@@ -45,7 +45,7 @@ jobs:
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        package: './output'
 
     - name: 'Logout from Azure'
       run: az logout
