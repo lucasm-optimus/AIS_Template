@@ -31,6 +31,7 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
   }
   properties: {
     serverFarmId: appServicePlan.id
+    httpsOnly: true
     siteConfig: {
       appSettings: [
         {
@@ -51,7 +52,7 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~8'
+          value: '~4'
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -59,13 +60,30 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet'
+          value: 'dotnet-isolated'
+        }
+        {
+          name: 'DOTNET_isolatedVersion'
+          value: '8.0'
         }
         {
           name: 'WEBSITE_PLATFORM'
           value: '64bit'
         }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
+        }
+        {
+          name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED'
+          value: '1'
+        }
+        {
+          name: 'WEBSITE_NODE_DEFAULT_VERSION' 
+          value: '6.9.1'
+        }
       ]
+      scmType: 'None'
     }
   }
 }
