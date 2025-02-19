@@ -55,7 +55,6 @@ internal static class RootstockQueries
     internal const string GetListofCustomerReferencesByCustomerReferences = @"SELECT rstk__sohdr_custref__c FROM rstk__sohdr__c WHERE rstk__sohdr_custref__c IN ('{0}')";
 
     internal const string GetIdByExternalReferenceId = @"select id from {0} where {1} = '{2}'"; // {0} = TableName, {1} = ColumnName, {2} = ExternalId
-    
+
     internal const string GetSoHdrFromSoApi = @"SELECT  rstk__soapi_sohdr__c  FROM rstk__soapi__c WHERE id='{0}'";//soapi record id
 }
- 

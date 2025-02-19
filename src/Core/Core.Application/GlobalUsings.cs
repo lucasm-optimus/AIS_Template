@@ -1,9 +1,12 @@
-﻿global using FluentResults;
+﻿global using AutoMapper;
+global using FluentResults;
 global using FluentValidation;
+global using Tilray.Integrations.Core.Application.Adapters.Services;
 global using Tilray.Integrations.Core.Common;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
-global using Tilray.Integrations.Core.Application.Adapters.Services;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Commands;
-global using AutoMapper;
-global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
+global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
+global using MediatR;
+global using Microsoft.Extensions.Logging;
+global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;

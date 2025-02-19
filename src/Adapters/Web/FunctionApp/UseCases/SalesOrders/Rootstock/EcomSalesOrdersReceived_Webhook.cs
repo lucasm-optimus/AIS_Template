@@ -1,8 +1,7 @@
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
-namespace Tilray.Integrations.Functions.UseCases.Ecom;
+namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
 public class EcomSalesOrdersReceived_Webhook(IMediator mediator)
 {

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkCustomerInfoResponse
     {

@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Customer
 {
     public class SalesOrderCustomerAddress
     {
@@ -30,7 +28,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         #region Constructors
 
         private SalesOrderCustomerAddress() { }
-        public static Result<SalesOrderCustomerAddress> Create(SalesOrder payload)
+        public static Result<SalesOrderCustomerAddress> Create(Ecom.SalesOrder payload)
         {
             try
             {

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
 {
     public class SalesOrderLineItem : Entity
     {

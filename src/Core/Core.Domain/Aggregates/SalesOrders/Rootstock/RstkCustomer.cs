@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkCustomer
     {

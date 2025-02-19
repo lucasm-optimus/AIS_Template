@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders

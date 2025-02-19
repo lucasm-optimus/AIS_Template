@@ -5,7 +5,7 @@ using Tilray.Integrations.Core.Common.Startup;
 using Tilray.Integrations.Core.Common.Stream;
 using Tilray.Integrations.Stream.Bus.Services;
 
-namespace Tilray.Integrations.Services.Rootstock.Startup;
+namespace Tilray.Integrations.Stream.Bus.Startup;
 
 /// <summary>
 /// This class is responsible for reading the ServiceBus settings from the configuration file.

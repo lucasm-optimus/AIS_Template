@@ -1,9 +1,6 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+﻿
 
-namespace Tilray.Integrations.Core.Application.Ecom.Commands
+namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class ProcessSalesOrderCommandHandler(
             IRootstockService rootstockService,

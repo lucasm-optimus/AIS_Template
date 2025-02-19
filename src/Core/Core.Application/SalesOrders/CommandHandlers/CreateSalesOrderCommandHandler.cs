@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 

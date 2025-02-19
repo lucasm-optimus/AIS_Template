@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
