@@ -55,7 +55,7 @@ jobs:
     - name: Deploy
       uses: azure/arm-deploy@v1
       with:
-        scope: resourceGroup
+        scope: resourcegroup
         subscriptionId: ${{ env.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
         template: ${{ env.TEMPLATE_FILE_PATH }}
