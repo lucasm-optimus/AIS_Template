@@ -129,7 +129,7 @@ module apimModule './modules/1.apim.bicep' = {
   ]
 } 
 
-module storageAccountModule './modules/2.StorageAccount.bicep' = {
+module storageAccountModule './modules/2.storageAccount.bicep' = {
   name: 'storageAccount'
   params: {
     plocation: location
@@ -155,7 +155,7 @@ module functionAppModule './modules/3.functionapp.bicep' = {
   }
 }
 
-module insightsModule './modules/4.AppInsights.bicep' = {
+module insightsModule './modules/4.appInsights.bicep' = {
   name: 'appinsights'
   params: {
     pappInsightsName: pappInsightsName
@@ -176,7 +176,7 @@ module serviceBusModule './modules/5.servicebus.bicep' = {
   }
 }
 
-module serviceBusTopicsModule './modules/6.ServicebusTopics.bicep' = {
+module serviceBusTopicsModule './modules/6.servicebusTopics.bicep' = {
   name: 'serviceBusTopics'
   params: {
     penablePartitioning: penablePartitioning
@@ -188,7 +188,7 @@ module serviceBusTopicsModule './modules/6.ServicebusTopics.bicep' = {
   ]
 }
 
-module logAnalyticsModule './modules/8.LogAnalyticsworkspace.bicep' = {
+module logAnalyticsModule './modules/8.logAnalyticsworkspace.bicep' = {
   name: 'logAnalytics'
   params:{
     plocation: location
