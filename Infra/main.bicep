@@ -173,7 +173,7 @@ module insightsModule './modules/4.AppInsights.bicep' = {
 }
 
 
-module serviceBusModule './modules/5.servicebusNameapaces.bicep' = {
+module serviceBusModule './modules/5.servicebus.bicep' = {
   name: 'serviceBus'
   params:{
     plocation: location
