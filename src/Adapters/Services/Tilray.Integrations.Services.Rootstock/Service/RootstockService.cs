@@ -175,9 +175,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok();
     }
 
-    private async Task<Result<IEnumerable<string>>> ValidateItems(List<string> items)
+    private async Task<Result<IEnumerable<string>>> ValidateItems(IEnumerable<string> items)
     {
-        if (items.Count == 0)
+        if (!items.Any())
         {
             var errorMessage = $"No Line Items are provided";
             logger.LogWarning(errorMessage);
@@ -206,8 +206,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     private async Task<Result<IEnumerable<string>>> ValidateUploadGroup(IEnumerable<string> uploadGroups)
     {
         var nullUploadGroups = uploadGroups
-            .Where(string.IsNullOrWhiteSpace)
-            .ToList();
+            .Where(string.IsNullOrWhiteSpace);
 
         if (nullUploadGroups.Any())
         {
@@ -216,11 +215,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail(errorMessage);
         }
 
-        var validUploadGroups = uploadGroups.Where(ug => !string.IsNullOrWhiteSpace(ug));
-
-        var tasks = validUploadGroups.Select(async uploadGroup =>
+        var tasks = uploadGroups.Select(async uploadGroup =>
         {
-            var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup, RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
+            var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup,
+                RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
             return uploadGroupResult.IsFailed || uploadGroupResult.Value != null ? uploadGroup : null;
         });
 
@@ -338,8 +336,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var distinctItems = salesOrders
             .SelectMany(order => order.LineItems.Select(lineItem => $"{order.Division}_{lineItem.ItemNumber}"))
-            .Distinct()
-            .ToList();
+            .Distinct();
 
         var invalidItemsResult = await ValidateItems(distinctItems);
         if (invalidItemsResult.IsFailed)
