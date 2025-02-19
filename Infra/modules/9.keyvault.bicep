@@ -12,6 +12,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
     enabledForDeployment: true
     enabledForTemplateDeployment: true
     enabledForDiskEncryption: true
+    softDeleteRetentionInDays: 90
     tenantId: subscription().tenantId
     accessPolicies: []
     sku: {
@@ -20,4 +21,3 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-04-01-preview' = {
     }
   }
 }
-

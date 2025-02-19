@@ -102,6 +102,20 @@ param pworkspaceName string
 @description('The name of the topicsAndSubscriptions workspace')
 param topicsAndSubscriptions array
 
+@description('The name of the secrets workspace')
+param psecrets array
+
+@description('Name of the Public IP Address')
+param publicIPName string 
+
+@description('Domain Name Label for the Public IP')
+param pipdomainNameLabel string 
+
+@description('Name of the Network Security Group')
+param nsgName string 
+
+@description('Name of the Virtual Network')
+param pvirtualNetworkName string
 
 targetScope = 'resourceGroup'
 
@@ -179,6 +193,15 @@ module serviceBusTopicsModule './modules/6.ServicebusTopics.bicep' = {
   ]
 }
 
+module logAnalyticsModule './modules/8.LogAnalyticsworkspace.bicep' = {
+  name: 'logAnalytics'
+  params:{
+    plocation: location
+    ptags: ptags
+    pworkspaceName: pworkspaceName
+  }
+}
+
 module keyVaultModule './modules/9.keyvault.bicep' = {
   name: 'keyVault'
   params: {
@@ -189,11 +212,41 @@ module keyVaultModule './modules/9.keyvault.bicep' = {
   }
 }
 
-module logAnalyticsModule './modules/8.LogAnalyticsworkspace.bicep' = {
-  name: 'logAnalytics'
-  params:{
+module keyVaultSecretModule './modules/10.keyvaultsecret.bicep' = {
+  name: 'keyVaultSecret'
+  params: {
+    secrets: psecrets
+    vaultName: pkeyVaultName
+  }
+  dependsOn: [
+    keyVaultModule
+  ]
+}
+
+module nsgModule './modules/11.nsg.bicep' = {
+  name: 'nsg'
+  params: {
+    location: location
+    nsgName: nsgName
+    ptags: ptags
+  }
+}
+
+module publicIPModule './modules/12.publicip.bicep' = {
+  name: 'publicIP'
+  params: {
+    pipdomainNameLabel: pipdomainNameLabel
     plocation: location
     ptags: ptags
-    pworkspaceName: pworkspaceName
+    publicIPName: publicIPName
+  }
+}
+
+module vnetModule './modules/13.vnet.bicep' = {
+  name: 'vnet'
+  params: {
+    location: location
+    networkSecurityGroupId: nsgModule.outputs.nsgId
+    virtualNetworkName: pvirtualNetworkName
   }
 }

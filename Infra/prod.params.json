@@ -96,6 +96,39 @@
             ]
           }
         ]
+      },
+      "psecrets": {
+        "value": [
+          "AISFunctions--ObeerAPI--APICommand",
+          "AISFunctions--ObeerAPI--APIToken",
+          "AISFunctions--ObeerAPI--EncompassId",
+          "AISFunctions--RootstockAPI--ClientId",
+          "AISFunctions--RootstockAPI--ClientSecret",
+          "AISFunctions--SAPConcurAPI--ClientId",
+          "AISFunctions--SAPConcurAPI--ClientSecret",
+          "AISFunctions--SAPConcurAPI--RefreshToken",
+          "AISFunctions--ServiceBusConnectionString",
+          "AISFunctions--SharepointAPI--ClientId",
+          "AISFunctions--SharepointAPI--ClientSecret",
+          "AISFunctions--SharepointAPI--TenantId",
+          "AISFunctions--Snowflake--Account",
+          "AISFunctions--Snowflake--Database",
+          "AISFunctions--Snowflake--Password",
+          "AISFunctions--Snowflake--RefreshToken",
+          "AISFunctions--Snowflake--Username"
+        ]
+      },
+      "publicIPName": {
+        "value": "pip-tilray-it-ais-prod-cace"
+      },
+      "pipdomainNameLabel": {
+        "value": "tilray-ais-prod"
+      },
+      "pvirtualNetworkName": {
+        "value": "vnet-tilray-it-ais-prod-cace-01"
+      },
+      "nsgName": {
+        "value": "nsg-tilray-it-ais-prod-cace-01"
       }
     }
   }
