@@ -1,38 +1,30 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
-namespace Tilray.Integrations.Core.Application.Ecom.Commands
+namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class ProcessSalesOrderCommandHandler(
-        IRootstockService rootstockService,
-        IMediator mediator,
-        ILogger<ProcessSalesOrderCommandHandler> logger,
-        OrderDefaultsSettings orderDefaults) : ICommandHandler<ProcessSalesOrdersCommand, SalesOrdersProcessed>
+            IRootstockService rootstockService,
+            IMediator mediator,
+            ILogger<ProcessSalesOrderCommandHandler> logger,
+            OrderDefaultsSettings orderDefaults) : ICommandHandler<ProcessSalesOrdersCommand, SalesOrdersProcessed>
     {
         public async Task<Result<SalesOrdersProcessed>> Handle(ProcessSalesOrdersCommand request, CancellationToken cancellationToken)
         {
-            #region Preparing variables
-
             logger.LogInformation($"Begin processing {request.SalesOrders.Count()} sales orders.");
 
-            var salesOrders = new List<MedSalesOrder>();
-
-            #endregion
-
-            #region Parallel processing of all orders
+            var succesSalesOrders = new List<MedSalesOrder>();
+            var failedSalesOrders = new List<string>();
 
             var tasks = request.SalesOrders.Select(async salesOrder =>
             {
                 var response = await ProcessIndividualSalesOrder(salesOrder);
                 if (response.IsSuccess)
                 {
-                    salesOrders.Add(response.Value);
+                    succesSalesOrders.Add(response.Value);
                 }
                 else
                 {
+                    failedSalesOrders.Add(salesOrder.ECommOrderID);
                     foreach (var message in response.Reasons.Select(r => r.Message).ToList())
                     {
                         logger.LogWarning($"Failed to process sales order:{salesOrder.ECommOrderID}, message: {message}");
@@ -42,23 +34,14 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
 
             await Task.WhenAll(tasks);
 
-            logger.LogInformation($"Successfully processed {salesOrders.Count()} sales orders.");
+            logger.LogInformation($"Successfully processed {succesSalesOrders.Count()} sales orders.");
 
-            #endregion
-
-            return Result.Ok(new SalesOrdersProcessed(salesOrders, $"Successfully processed {salesOrders.Count()} sales orders."));
+            return Result.Ok(new SalesOrdersProcessed(succesSalesOrders, failedSalesOrders));
         }
 
-        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Models.Ecom.SalesOrder payload)
+        private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload)
         {
-            #region Preparing Variables
-
-            var result = Result.Ok();
             logger.LogInformation($"Processing sales order {payload.ECommOrderID}");
-
-            #endregion
-
-            #region Process Sales Order
 
             var salesAggResult = SalesAgg.Create(payload, orderDefaults);
             if (salesAggResult.IsFailed)
@@ -70,10 +53,23 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
             var salesAgg = salesAggResult.Value;
             logger.LogInformation($"Created sales order aggregate for {payload.ECommOrderID}");
 
-            #endregion
+            var customerResult = await EnsureCustomerExists(payload, salesAgg);
+            if (customerResult.IsFailed)
+            {
+                return Result.Fail<MedSalesOrder>(customerResult.Errors);
+            }
 
-            #region Create Customer and Customer Address if does not exists
+            var customerAddressResult = await EnsureCustomerAddressExists(payload, salesAgg);
+            if (customerAddressResult.IsFailed)
+            {
+                return Result.Fail<MedSalesOrder>(customerAddressResult.Errors);
+            }
 
+            return Result.Ok(salesAgg.SalesOrder);
+        }
+
+        private async Task<Result> EnsureCustomerExists(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload, SalesAgg salesAgg)
+        {
             var customerInfoResult = await rootstockService.GetCustomerInfo(payload.CustomerAccountID);
             if (customerInfoResult.IsFailed)
             {
@@ -86,7 +82,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
                 else
                 {
                     logger.LogWarning($"Failed to create customer {payload.CustomerAccountID} for sales order {payload.ECommOrderID}");
-                    return Result.Fail<MedSalesOrder>(customerInfoResult.Errors);
+                    return Result.Fail(response.Errors);
                 }
             }
             else
@@ -94,6 +90,11 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
                 salesAgg.SalesOrder.UpdateCustomerId(customerInfoResult.Value.CustomerId);
             }
 
+            return Result.Ok();
+        }
+
+        private async Task<Result> EnsureCustomerAddressExists(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload, SalesAgg salesAgg)
+        {
             var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(payload.CustomerAccountNumber, payload.ShipToAddress1, payload.ShipToCity, payload.ShipToState, payload.ShipToZip);
             if (customerAddressInfoResult.IsFailed)
             {
@@ -107,7 +108,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
                 {
                     var errorMessage = $"Failed to create customer address for sales order {payload.ECommOrderID} and customer no:{payload.CustomerAccountNumber}";
                     logger.LogWarning(errorMessage);
-                    return Result.Fail<MedSalesOrder>(response.Errors);
+                    return Result.Fail(response.Errors);
                 }
             }
             else
@@ -115,9 +116,7 @@ namespace Tilray.Integrations.Core.Application.Ecom.Commands
                 salesAgg.SalesOrder.UpdateCustomerAddressReference(customerAddressInfoResult.Value.CustomerAddressID);
             }
 
-            #endregion
-
-            return Result.Ok(salesAgg.SalesOrder);
+            return Result.Ok();
         }
     }
 }

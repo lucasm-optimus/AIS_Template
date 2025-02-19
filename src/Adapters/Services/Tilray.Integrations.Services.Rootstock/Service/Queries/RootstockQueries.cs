@@ -62,4 +62,3 @@ internal static class RootstockQueries
 
     internal const string GetChatterBodyQuery = "SELECT Body FROM FeedItem WHERE ParentId = '{0}'";
 }
- 

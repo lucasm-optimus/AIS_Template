@@ -1,4 +1,5 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
 
@@ -457,7 +458,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var responseResult = await ExecuteQueryAsync(formattedQuery);
         return responseResult.Value.Count > 0;
     }
-
 
     public async Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId)
     {

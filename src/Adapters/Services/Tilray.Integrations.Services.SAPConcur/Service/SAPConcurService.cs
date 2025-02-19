@@ -1,4 +1,7 @@
-﻿namespace Tilray.Integrations.Services.SAPConcur.Service;
+﻿using Tilray.Integrations.Services.SAPConcur.Service.Models;
+using Tilray.Integrations.Services.SAPConcur.Startup;
+
+namespace Tilray.Integrations.Services.SAPConcur.Service;
 
 public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger,
     IMapper mapper) : ISAPConcurService

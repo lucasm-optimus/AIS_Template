@@ -1,11 +1,9 @@
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Common.Stream;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
-namespace Tilray.Integrations.Functions.UseCases.Ecom;
+namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
-public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClient serviceBusClient)
+public class EcomSalesOrdersReceived_Webhook(IMediator mediator)
 {
     #region Function Implementation
 
@@ -19,23 +17,24 @@ public class EcomSalesOrdersReceived_Webhook(IMediator mediator, ServiceBusClien
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Models.Ecom.SalesOrder>>(requestBody);
+        var ecomSalesOrders = JsonConvert.DeserializeObject<List<Core.Domain.Aggregates.SalesOrders.Ecom.SalesOrder>>(requestBody);
 
         FluentResults.Result<SalesOrdersProcessed> response = await mediator.Send(new ProcessSalesOrdersCommand(ecomSalesOrders));
 
         if (response.IsSuccess)
         {
-            var salesOrders = response.Value.salesOrder;
-            var sender = serviceBusClient.CreateSender(Topics.EcomSalesOrderReceived);
+            await mediator.Publish(response.Value);
 
-            foreach (var salesOrder in salesOrders)
+            var successfulSalesOrders = response.Value.SuccessfullOrders;
+            var failedSalesOrders = response.Value.FailedOrders;
+            return new OkObjectResult(new
             {
-                var message = new ServiceBusMessage(JsonConvert.SerializeObject(salesOrder));
-                await sender.SendMessageAsync(message);
-            }
-
-            var responseMessage = $"Sales orders processed:{salesOrders.Count}, failed:{ecomSalesOrders.Count - salesOrders.Count}. {((ecomSalesOrders.Count - salesOrders.Count) > 0 ? "Check logs for failed sales orders." : "")}";
-            return new OkObjectResult(responseMessage);
+                Received = ecomSalesOrders.Count,
+                Processed = successfulSalesOrders.Count,
+                Failed = failedSalesOrders.Count,
+                FailedSalesOrders = failedSalesOrders,
+                Message = failedSalesOrders.Count > 0 ? "Check logs for failed sales orders." : null
+            });
         }
 
         return new OkObjectResult("No Sales order found.");

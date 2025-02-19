@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
 {
     public class OrderDefaultsSettings
     {

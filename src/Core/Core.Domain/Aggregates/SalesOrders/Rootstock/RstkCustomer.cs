@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkCustomer
     {
@@ -34,8 +29,8 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
                     rstk__socust_custno__c = salesOrderCustomer.CustomerNo,
                     rstk__socust_sf_account__c = salesOrderCustomer.SFAccountID,
                     rstk__socust_cclass__c = salesOrderCustomer.CustomerClass,
-                    rstk__socust_dimval__c =salesOrderCustomer.AccountingDimension1,
-                    rstk__socust_dimval2__c =  salesOrderCustomer.AccountingDimension2,
+                    rstk__socust_dimval__c = salesOrderCustomer.AccountingDimension1,
+                    rstk__socust_dimval2__c = salesOrderCustomer.AccountingDimension2,
                     rstk__socust_dfltprodtype__c = salesOrderCustomer.DefaultProductType,
                     rstk__socust_prodind__c = salesOrderCustomer.CustomerBuysProduct,
                     rstk__socust_serviceind__c = salesOrderCustomer.CustomerBuysService,

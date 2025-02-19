@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkSalesOrderPrePayment
     {
@@ -32,7 +26,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock
             {
                 var prePayment = new RstkSalesOrderPrePayment
                 {
-                    rstk__soppy_div__c =divisionId,
+                    rstk__soppy_div__c = divisionId,
                     rstk__soppy_type__c = soPrepayment.PrepaymentType,
                     rstk__soppy_order__c = soPrepayment.OrderID,
                     rstk__soppy_custno__c = soPrepayment.Customer,

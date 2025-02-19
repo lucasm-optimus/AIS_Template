@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 

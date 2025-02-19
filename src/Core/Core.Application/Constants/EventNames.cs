@@ -1,4 +1,4 @@
-﻿namespace Tilray.Integrations.Core.Common.Stream;
+﻿namespace Tilray.Integrations.Core.Application.Constants;
 
 public static class Topics
 {

@@ -1,4 +1,4 @@
-﻿namespace Tilray.Integration.Core.Application;
+﻿namespace Tilray.Integrations.Core.Application;
 
 public interface IApplication
 {

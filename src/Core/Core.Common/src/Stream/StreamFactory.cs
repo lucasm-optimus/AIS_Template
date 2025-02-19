@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Tilray.Integrations.Core.Common.Stream;
+﻿namespace Tilray.Integrations.Core.Common.Stream;
 
 internal class StreamSettings
 {

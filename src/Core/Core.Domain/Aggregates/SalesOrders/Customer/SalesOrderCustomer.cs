@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Customer
 {
     public class SalesOrderCustomer
     {
@@ -29,7 +21,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer
         #region Constructors
 
         private SalesOrderCustomer() { }
-        public static Result<SalesOrderCustomer> Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public static Result<SalesOrderCustomer> Create(Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             try
             {

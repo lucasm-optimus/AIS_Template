@@ -1,12 +1,7 @@
-﻿using Newtonsoft.Json;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Customer;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Ecom;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
-using Tilray.Integrations.Core.Models.Ecom;
 
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
 {
     public class MedSalesOrder : Entity
     {
@@ -95,7 +90,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         private MedSalesOrder() { LineItems = new(); }
 
-        public static Result<MedSalesOrder> Create(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        public static Result<MedSalesOrder> Create(Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             var validationResult = Validate(payload);
 
@@ -154,11 +149,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
         {
             if (StandardPrepayment != null)
             {
-                return SalesOrderPrepayment.Create(StandardPrepayment.AmountPaid, this.CustomerId, this.Division, createdSalesOrderId, prePaymentAccount, this.CustomerAddressId);
+                return SalesOrderPrepayment.Create(StandardPrepayment.AmountPaid, CustomerId, Division, createdSalesOrderId, prePaymentAccount, CustomerAddressId);
             }
             if (CCPrepayment != null)
             {
-                return SalesOrderPrepayment.Create(CCPrepayment.AmountPrepaidByCC, this.CustomerId, this.Division, createdSalesOrderId, prePaymentAccount, this.CustomerAddressId);
+                return SalesOrderPrepayment.Create(CCPrepayment.AmountPrepaidByCC, CustomerId, Division, createdSalesOrderId, prePaymentAccount, CustomerAddressId);
             }
 
             return Result.Fail<SalesOrderPrepayment>("No prepayment found");
@@ -203,7 +198,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
 
         #region Private Methods
 
-        private static Result<SalesOrderValidated> Validate(Models.Ecom.SalesOrder payload)
+        private static Result<SalesOrderValidated> Validate(Ecom.SalesOrder payload)
         {
             var result = Result.Ok();
 
@@ -232,15 +227,15 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             return new SalesOrderValidated(true, null);
         }
 
-        private static bool ConfirmShippingInfoPopulated(Models.Ecom.SalesOrder salesOrder)
+        private static bool ConfirmShippingInfoPopulated(Ecom.SalesOrder salesOrder)
         {
             return salesOrder.ShippingCarrier != null && salesOrder.ShippingMethod != null;
         }
 
-        private static bool ConfirmOrderTotalMatchesPayments(Models.Ecom.SalesOrder salesOrder, out double TotalPayment, out double OrderTotal)
+        private static bool ConfirmOrderTotalMatchesPayments(Ecom.SalesOrder salesOrder, out double TotalPayment, out double OrderTotal)
         {
             var totalPayments = salesOrder.AmountPaidByCustomer + salesOrder.AmountPaidByBillTo;
-            var orderTotal = (salesOrder.ShippingCost - salesOrder.DiscountAmount)
+            var orderTotal = salesOrder.ShippingCost - salesOrder.DiscountAmount
                              + (salesOrder.Taxes?.Sum(t => t.Amount) ?? 0)
                              + (salesOrder.OrderLines?.Sum(ol => ol.Quantity * ol.UnitPrice) ?? 0);
             TotalPayment = totalPayments;
@@ -248,13 +243,13 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             return totalPayments == orderTotal;
         }
 
-        private static bool ConfirmPatientType(Models.Ecom.SalesOrder salesOrder)
+        private static bool ConfirmPatientType(Ecom.SalesOrder salesOrder)
         {
             var validPatientTypes = new List<string> { "Insured", "Non-Insured", "Veteran" };
             return validPatientTypes.Contains(salesOrder.PatientType);
         }
 
-        private static MedSalesOrder CreateForSweetWater(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        private static MedSalesOrder CreateForSweetWater(Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             var salesOrder = new MedSalesOrder
             {
@@ -316,7 +311,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
             return salesOrder;
         }
 
-        private static MedSalesOrder CreateForAphria(Models.Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
+        private static MedSalesOrder CreateForAphria(Ecom.SalesOrder payload, OrderDefaultsSettings orderDefaults)
         {
             var salesOrder = new MedSalesOrder
             {

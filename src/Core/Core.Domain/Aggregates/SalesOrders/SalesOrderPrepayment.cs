@@ -1,11 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tilray.Integrations.Core.Domain.Aggregates.Sales
+﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
 {
     public class SalesOrderPrepayment : Entity
     {

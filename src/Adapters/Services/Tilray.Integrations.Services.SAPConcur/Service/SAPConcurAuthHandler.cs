@@ -1,4 +1,7 @@
-﻿namespace Tilray.Integrations.Services.SAPConcur.Service
+﻿using Tilray.Integrations.Core.Application.Models;
+using Tilray.Integrations.Services.SAPConcur.Startup;
+
+namespace Tilray.Integrations.Services.SAPConcur.Service
 {
     /// <summary>
     /// A <see cref="DelegatingHandler"/> which adds the Authentication header onto outgoing SAP Concur HTTP requests.

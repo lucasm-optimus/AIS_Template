@@ -1,4 +1,4 @@
-﻿namespace Tilray.Integrations.Core.Common.Models;
+﻿namespace Tilray.Integrations.Core.Application.Models;
 
 public class TokenResponse
 {

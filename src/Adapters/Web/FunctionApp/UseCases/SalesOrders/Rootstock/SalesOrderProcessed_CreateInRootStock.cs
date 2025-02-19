@@ -1,9 +1,7 @@
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Common.Stream;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Commands;
+using Tilray.Integrations.Core.Application.Constants;
 
-namespace Tilray.Integrations.Functions.UseCases.Rootstock;
+namespace Tilray.Integrations.Functions.UseCases.SalesOrders.Rootstock;
 
 public class SalesOrderProcessed_CreateInRootStock(IMediator mediator, ILogger<SalesOrderProcessed_CreateInRootStock> logger)
 {

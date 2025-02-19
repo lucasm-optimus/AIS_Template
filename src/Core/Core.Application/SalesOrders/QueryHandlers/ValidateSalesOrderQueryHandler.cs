@@ -4,7 +4,7 @@ public class ValidateSalesOrderQueryHandler(IRootstockService rootstockService) 
 {
     public async Task<Result<IEnumerable<SalesOrder>>> Handle(ValidateSalesOrderQuery request, CancellationToken cancellationToken)
     {
-        if(request.SalesOrders == null || !request.SalesOrders.Any())
+        if (request.SalesOrders == null || !request.SalesOrders.Any())
         {
             return Result.Fail<IEnumerable<SalesOrder>>("No sales orders to validate");
         }

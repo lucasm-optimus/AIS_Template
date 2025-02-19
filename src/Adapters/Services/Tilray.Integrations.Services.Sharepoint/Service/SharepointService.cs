@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Sharepoint.Service;
+﻿using Tilray.Integrations.Services.Sharepoint.Startup;
+
+namespace Tilray.Integrations.Services.Sharepoint.Service;
 
 public class SharepointService(GraphServiceClient graphServiceClient, IMapper mapper, SharepointSettings sharepointSettings, ILogger<SharepointService> logger)
     : ISharepointService

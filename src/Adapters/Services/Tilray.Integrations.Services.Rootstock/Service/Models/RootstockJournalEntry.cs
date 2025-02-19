@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Services.Rootstock.Service.Models;
+﻿using Tilray.Integrations.Services.Rootstock.Startup;
+
+namespace Tilray.Integrations.Services.Rootstock.Service.Models;
 
 public class RootstockJournalEntry
 {
