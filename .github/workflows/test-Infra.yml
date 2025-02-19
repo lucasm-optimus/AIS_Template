@@ -5,7 +5,6 @@ on:
 env:
   AZURE_SUBSCRIPTION: bcdf2f15-1f15-49b0-8ba7-c4fb87a2fc20
   AZURE_RESOURCE_GROUP: rg-tilray-it-test-cace
-  ENVIRONMENT: test
   TEMPLATE_FILE_PATH: ./Infra/main.bicep
   PARAMETERS_FILE_PATH: ./Infra/test.params.json
 
