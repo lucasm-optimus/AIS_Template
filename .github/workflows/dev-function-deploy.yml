@@ -1,0 +1,51 @@
+name: Deploy .NET to Azure Functions
+
+on:
+  push:
+    branches: ["dev"]
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'func-tilray-it-ais-test-cace-01'   # Replace with your Azure Functions App name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/Adapters/Web/FunctionApp'        # Path to your .NET project (e.g., 'src/MyFunctionApp')
+  DOTNET_VERSION: '8.0.x'                    # .NET version 
+  AZURE_RESOURCE_GROUP: 'rg-tilray-it-dev-cace' # Replace with your Azure resource group name
+  ENVIRONMENT: production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # Use 'windows-latest' for Windows
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v4
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }} # Azure RBAC credentials
+
+    - name: 'Set up .NET'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Restore Dependencies'
+      run: dotnet restore ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+
+    - name: 'Build Project'
+      run: dotnet build ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} --configuration Release --output ./output
+
+    - name: 'Run Unit Tests'
+      run: dotnet test ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} --configuration Release --no-build
+
+    - name: 'Publish Project'
+      run: dotnet publish ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} --configuration Release --output ./output
+
+    - name: 'Deploy to Azure Functions'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+
+    - name: 'Logout from Azure'
+      run: az logout

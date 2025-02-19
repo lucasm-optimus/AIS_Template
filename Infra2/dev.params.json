@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "pkeyVaultName": {
+      "value": "kv-tilray-it-ais-dev-01"
+    },
+    "pserviceBusNamespaceName": {
+      "value": "sb-tilray-it-ais-dev-cace-01"
+    },
+    "penablePartitioning": {
+      "value": true
+    },
+    "ptags": {
+      "value": {
+        "Application": "AIS",
+        "BusinessUnit": "IT",
+        "CostCenter": "IT",
+        "Environment": "dev",
+        "Location": "cace",
+        "Owner": "ITOps"
+      }
+    },
+    "pAPIMpublisherEmail": {
+      "value": "v-rupesh.kumar@tilray.com"
+    },
+    "pAPIMpublisherName": {
+      "value": "Rupesh kumar"
+    },
+    "papiManagementServiceName": {
+      "value": "apim-tilray-it-ais-dev-cace-01"
+    },
+    "pAPIMsku": {
+      "value": "Developer"
+    },
+    "topicsAndSubscriptions": {
+      "value": [
+        {
+          "name": "salesordercreated",
+          "subscriptions": [
+            "CreateSalesOrderInRootstock",
+            "Monitoring"
+          ]
+        },
+        {
+          "name": "ecomsalesorderreceived",
+          "subscriptions": [
+            "EcomSalesOrderReceived_CreateSalesOrderInRootStock",
+            "Monitoring"
+          ]
+        }
+      ]
+    }
+  }
+}
