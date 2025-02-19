@@ -127,6 +127,9 @@ module apimModule './modules/1.apim.bicep' = {
     pAPIMpublisherName: pAPIMpublisherName
     ptags: ptags
     pAPIMsku: pAPIMsku
+    publicIpAddressId: publicIPModule.outputs.publicIPId
+    subnetResourceId: vnetModule.outputs.subnetId
+    plocation: location
   }
   dependsOn: [
     logAnalyticsModule

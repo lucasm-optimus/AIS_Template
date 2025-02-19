@@ -30,11 +30,16 @@ param pAPIMsku string
 param pAPIMskuCount int = 1
 
 @description('Location for all resources.')
-param plocation string = resourceGroup().location
+param plocation string 
 
 @description('Tags for resources.')
 param ptags object
 
+@description('Virtual network subnet resource ID')
+param subnetResourceId string
+
+@description('Public IP resource ID')
+param publicIpAddressId string
 
 resource apiManagementService 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
   name: papiManagementServiceName
@@ -47,5 +52,15 @@ resource apiManagementService 'Microsoft.ApiManagement/service@2024-06-01-previe
   properties: {
     publisherEmail: pAPIMpublisherEmail
     publisherName: pAPIMpublisherName
+    virtualNetworkConfiguration: {
+      subnetResourceId: subnetResourceId
+    }
+    virtualNetworkType: 'External'
+    disableGateway: false
+    natGatewayState: 'Unsupported'
+    publicIpAddressId: publicIpAddressId
+    publicNetworkAccess: 'Enabled'
+    legacyPortalStatus: 'Disabled'
+    developerPortalStatus: 'Enabled'
   }
 }

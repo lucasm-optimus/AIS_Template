@@ -46,3 +46,6 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2024-03-01' = {
     }
   }
 }
+
+output publicIPName string = publicIP.name
+output publicIPId string = publicIP.id
