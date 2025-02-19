@@ -14,7 +14,6 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest # Use 'windows-latest' for Windows
-    environment: ${{ env.ENVIRONMENT }} # Use environment-specific secrets
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
@@ -22,7 +21,7 @@ jobs:
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }} # Azure RBAC credentials
+        creds: ${{ secrets.AZURE_CREDENTIALS_DEV }} # Azure RBAC credentials
 
     - name: 'Set up .NET'
       uses: actions/setup-dotnet@v4
