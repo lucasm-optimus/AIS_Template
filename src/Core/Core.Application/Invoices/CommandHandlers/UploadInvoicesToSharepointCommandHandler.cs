@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Application.Adapters.Storage;
-
-namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
+﻿namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
 
 public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepointService, IBlobService blobService,
     ILogger<UploadInvoicesToSharepointCommandHandler> logger) : ICommandHandler<UploadInvoicesToSharepointCommand>
@@ -10,14 +8,15 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
         string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
 
-        if (invoiceGroup.Invoices?.Any() != true)
+        if (!invoiceGroup.AreNonEmptyInvoices())
         {
+            logger.LogInformation("No invoices to upload to Sharepoint");
             return Result.Ok();
         }
 
         if (!invoiceGroup.Company.OBeer_Invoices__c)
         {
-            logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
+            logger.LogInformation("Skipping SharePoint upload: Company {CompanyName} is not configured to process invoices for Obeer.",
                 invoiceGroup.Company.Company_Name__c);
             return Result.Ok();
         }

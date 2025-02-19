@@ -2,12 +2,12 @@
 
 public class InvoicesProcessed : IDomainEvent
 {
-    public List<NonPOLineItemError> ErrorsNoPo { get; } = [];
+    public List<NonPOLineItemError> ErrorsNonPO { get; } = [];
     public List<GrpoLineItemError> ErrorsGrpo { get; } = [];
-    public bool HasErrors => ErrorsNoPo.Count > 0 || ErrorsGrpo.Count > 0;
+    public bool HasErrors => ErrorsNonPO.Count > 0 || ErrorsGrpo.Count > 0;
     public CompanyReference CompanyReference { get; set; }
     public string Message => HasErrors
-        ? $"Processing failed with {ErrorsGrpo.Count} GRPO errors and {ErrorsNoPo.Count} NonPO errors."
+        ? $"Processing failed with {ErrorsGrpo.Count} GRPO errors and {ErrorsNonPO.Count} NonPO errors."
         : "Processing succeeded.";
 }
 
@@ -22,7 +22,7 @@ public class GrpoLineItemError
     public string DocumentDate { get; set; }
     public string ConcurOrderID { get; set; }
     public string DocumentType { get; set; }
-    public string ErrorMessage { get; set; }
+    public string Error { get; set; }
 }
 
 public class NonPOLineItemError

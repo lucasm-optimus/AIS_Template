@@ -204,4 +204,6 @@ public class InvoiceGroup
             Invoices = invoices
         };
     }
+
+    public bool AreNonEmptyInvoices() => Invoices?.Any() == true;
 }

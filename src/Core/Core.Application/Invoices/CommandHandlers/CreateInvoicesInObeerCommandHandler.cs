@@ -8,6 +8,9 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
         string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
 
+        logger.LogInformation("Total {InvoiceCount} invoices for company {CompanyName} received",
+            invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c);
+
         if (!invoiceGroup.Company.OBeer_Invoices__c)
         {
             logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
@@ -18,7 +21,9 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
         var invoicesProcessed = new InvoicesProcessed();
         foreach (var invoice in invoiceGroup.Invoices)
         {
-            await obeerService.CreateInvoiceAsync(invoice, invoicesProcessed);
+            var result = await obeerService.CreateInvoiceAsync(invoice);
+            invoicesProcessed.ErrorsGrpo.AddRange(result.Value.ErrorsGrpo);
+            invoicesProcessed.ErrorsNonPO.AddRange(result.Value.ErrorsNonPO);
         }
 
         if (invoicesProcessed.HasErrors)
@@ -26,7 +31,7 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
             logger.LogWarning(
                 "Invoices processing completed with errors. GRPOErrors: {GrpoErrorCount}, NonPOErrors: {NonPoErrorCount}",
                 invoicesProcessed.ErrorsGrpo.Count,
-                invoicesProcessed.ErrorsNoPo.Count
+                invoicesProcessed.ErrorsNonPO.Count
             );
 
             invoicesProcessed.CompanyReference = invoiceGroup.Company;

@@ -1,8 +1,6 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
-
-namespace Tilray.Integrations.Core.Application.Adapters.Services;
+﻿namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
 public interface IObeerService
 {
-    Task<Result> CreateInvoiceAsync(Invoice invoice, InvoicesProcessed invoicesProcessed);
+    Task<Result<(List<GrpoLineItemError> ErrorsGrpo, List<NonPOLineItemError> ErrorsNonPO)>> CreateInvoiceAsync(Invoice invoice);
 }

@@ -1,8 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
-
-namespace Tilray.Integrations.Core.Application.Invoices.EventHandlers;
+﻿namespace Tilray.Integrations.Core.Application.Invoices.EventHandlers;
 
 public class InvoicesProcessedEventHandler(ISharepointService sharepointService, ILogger<InvoicesProcessedEventHandler> logger)
     : INotificationHandler<InvoicesProcessed>
@@ -21,10 +17,10 @@ public class InvoicesProcessedEventHandler(ISharepointService sharepointService,
                 LogErrors(result.Errors, "GRPO");
         }
 
-        if (notification.ErrorsNoPo.Count > 0)
+        if (notification.ErrorsNonPO.Count > 0)
         {
             var result = await sharepointService.UploadFileAsync(
-                notification.ErrorsNoPo,
+                notification.ErrorsNonPO,
                 notification.CompanyReference);
             if (result.IsFailed)
                 LogErrors(result.Errors, "NonPO");

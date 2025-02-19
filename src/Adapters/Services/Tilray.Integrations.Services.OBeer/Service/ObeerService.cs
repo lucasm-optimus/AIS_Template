@@ -1,8 +1,4 @@
-﻿using Tilray.Integrations.Core.Common.Extensions;
-using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
-using Tilray.Integrations.Services.OBeer.Service.Models;
-
-namespace Tilray.Integrations.Services.OBeer.Service;
+﻿namespace Tilray.Integrations.Services.OBeer.Service;
 
 public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepository, ObeerSettings obeerSettings,
     ILogger<ObeerService> logger, IMapper mapper) : IObeerService
@@ -37,7 +33,11 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
     private async Task ProcessGrpoLineItemsAsync(Invoice invoice, IEnumerable<LineItem> grpoLineItems,
         List<GrpoLineItemError> errorsGrpo)
     {
-        if (!grpoLineItems.Any()) return;
+        if (!grpoLineItems.Any())
+        {
+            logger.LogInformation("No GRPO line items to process for Invoice {InvoiceId}", invoice.ID);
+            return;
+        }
 
         List<Item> obeerItems = [];
         foreach (var lineItem in grpoLineItems)
@@ -76,7 +76,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
     {
         if (!obeerItems.Any())
         {
-            logger.LogInformation("No valid GRPO items to post for Invoice {InvoiceId}", invoice.ID);
+            logger.LogInformation("No valid GRPO items to post to Obeer for Invoice {InvoiceId}", invoice.ID);
             return;
         }
 
@@ -126,10 +126,11 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
                     segments[1]);
                 if (result == null)
                 {
-                    logger.LogWarning("GL account not found for segments {Segment1}-{Segment2} in lineItem {LineItem} for Invoice {InvoiceId}",
+                    logger.LogWarning("GL account not found for segments {Segment1}-{Segment2} in lineItem {LineItemId} for Invoice {InvoiceId}",
                         segments[0], segments[1], lineItem.LineItemId, invoice.ID);
                 }
-                lineItem.SetGlAccount(result);
+                else
+                    lineItem.SetGlAccount(result);
             }
             else
             {
@@ -159,22 +160,29 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
 
     #region Public methods
 
-    public async Task<Result> CreateInvoiceAsync(Invoice invoice, InvoicesProcessed invoicesProcessed)
+    public async Task<Result<(List<GrpoLineItemError>, List<NonPOLineItemError>)>> CreateInvoiceAsync(Invoice invoice)
     {
+        var nonPOErrors = new List<NonPOLineItemError>();
+        var grpoErrors = new List<GrpoLineItemError>();
+
         if (invoice.IsValid())
         {
             logger.LogInformation("Processing invoice {InvoiceNumber}", invoice.ID);
+
             var validLineItems = invoice.LineItems.ValidLineItems();
             await SetGlAccountForLineItemsAsync(invoice, validLineItems);
 
             var grpoLineItems = invoice.LineItems.GrpoLineItems();
             var nonPOLineItems = invoice.LineItems.NonPOLineItems();
 
-            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, invoicesProcessed.ErrorsGrpo);
-            await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), invoicesProcessed.ErrorsNoPo);
+            logger.LogInformation("Invoice {InvoiceId} has {GRPOCount} GRPO line items and {NonPOCount} NonPO line items",
+                invoice.ID, grpoLineItems.Count(), nonPOLineItems.Count());
+
+            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, grpoErrors);
+            await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), nonPOErrors);
         }
 
-        return Result.Ok();
+        return Result.Ok((grpoErrors, nonPOErrors));
     }
 
     #endregion

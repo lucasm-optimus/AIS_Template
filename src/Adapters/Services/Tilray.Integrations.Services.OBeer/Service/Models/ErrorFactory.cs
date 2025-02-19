@@ -17,7 +17,7 @@ public static class ErrorFactory
             DocumentDate = header?.DocumentDate,
             ConcurOrderID = header?.ConcurOrderID,
             DocumentType = header?.DocumentType,
-            ErrorMessage = error
+            Error = error
         };
     }
 
@@ -34,7 +34,7 @@ public static class ErrorFactory
             DocumentDate = invoice?.DocumentDate,
             ConcurOrderID = invoice?.ID,
             DocumentType = "dDocument_Items",
-            ErrorMessage = $"Could not find GRPO record - {goodsReceipt}"
+            Error = $"Could not find GRPO record - {goodsReceipt}"
         };
     }
 

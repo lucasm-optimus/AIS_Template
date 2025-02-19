@@ -12,3 +12,6 @@ global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
 global using Tilray.Integrations.Services.OBeer.Service;
 global using Tilray.Integrations.Services.OBeer.Service.MappingProfiles;
 global using Tilray.Integrations.Services.OBeer.Startup;
+global using Tilray.Integrations.Core.Common.Extensions;
+global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+global using Tilray.Integrations.Services.OBeer.Service.Models;
