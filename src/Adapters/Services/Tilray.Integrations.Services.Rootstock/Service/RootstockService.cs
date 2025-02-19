@@ -168,7 +168,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (invalidCustomers.Any())
         {
             var errorMessage = $"The following customers could not be found: {Helpers.GetErrorMessage(invalidCustomers)}";
-            logger.LogError(errorMessage);
+            logger.LogWarning(errorMessage);
             return Result.Fail(errorMessage);
         }
 
@@ -196,7 +196,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (invalidItems.Any())
         {
             var errorMessage = $"The following items could not be found: {Helpers.GetErrorMessage(invalidItems)}";
-            logger.LogError(errorMessage);
+            logger.LogWarning(errorMessage);
             return Result.Fail(errorMessage);
         }
 
@@ -230,7 +230,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         if (invalidUploadGroups.Any())
         {
             var errorMessage = $"The following upload groups have already been used: {Helpers.GetErrorMessage(invalidUploadGroups)}";
-            logger.LogError(errorMessage);
+            logger.LogWarning(errorMessage);
             return Result.Fail(errorMessage);
         }
 
@@ -327,6 +327,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     public async Task<Result<IEnumerable<SalesOrder>>> ValidateSalesOrders(IEnumerable<SalesOrder> salesOrders)
     {
+        logger.LogInformation($"Validating {salesOrders.Count()} sales orders.");
+
         var customers = salesOrders.Select(order => order.Customer).Distinct();
         var invalidCustomersResult = await ValidateCustomers(customers);
         if (invalidCustomersResult.IsFailed)
