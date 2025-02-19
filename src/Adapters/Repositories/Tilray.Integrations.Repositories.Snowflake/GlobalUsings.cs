@@ -1,5 +1,4 @@
-﻿global using FluentResults;
-global using Snowflake.Data.Client;
+﻿global using Snowflake.Data.Client;
 global using Tilray.Integrations.Core.Application.Adapters.Repositories;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
 global using Tilray.Integrations.Repositories.Snowflake.Repository.Queries;

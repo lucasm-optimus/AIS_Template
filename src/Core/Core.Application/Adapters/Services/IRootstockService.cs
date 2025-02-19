@@ -1,6 +1,6 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
-using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Sales.Rootstock;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrdersPayments;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
@@ -24,4 +24,6 @@ public interface IRootstockService
     Task<Result<string>> GetSoHdr(string soapiId);
     Task<Result<List<ExpenseError>>> CreateJournalEntryAsync(Expense expense, CompanyReference company);
     Task<Result> PostExpenseMessageToChatterAsync(string companyNumber, int errorCount);
+    Task<Result<IEnumerable<SalesOrderPayment>>> GetSalesOrdersPaymentsAsync();
+    Task<Result> UpdateSalesOrderPaymentAsync(string salesOrderPaymentId);
 }

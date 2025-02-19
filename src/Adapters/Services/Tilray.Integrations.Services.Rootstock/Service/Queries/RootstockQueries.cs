@@ -61,5 +61,15 @@ internal static class RootstockQueries
     internal const string GetChatterGroupIdQuery = "SELECT Id FROM CollaborationGroup WHERE Name = '{0}'";
 
     internal const string GetChatterBodyQuery = "SELECT Body FROM FeedItem WHERE ParentId = '{0}'";
+
+    internal const string GetSalesOrderPaymentsQuery = @"
+        SELECT Id, rstk__sohdrpay_sohdr__r.rstk__sohdr_div__r.rstk__externalid__c,
+            rstk__externalid__c, rstk__sohdrpay_ordpayid__c, rstk__sohdrpay_sogateway__r.rstk__externalid__c, rstk__sohdrpay_payamount__c
+        FROM rstk__sohdrpay__c
+        WHERE rstk__sohdrpay_sohdr__r.rstk__sohdr_div__r.rstk__externalid__c = '{0}'
+            AND rstk__sohdrpay_sogateway__r.rstk__externalid__c = '{1}'
+            AND DAY_ONLY(convertTimezone(rstk__sohdrpay_paydate__c)) < {2}
+            AND rstk__sohdrpay_status__c = '{3}'
+            AND Captured_in_Payment_Gateway__c = {4}";
 }
  

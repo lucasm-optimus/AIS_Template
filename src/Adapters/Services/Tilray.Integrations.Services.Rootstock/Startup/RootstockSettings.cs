@@ -10,6 +10,10 @@ public class RootstockSettings
     public string? ClientSecret { get; set; }
     public string JournalEntryChatterGroupPrefix { get; set; }
     public string IntegrationUserName { get; set; }
+    public string Division { get; set; } = "001";
+    public string PaymentGateway { get; set; } = "Authorize.net";
+    public bool CapturedInPaymentGateway { get; set; } = false;
+    public string Status { get; set; } = "Payment Completed";
 }
 
 public class RootstockGLAccountsSettings

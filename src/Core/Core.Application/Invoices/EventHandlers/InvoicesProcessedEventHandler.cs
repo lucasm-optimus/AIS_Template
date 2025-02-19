@@ -1,8 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
-
-namespace Tilray.Integrations.Core.Application.Invoices.EventHandlers;
+﻿namespace Tilray.Integrations.Core.Application.Invoices.EventHandlers;
 
 public class InvoicesProcessedEventHandler(ISharepointService sharepointService, ILogger<InvoicesProcessedEventHandler> logger)
     : INotificationHandler<InvoicesProcessed>

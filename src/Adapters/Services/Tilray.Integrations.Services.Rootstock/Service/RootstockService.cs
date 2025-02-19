@@ -1,4 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrdersPayments;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
 
@@ -81,6 +81,24 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             objectName, id);
 
         return Result.Ok(id ?? string.Empty);
+    }
+
+    private async Task<Result> UpdateAsync(string objectId, object updatedContent, string objectName)
+    {
+        string url = $"{SObjectUrl}/{objectName}/{objectId}";
+
+        HttpResponseMessage response = await httpClient.PatchAsync(url, Helpers.CreateStringContent(updatedContent));
+        if (!response.IsSuccessStatusCode)
+        {
+            string errorMessage = $"Failed to update {objectName} object with Id: {objectId}. Error: {Helpers.GetErrorFromResponse(response)}";
+            logger.LogError(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+        else
+        {
+            logger.LogInformation($"{objectName} object with Id: {objectId} is updated.");
+            return Result.Ok();
+        }
     }
 
     private async Task<Result<bool>> CheckForExistingMessageInChatterGroupAsync(string groupId, string message)
@@ -522,6 +540,37 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var message = $"The latest Journal Entry Upload for Expenses produced {errorCount} errors.";
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
+    }
+
+    private string GetFormattedQuery(string query, params object[] formatArgs)
+    {
+        string formattedQuery = formatArgs != null ? string.Format(query, formatArgs) : query;
+        return formattedQuery;
+    }
+
+    public async Task<Result<IEnumerable<SalesOrderPayment>>> GetSalesOrdersPaymentsAsync()
+    {
+        var result = await GetObjectListAsync<RootstockSalesOrderPayment>(
+            GetFormattedQuery(RootstockQueries.GetSalesOrderPaymentsQuery, rootstockSettings.Division,
+                rootstockSettings.PaymentGateway, DateTime.UtcNow, rootstockSettings.Status, rootstockSettings.CapturedInPaymentGateway),
+            "rstk__sohdrpay__c");
+        if (result.IsFailed)
+        {
+            return Result.Fail<IEnumerable<SalesOrderPayment>>(result.Errors);
+        }
+
+        return Result.Ok(result.Value.Select(sop => SalesOrderPayment.Create(sop.rstk__sohdrpay_sohdr__r.rstk__sohdr_div__r.rstk__externalid__c,
+            sop.rstk__externalid__c, sop.rstk__sohdrpay_ordpayid__c, sop.rstk__sohdrpay_sogateway__r.rstk__externalid__c, sop.rstk__sohdrpay_payamount__c)));
+    }
+
+    public async Task<Result> UpdateSalesOrderPaymentAsync(string salesOrderPaymentId)
+    {
+        var content = new
+        {
+            Captured_in_Payment_Gateway__c = true
+        };
+
+        return await UpdateAsync(salesOrderPaymentId, content, "rstk__sohdrpay__c");
     }
 
     #endregion

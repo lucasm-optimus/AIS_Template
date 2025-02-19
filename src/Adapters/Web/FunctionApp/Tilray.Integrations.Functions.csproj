@@ -33,6 +33,8 @@
         <ProjectReference Include="..\..\..\Core\Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
         <ProjectReference Include="..\..\Repositories\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj" />
+        <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Authorize.net\Tilray.Integrations.Services.Authorize.net.csproj" />
+        <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Email\Tilray.Integrations.Services.Email.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.OBeer\Tilray.Integrations.Services.OBeer.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Rootstock\Tilray.Integrations.Services.Rootstock.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.SAPConcur\Tilray.Integrations.Services.SAPConcur.csproj" />
