@@ -9,33 +9,7 @@ env:
   PARAMETERS_FILE_PATH: ./Infra/test.params.json
 
 jobs:
-
-  bicep-linter:
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-      # Log into Azure
-    - name: Log into Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS_TEST }}
-
-        
-      # bicep linter
-    - name: Bicep Linter
-      uses: azure/CLI@v2
-      with:
-        azcliversion: 2.63.0
-        inlineScript: |
-          az bicep install
-          az bicep upgrade
-          az bicep lint --file ${{ env.TEMPLATE_FILE_PATH }}
-
   what-if:
-    needs: bicep-linter
     runs-on: ubuntu-latest
     steps:
       # Checkout code

@@ -213,7 +213,7 @@ module keyVaultModule './modules/9.keyvault.bicep' = {
     plocation: location
     pkeyVaultSku: pkeyVaultSku
     ptags: ptags
-    objectId: functionAppModule.outputs.functionAppId
+    objectId: functionAppModule.outputs.functionAppPrincipalId
   }
 }
 
