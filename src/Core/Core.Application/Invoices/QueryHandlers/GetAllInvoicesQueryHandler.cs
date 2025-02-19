@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Application.Adapters.Storage;
-
-namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
+﻿namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
 
 public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService, IBlobService blobService)
     : IQueryManyHandler<GetAllInvoices, string>

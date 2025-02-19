@@ -1,4 +1,5 @@
 ﻿using Tilray.Integrations.Core.Application.Models;
+using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
 

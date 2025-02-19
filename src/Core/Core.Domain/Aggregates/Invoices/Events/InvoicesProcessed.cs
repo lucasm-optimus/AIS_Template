@@ -7,8 +7,8 @@ public class InvoicesProcessed : IDomainEvent
     public bool HasErrors => ErrorsNoPo.Count > 0 || ErrorsGrpo.Count > 0;
     public CompanyReference CompanyReference { get; set; }
     public string Message => HasErrors
-    ? $"Processing failed with {ErrorsGrpo.Count} GRPO errors and {ErrorsNoPo.Count} NonPO errors."
-    : "Processing succeeded.";
+        ? $"Processing failed with {ErrorsGrpo.Count} GRPO errors and {ErrorsNoPo.Count} NonPO errors."
+        : "Processing succeeded.";
 }
 
 public class GrpoLineItemError

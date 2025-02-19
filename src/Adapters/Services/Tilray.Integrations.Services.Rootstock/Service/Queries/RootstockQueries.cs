@@ -57,4 +57,8 @@ internal static class RootstockQueries
     internal const string GetIdByExternalReferenceId = @"select id from {0} where {1} = '{2}'"; // {0} = TableName, {1} = ColumnName, {2} = ExternalId
 
     internal const string GetSoHdrFromSoApi = @"SELECT  rstk__soapi_sohdr__c  FROM rstk__soapi__c WHERE id='{0}'";//soapi record id
+
+    internal const string GetChatterGroupIdQuery = "SELECT Id FROM CollaborationGroup WHERE Name = '{0}'";
+
+    internal const string GetChatterBodyQuery = "SELECT Body FROM FeedItem WHERE ParentId = '{0}'";
 }

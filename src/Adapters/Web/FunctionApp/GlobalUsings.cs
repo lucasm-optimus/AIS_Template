@@ -13,3 +13,7 @@ global using Tilray.Integrations.Core.Common.Extensions;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Commands;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Commands;
+global using Tilray.Integrations.Core.Common.Stream;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses.Commands;
+global using Tilray.Integrations.Core.Application.Expenses.QueryHandlers;

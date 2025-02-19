@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Application.Adapters.Storage;
-using Tilray.Integrations.Core.Common.Extensions;
+﻿using Tilray.Integrations.Core.Application.Adapters.Storage;
 
 namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
 
@@ -24,6 +22,6 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
-        return await sharepointService.UploadFileAsync(invoiceGroup.Invoices, invoiceGroup.Company);
+        return await sharepointService.UploadInvoicesAsync(invoiceGroup.Invoices, invoiceGroup.Company);
     }
 }

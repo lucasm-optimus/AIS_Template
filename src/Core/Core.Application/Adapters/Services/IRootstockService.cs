@@ -20,4 +20,6 @@ public interface IRootstockService
     Task<bool> SalesOrderExists(string customerReferenceNumber);
     Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId);
     Task<Result<string>> GetSoHdr(string soapiId);
+    Task<Result<List<ExpenseError>>> CreateJournalEntryAsync(Expense expense, CompanyReference company);
+    Task<Result> PostExpenseMessageToChatterAsync(string companyNumber, int errorCount);
 }

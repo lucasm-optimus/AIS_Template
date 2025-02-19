@@ -10,4 +10,7 @@ public class CompanyReference
     public bool Non_PO_Invoices__c { get; set; }
     public bool PO_AP_Match_Invoices__c { get; set; }
     public bool OBeer_Invoices__c { get; set; }
+    public bool CanProcessExpenses =>
+        Rootstock_Company__c != null &&
+        Expenses__c;
 }

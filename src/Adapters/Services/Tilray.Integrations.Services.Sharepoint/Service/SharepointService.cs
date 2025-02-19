@@ -1,21 +1,51 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+﻿using Tilray.Integrations.Services.Sharepoint.Startup;
 
 namespace Tilray.Integrations.Services.Sharepoint.Service;
 
-public class SharepointService(GraphServiceClient graphServiceClient, IMapper mapper, SharepointSettings sharepointSettings, ILogger<SharepointService> logger) : ISharepointService
+public class SharepointService(GraphServiceClient graphServiceClient, IMapper mapper, SharepointSettings sharepointSettings, ILogger<SharepointService> logger)
+    : ISharepointService
 {
     #region Private methods
 
     private string GetSubFolderPath<T>()
     {
-        Type type = typeof(T);
-        return type switch
+        return typeof(T) switch
         {
             Type invoice when invoice == typeof(SharepointInvoice) => sharepointSettings.InvoicesSubFolderPath,
             Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
             Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
-            _ => string.Empty
+            Type error when error == typeof(ExpenseError) => sharepointSettings.ExpensesErrorsSubFolderPath,
+            _ => string.Empty,
         };
+    }
+
+    private string GetExpensesUploadPath(CompanyReference companyReference, ExpenseType? expenseType, string stopTime)
+    {
+        var companyName = companyReference?.Company_Name__c?.Trim() ?? "";
+        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
+        var expensesFolder = sharepointSettings.ExpensesFolderPath?.TrimEnd('/');
+
+        return expenseType switch
+        {
+            ExpenseType.Cash => $"{basePath}/{companyName}/{expensesFolder}/Expenses_Cash_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
+            ExpenseType.Company => $"{basePath}/{companyName}/{expensesFolder}/Expenses_Company_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
+            _ => $"{basePath}/General/Expenses/Expenses_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv"
+        };
+    }
+
+    private string GetUploadPath<T>(CompanyReference companyReference)
+    {
+        string subFolderPath = GetSubFolderPath<T>();
+        string basePath = sharepointSettings.BasePath?.TrimEnd('/') ?? "";
+        string fileName = $"{companyReference?.Company_Name__c}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
+        string companyName = companyReference?.Company_Name__c?.Trim() ?? "";
+
+        if (typeof(T) == typeof(ExpenseError))
+        {
+            return $"{basePath}/{companyName}{sharepointSettings.ExpensesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
+        }
+
+        return $"{basePath}/{companyName}{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
     }
 
     private async Task<Result<string>> GetSiteIdAsync()
@@ -64,7 +94,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
     #region Public methods
 
-    public async Task<Result> UploadFileAsync(IEnumerable<Invoice> invoices, CompanyReference companyReference)
+    public async Task<Result> UploadInvoicesAsync(IEnumerable<Invoice> invoices, CompanyReference companyReference)
     {
         var sharepointInvoices = invoices
             .SelectMany(invoice =>
@@ -76,7 +106,18 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         return await UploadFileAsync(sharepointInvoices, companyReference);
     }
 
-    public async Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference)
+    public async Task<Result> UploadExpensesAsync(IEnumerable<Expense> expenses, string stopTime, CompanyReference companyReference = null,
+        ExpenseType? expenseType = null)
+    {
+        var uploadPath = GetExpensesUploadPath(companyReference, expenseType, stopTime);
+        string[] ignoredProperties = { "LineType", "CleanCompanyCode", "IsNegative", "IsTaxExpense",
+            "IsQstsExpense", "IsCashExpense", "IsCompanyExpense" };
+
+        return await UploadFileAsync(expenses, uploadPath: uploadPath, ignoredProperties: ignoredProperties);
+    }
+
+    public async Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference = null,
+        string uploadPath = null, string[] ignoredProperties = null)
     {
         if (content == null || !content.Any())
         {
@@ -87,8 +128,8 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         var driveResult = await GetDriveIdAsync();
         if (driveResult.IsFailed) return driveResult.ToResult();
 
-        var fileContent = Helpers.ConvertToCsv(content);
-        var uploadPath = $"{sharepointSettings.BasePath?.TrimEnd('/')}/{companyReference.Company_Name__c.Trim()}{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/{GetSubFolderPath<T>()}{companyReference.Company_Name__c}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
+        var fileContent = Helpers.ConvertToCsv(content, ignoredProperties);
+        uploadPath ??= GetUploadPath<T>(companyReference);
 
         using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
         {
@@ -101,11 +142,13 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
             if (uploadedFile?.Id == null)
             {
-                logger.LogError("UploadFileAsync: File upload failed");
-                return Result.Fail("UploadFileAsync: File upload failed");
+                string errorMessage = $"UploadFileAsync: File upload failed for {typeof(T).Name}";
+                logger.LogError(errorMessage);
+                return Result.Fail(errorMessage);
             }
         }
 
+        logger.LogInformation("UploadFileAsync: {ObjectName} uploaded. Upload Path {UploadPath}", typeof(T).Name, uploadPath);
         return Result.Ok();
     }
 

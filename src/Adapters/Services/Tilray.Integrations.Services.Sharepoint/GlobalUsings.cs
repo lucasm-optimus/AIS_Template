@@ -12,4 +12,6 @@ global using Tilray.Integrations.Core.Common.Startup;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
 global using Tilray.Integrations.Services.Sharepoint.Service;
 global using Tilray.Integrations.Services.Sharepoint.Service.Models;
-global using Tilray.Integrations.Services.Sharepoint.Startup;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses.Events;
+global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;

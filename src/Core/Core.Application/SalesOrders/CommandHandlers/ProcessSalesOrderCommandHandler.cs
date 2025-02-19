@@ -1,4 +1,4 @@
-﻿
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
 
 namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
