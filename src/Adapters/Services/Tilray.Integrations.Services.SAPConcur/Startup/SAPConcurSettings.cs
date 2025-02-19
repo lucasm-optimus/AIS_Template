@@ -6,7 +6,6 @@
 public class SAPConcurSettings
 {
     public string BaseUrl { get; set; }
-    public string TokenEndpoint { get; set; }
     public string ApprovalStatus { get; set; }
     public string PaymentStatus { get; set; }
     public string ClientId { get; set; }

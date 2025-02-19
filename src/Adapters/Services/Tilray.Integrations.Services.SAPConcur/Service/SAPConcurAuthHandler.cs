@@ -43,7 +43,7 @@ namespace Tilray.Integrations.Services.SAPConcur.Service
 
         private async Task RefreshTokenAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, _settings.TokenEndpoint)
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_settings.BaseUrl}/oauth2/v0/token")
             {
                 Content = new FormUrlEncodedContent(new[]
                 {
