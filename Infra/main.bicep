@@ -117,6 +117,7 @@ param nsgName string
 @description('Name of the Virtual Network')
 param pvirtualNetworkName string
 
+
 targetScope = 'resourceGroup'
 
 module apimModule './modules/1.apim.bicep' = {
@@ -134,7 +135,7 @@ module apimModule './modules/1.apim.bicep' = {
   dependsOn: [
     logAnalyticsModule
   ]
-}
+} 
 
 module storageAccountModule './modules/2.StorageAccount.bicep' = {
   name: 'storageAccount'
@@ -212,6 +213,7 @@ module keyVaultModule './modules/9.keyvault.bicep' = {
     plocation: location
     pkeyVaultSku: pkeyVaultSku
     ptags: ptags
+    objectId: functionAppModule.outputs.functionAppId
   }
 }
 

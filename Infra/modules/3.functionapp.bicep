@@ -26,6 +26,9 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
   location: plocation
   kind: 'functionapp'
   tags: ptags
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -66,3 +69,4 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
 // Outputs
 output functionAppId string = azureFunction.id
 output appServicePlanId string = appServicePlan.id
+output functionAppPrincipalId string = azureFunction.identity.principalId
