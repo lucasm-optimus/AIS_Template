@@ -1,26 +1,15 @@
-﻿using Optimus.Core.Common.ActionFilters;
-using Optimus.Core.Common.Middlewares;
-using Optimus.Core.Common.Stream;
-using Optimus.Core.Common.Validation;
-using FluentValidation;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Polly;
-using Polly.Extensions.Http;
-using System.Reflection;
-using Microsoft.Azure.Functions.Worker;
+﻿using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
-namespace Optimus.Core.Common.Startup;
+namespace Tilray.Integrations.Core.Common.Startup;
 
 public static class StartupExtensions
 {
     static readonly Assembly[] _Assemblies = AppDomain.CurrentDomain
         .GetAssemblies()
-        .Where(a => a.GetName().Name.StartsWith(typeof(StartupExtensions).Namespace.Split('.')[0]))
+        .Where(a => a.GetName().Name.StartsWith("Tilray.Integrations"))
         .ToArray();
-
 
     public static void RegisterCommonServices(this IHostApplicationBuilder builder, string applicationName)
     {
@@ -40,29 +29,27 @@ public static class StartupExtensions
             cfg.RegisterServicesFromAssemblies(_Assemblies);
 
             //Add the Validation Behavior to the Mediatr pipeline
-            cfg.AddOpenBehavior(typeof(MediatrValidationBehavior<,>));
+            //cfg.AddOpenBehavior(typeof(MediatrValidationBehavior<,>));
         });
 
         var configuration = builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>();
+        var keyVaultUri = configuration["KeyVault:Uri"];
+        if (!string.IsNullOrEmpty(keyVaultUri))
+        {
+            builder.Configuration.AddAzureKeyVault(
+                new Uri(keyVaultUri),
+                new DefaultAzureCredential(), new PrefixKeyVaultSecretManager("IntegrationsFunctions"));
+        }
 
         builder.Services.RegisterStartupClasses(configuration);
-        builder.Services.RegisterStreams(configuration);
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        builder.Services.AddSwaggerGen(options =>
-        {
-            options.OperationFilter<MinimumResultTypeFilter>();
-        });
     }
 
 
-    public static IFunctionsWorkerApplicationBuilder UseOptimusMiddlewares(this IFunctionsWorkerApplicationBuilder app)
+    public static IFunctionsWorkerApplicationBuilder UseMiddlewares(this IFunctionsWorkerApplicationBuilder app)
     {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseMiddleware<LoggingMiddleware>();
-        app.UseMiddleware<ResultTypeFilter>();
+        //app.UseMiddleware<ResultTypeFilter>();
 
         return app;
     }
@@ -118,7 +105,7 @@ public static class StartupExtensions
     private static void LoadAssemblies()
     {
         var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll")
-                .Where(file => file.Contains("Optimus."))
+                .Where(file => file.Contains("Tilray.Integrations"))
                 .ToList();
 
         foreach (var dll in assemblies)
@@ -127,4 +114,17 @@ public static class StartupExtensions
         }
     }
 
+    private class PrefixKeyVaultSecretManager : KeyVaultSecretManager
+    {
+        private readonly string _prefix;
+
+        public PrefixKeyVaultSecretManager(string prefix)
+            => _prefix = $"{prefix}--";
+
+        public override bool Load(SecretProperties properties)
+            => properties.Name.StartsWith(_prefix);
+
+        public override string GetKey(KeyVaultSecret secret)
+            => secret.Name[_prefix.Length..].Replace("--", ConfigurationPath.KeyDelimiter);
+    }
 }

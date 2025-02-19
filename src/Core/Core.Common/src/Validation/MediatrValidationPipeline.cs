@@ -1,8 +1,4 @@
-﻿using MediatR;
-using FluentValidation;
-using FluentValidation.Results;
-
-namespace Optimus.Core.Common.Validation;
+﻿namespace Tilray.Integrations.Core.Common.Validation;
 
 /// <summary>
 /// This class is responsible for validate the Commands and Queries before executing the Handler

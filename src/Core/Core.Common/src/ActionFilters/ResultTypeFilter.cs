@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace Optimus.Core.Common.ActionFilters;
+﻿namespace Tilray.Integrations.Core.Common.ActionFilters;
 
 public class MinimumResultTypeFilter(ILogger<MinimumResultTypeFilter> logger) : IEndpointFilter, IOperationFilter
 {

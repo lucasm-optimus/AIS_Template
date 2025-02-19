@@ -1,7 +1,8 @@
+using Tilray.Integrations.Core.Common.Startup;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
-string ApplicationName = "Optimus Info Integration Functions";
+string ApplicationName = "Tilray Integration Functions";
 
 var app = builder
     .ConfigureFunctionsWebApplication()
@@ -9,6 +10,6 @@ var app = builder
 
 builder.RegisterCommonServices(ApplicationName);
 
-app.UseOptimusMiddlewares();
+app.UseMiddlewares();
 
 builder.Build().Run();
