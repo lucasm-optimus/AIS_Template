@@ -1,0 +1,17 @@
+﻿global using FluentResults;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;
+global using Newtonsoft.Json;
+global using Polly;
+global using Polly.Retry;
+global using System.Net;
+global using System.Net.Http.Headers;
+global using Tilray.Integrations.Core.Application.Adapters.Services;
+global using Tilray.Integrations.Core.Common.Startup;
+global using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
+global using Tilray.Integrations.Services.SAPConcur.Service;
+global using AutoMapper;
+global using System.IO.Compression;
+global using Tilray.Integrations.Core.Common.Extensions;
+global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;

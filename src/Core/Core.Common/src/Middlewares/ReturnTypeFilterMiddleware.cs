@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Functions.Worker.Middleware;
-using Microsoft.Azure.Functions.Worker;
-
-namespace Optimus.Core.Common.Middlewares;
+﻿namespace Tilray.Integrations.Core.Common.Middlewares;
 
 public class ResultTypeFilter(ILogger<ResultTypeFilter> logger) : IFunctionsWorkerMiddleware
 {

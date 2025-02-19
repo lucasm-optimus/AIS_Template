@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
-
-namespace Optimus.Core.Common.Startup;
+﻿namespace Tilray.Integrations.Core.Common.Startup;
 
 /// <summary>
 /// Used to define an automatic way to register startup classes
@@ -10,15 +7,6 @@ public interface IStartupRegister
 {
     IServiceCollection Register(IServiceCollection services, IConfiguration configuration);
 }
-
-/// <summary>
-/// Used to define an automatic way to register endpoints
-/// </summary>
-public interface IEndpointDefinition
-{
-    void RegisterEndpoints(RouteGroupBuilder route);
-}
-
 
 internal static class StartupRegister
 {
