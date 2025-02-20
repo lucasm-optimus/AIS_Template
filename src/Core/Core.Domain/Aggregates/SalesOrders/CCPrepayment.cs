@@ -18,6 +18,7 @@
         #endregion
 
         #region Constructors
+        private CCPrepayment() { }
 
         private CCPrepayment(double amountPrepaidByCC, string prepaidCCTransactionID, string ccPaymentGateway)
         {
