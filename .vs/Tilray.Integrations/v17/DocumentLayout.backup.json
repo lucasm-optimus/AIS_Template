@@ -1,0 +1,632 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.functions\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|solutionrelative:tilray.integrations.functions\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.functions\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|solutionrelative:tilray.integrations.functions\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.services.onedrive\\service\\onedriveservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|solutionrelative:tilray.integrations.services.onedrive\\service\\onedriveservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.functions\\host.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|solutionrelative:tilray.integrations.functions\\host.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.services.onedrive\\startup\\onedrivesettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|solutionrelative:tilray.integrations.services.onedrive\\startup\\onedrivesettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.functions\\usecase\\soxreport\\testing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|solutionrelative:tilray.integrations.functions\\usecase\\soxreport\\testing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.application\\soxreport\\queryhandlers\\converttocsvformatqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|solutionrelative:tilray.integrations.core.application\\soxreport\\queryhandlers\\converttocsvformatqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\aggroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\aggroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.application\\soxreport\\queryhandlers\\generatesoxreportqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|solutionrelative:tilray.integrations.core.application\\soxreport\\queryhandlers\\generatesoxreportqueryhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.application\\soxreport\\commandhandlers\\savereporttoonedrivecommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|solutionrelative:tilray.integrations.core.application\\soxreport\\commandhandlers\\savereporttoonedrivecommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.application\\soxreport\\commandhandlers\\savequerytoonedrivecommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B160466-3762-4F56-A936-2E5FAC0406E0}|Tilray.Integrations.Core.Application\\Tilray.Integrations.Core.Application.csproj|solutionrelative:tilray.integrations.core.application\\soxreport\\commandhandlers\\savequerytoonedrivecommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.domain\\aggregates\\soxreport\\commands\\savereporttoonedrivecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|solutionrelative:tilray.integrations.core.domain\\aggregates\\soxreport\\commands\\savereporttoonedrivecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.domain\\aggregates\\soxreport\\commands\\savequerytoonedrivecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|solutionrelative:tilray.integrations.core.domain\\aggregates\\soxreport\\commands\\savequerytoonedrivecommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.domain\\aggregates\\soxreport\\queries\\generatesoxreportquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|solutionrelative:tilray.integrations.core.domain\\aggregates\\soxreport\\queries\\generatesoxreportquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.domain\\aggregates\\soxreport\\queries\\converttocsvformatquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1548350-D4F1-4562-90EB-0125D709FF10}|Tilray.Integrations.Core.Domain\\Tilray.Integrations.Core.Domain.csproj|solutionrelative:tilray.integrations.core.domain\\aggregates\\soxreport\\queries\\converttocsvformatquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.services.onedrive\\startup\\onedrivestartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED51F49-2984-4CDA-A5BC-83A80B405D24}|Tilray.Integrations.Services.OneDrive\\Tilray.Integrations.Services.OneDrive.csproj|solutionrelative:tilray.integrations.services.onedrive\\startup\\onedrivestartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EBF70C8D-BFB5-49D3-9768-2EA97ED54ED6}|Tilray.Integrations.Service.Salesforce\\Tilray.Integrations.Service.Salesforce.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.service.salesforce\\startup\\salesforcestartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EBF70C8D-BFB5-49D3-9768-2EA97ED54ED6}|Tilray.Integrations.Service.Salesforce\\Tilray.Integrations.Service.Salesforce.csproj|solutionrelative:tilray.integrations.service.salesforce\\startup\\salesforcestartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.functions\\tilray.integrations.functions.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{2FC90890-E908-4D64-BA29-EB53626B8B66}|Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj|solutionrelative:tilray.integrations.functions\\tilray.integrations.functions.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2650F78C-3F9F-4C49-A971-651955609D41}|Tilray.Integrations.Service.CSVService\\Tilray.Integrations.Services.CSV.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.service.csvservice\\service\\csvservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2650F78C-3F9F-4C49-A971-651955609D41}|Tilray.Integrations.Service.CSVService\\Tilray.Integrations.Services.CSV.csproj|solutionrelative:tilray.integrations.service.csvservice\\service\\csvservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EBF70C8D-BFB5-49D3-9768-2EA97ED54ED6}|Tilray.Integrations.Service.Salesforce\\Tilray.Integrations.Service.Salesforce.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.service.salesforce\\globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EBF70C8D-BFB5-49D3-9768-2EA97ED54ED6}|Tilray.Integrations.Service.Salesforce\\Tilray.Integrations.Service.Salesforce.csproj|solutionrelative:tilray.integrations.service.salesforce\\globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2650F78C-3F9F-4C49-A971-651955609D41}|Tilray.Integrations.Service.CSVService\\Tilray.Integrations.Services.CSV.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.service.csvservice\\startup\\csvstartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2650F78C-3F9F-4C49-A971-651955609D41}|Tilray.Integrations.Service.CSVService\\Tilray.Integrations.Services.CSV.csproj|solutionrelative:tilray.integrations.service.csvservice\\startup\\csvstartup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\actionfilters\\resulttypefilter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\actionfilters\\resulttypefilter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\extensions\\helpers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\extensions\\helpers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\middlewares\\returntypefiltermiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\middlewares\\returntypefiltermiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\middlewares\\loggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\middlewares\\loggingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\middlewares\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\middlewares\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\models\\tokenresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\models\\tokenresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\notifications\\idomainnotificationcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\notifications\\idomainnotificationcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\startup\\startupextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\startup\\startupextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\startup\\istartupregister.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\startup\\istartupregister.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\states\\istate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\states\\istate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\stream\\streamfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\stream\\streamfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\stream\\istream.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\stream\\istream.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\validation\\mediatrvalidationpipeline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\validation\\mediatrvalidationpipeline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|c:\\users\\vishal.thapa\\source\\tilray_integrations\\sox-integrations\\tilray.integrations.core.common\\tilray.integrations.core.common.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D0FAFBD0-A6DC-4FA5-8A50-B37C3DF6A94B}|Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj|solutionrelative:tilray.integrations.core.common\\tilray.integrations.core.common.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 290,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OneDriveSettings.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveSettings.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveSettings.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveSettings.cs",
+              "RelativeToolTip": "Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:23:41.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Testing.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Usecase\\SOXReport\\Testing.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Functions\\Usecase\\SOXReport\\Testing.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Usecase\\SOXReport\\Testing.cs",
+              "RelativeToolTip": "Tilray.Integrations.Functions\\Usecase\\SOXReport\\Testing.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwCwAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:22:51.206Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ConvertToCSVFormatQueryHandler.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\ConvertToCSVFormatQueryHandler.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\ConvertToCSVFormatQueryHandler.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\ConvertToCSVFormatQueryHandler.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\ConvertToCSVFormatQueryHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:13:48.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "host.json",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\host.json",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Functions\\host.json",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\host.json",
+              "RelativeToolTip": "Tilray.Integrations.Functions\\host.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-20T09:18:12.737Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "OneDriveService.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\Service\\OneDriveService.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Services.OneDrive\\Service\\OneDriveService.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\Service\\OneDriveService.cs",
+              "RelativeToolTip": "Tilray.Integrations.Services.OneDrive\\Service\\OneDriveService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:45:40.636Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "local.settings.json",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\local.settings.json",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Functions\\local.settings.json",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\local.settings.json",
+              "RelativeToolTip": "Tilray.Integrations.Functions\\local.settings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-20T09:18:02.565Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Program.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Functions\\Program.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Program.cs",
+              "RelativeToolTip": "Tilray.Integrations.Functions\\Program.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAADcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:56:00.879Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "SaveReportToOneDriveCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveReportToOneDriveCommandHandler.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveReportToOneDriveCommandHandler.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveReportToOneDriveCommandHandler.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveReportToOneDriveCommandHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:18:08.189Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SaveQueryToOneDriveCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveQueryToOneDriveCommandHandler.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveQueryToOneDriveCommandHandler.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveQueryToOneDriveCommandHandler.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Application\\SOXReport\\CommandHandlers\\SaveQueryToOneDriveCommandHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:16:09.895Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "GenerateSOXReportQueryHandler.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\GenerateSOXReportQueryHandler.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\GenerateSOXReportQueryHandler.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\GenerateSOXReportQueryHandler.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Application\\SOXReport\\QueryHandlers\\GenerateSOXReportQueryHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:15:18.703Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AggRoot.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\AggRoot.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\AggRoot.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\AggRoot.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\AggRoot.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAuwAwAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:38:46.005Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "SaveReportToOneDriveCommand.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveReportToOneDriveCommand.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveReportToOneDriveCommand.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveReportToOneDriveCommand.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveReportToOneDriveCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:12:06.164Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "SaveQueryToOneDriveCommand.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveQueryToOneDriveCommand.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveQueryToOneDriveCommand.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveQueryToOneDriveCommand.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Commands\\SaveQueryToOneDriveCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:11:03.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "GenerateSOXReportQuery.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\GenerateSOXReportQuery.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\GenerateSOXReportQuery.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\GenerateSOXReportQuery.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\GenerateSOXReportQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:10:33.489Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ConvertToCSVFormatQuery.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\ConvertToCSVFormatQuery.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\ConvertToCSVFormatQuery.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\ConvertToCSVFormatQuery.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Domain\\Aggregates\\SOXReport\\Queries\\ConvertToCSVFormatQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T10:10:49.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "CSVStartup.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.CSVService\\Startup\\CSVStartup.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Service.CSVService\\Startup\\CSVStartup.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.CSVService\\Startup\\CSVStartup.cs",
+              "RelativeToolTip": "Tilray.Integrations.Service.CSVService\\Startup\\CSVStartup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:42:11.395Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "GlobalUsings.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.Salesforce\\GlobalUsings.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Service.Salesforce\\GlobalUsings.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.Salesforce\\GlobalUsings.cs",
+              "RelativeToolTip": "Tilray.Integrations.Service.Salesforce\\GlobalUsings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:49:59.624Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Helpers.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Extensions\\Helpers.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Extensions\\Helpers.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Extensions\\Helpers.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Extensions\\Helpers.cs",
+              "ViewState": "AgIAADgAAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:40.507Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SalesforceStartup.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.Salesforce\\Startup\\SalesforceStartup.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Service.Salesforce\\Startup\\SalesforceStartup.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.Salesforce\\Startup\\SalesforceStartup.cs",
+              "RelativeToolTip": "Tilray.Integrations.Service.Salesforce\\Startup\\SalesforceStartup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:16:38.721Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "OneDriveStartup.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveStartup.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveStartup.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveStartup.cs",
+              "RelativeToolTip": "Tilray.Integrations.Services.OneDrive\\StartUp\\OneDriveStartup.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:43:26.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Tilray.Integrations.Functions",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj",
+              "RelativeToolTip": "Tilray.Integrations.Functions\\Tilray.Integrations.Functions.csproj",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAswCkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-02-20T09:56:49.129Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "CSVService.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.CSVService\\Service\\CSVService.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Service.CSVService\\Service\\CSVService.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Service.CSVService\\Service\\CSVService.cs",
+              "RelativeToolTip": "Tilray.Integrations.Service.CSVService\\Service\\CSVService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwCsAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:50:22.107Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ReturnTypeFilterMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\ReturnTypeFilterMiddleware.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Middlewares\\ReturnTypeFilterMiddleware.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\ReturnTypeFilterMiddleware.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Middlewares\\ReturnTypeFilterMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:36.665Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "LoggingMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\LoggingMiddleware.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Middlewares\\LoggingMiddleware.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\LoggingMiddleware.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Middlewares\\LoggingMiddleware.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:31.893Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "ExceptionHandlingMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\ExceptionHandlingMiddleware.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Middlewares\\ExceptionHandlingMiddleware.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Middlewares\\ExceptionHandlingMiddleware.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Middlewares\\ExceptionHandlingMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:20.854Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "TokenResponse.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Models\\TokenResponse.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Models\\TokenResponse.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Models\\TokenResponse.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Models\\TokenResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:15.529Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "IDomainNotificationContext.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Notifications\\IDomainNotificationContext.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Notifications\\IDomainNotificationContext.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Notifications\\IDomainNotificationContext.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Notifications\\IDomainNotificationContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:12.14Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "StartupExtension.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Startup\\StartupExtension.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Startup\\StartupExtension.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Startup\\StartupExtension.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Startup\\StartupExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:08.728Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "IStartupRegister.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Startup\\IStartupRegister.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Startup\\IStartupRegister.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Startup\\IStartupRegister.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Startup\\IStartupRegister.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:06.564Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "IState.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\States\\IState.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\States\\IState.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\States\\IState.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\States\\IState.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:03.772Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "StreamFactory.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Stream\\StreamFactory.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Stream\\StreamFactory.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Stream\\StreamFactory.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Stream\\StreamFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:39:00.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "IStream.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Stream\\IStream.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Stream\\IStream.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Stream\\IStream.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Stream\\IStream.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:38:57.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "MediatrValidationPipeline.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Validation\\MediatrValidationPipeline.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Validation\\MediatrValidationPipeline.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Validation\\MediatrValidationPipeline.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Validation\\MediatrValidationPipeline.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:38:50.339Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "GlobalUsings.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\GlobalUsings.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\GlobalUsings.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\GlobalUsings.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\GlobalUsings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:38:43.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "Tilray.Integrations.Core.Common",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\Tilray.Integrations.Core.Common.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-02-20T09:23:30.074Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "ResultTypeFilter.cs",
+              "DocumentMoniker": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\ActionFilters\\ResultTypeFilter.cs",
+              "RelativeDocumentMoniker": "Tilray.Integrations.Core.Common\\ActionFilters\\ResultTypeFilter.cs",
+              "ToolTip": "C:\\Users\\vishal.thapa\\source\\Tilray_Integrations\\SOX-Integrations\\Tilray.Integrations.Core.Common\\ActionFilters\\ResultTypeFilter.cs",
+              "RelativeToolTip": "Tilray.Integrations.Core.Common\\ActionFilters\\ResultTypeFilter.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAQwBUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-20T09:23:39.884Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

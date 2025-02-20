@@ -1,0 +1,55 @@
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.deps.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfo.cs
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.sourcelink.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.I.13670849.Up2Date
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\refint\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\ref\Tilray.Integrations.Services.CSV.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.deps.json
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.AssemblyReference.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfoInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfo.cs
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.CoreCompileInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.I.13670849.Up2Date
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\refint\Tilray.Integrations.Services.CSV.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\ref\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.deps.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.AssemblyInfo.cs
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.sourcelink.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.I.13670849.Up2Date
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\refint\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\Tilray.Integrations.Services.CSV.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\obj\Debug\net8.0\ref\Tilray.Integrations.Services.CSV.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.CSVService\bin\Debug\net8.0\Tilray.Integrations.Core.Common.pdb

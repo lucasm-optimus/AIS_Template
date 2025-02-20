@@ -1,0 +1,13 @@
+﻿global using System;
+global using MediatR;
+global using Microsoft.Azure.Functions.Worker;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;
+global using Tilray.Integrations.Core.Domain.Aggregates.SOXReport.Commands;
+global using Tilray.Integrations.Core.Domain.Aggregates.SOXReport.Queries;
+global using Tilray.Integrations.Services.Salesforce.Service.Queries;
+global using Microsoft.Azure.Functions.Worker.Builder;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Hosting;
+global using Tilray.Integrations.Services.OneDrive.Startup;
+global using Tilray.Integrations.Services.Salesforce.Satrtup;

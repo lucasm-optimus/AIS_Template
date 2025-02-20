@@ -1,0 +1,13 @@
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\bin\Debug\net8.0\Tilray.Integrations.Core.Common.deps.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\bin\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\bin\Debug\net8.0\Tilray.Integrations.Core.Common.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.AssemblyInfo.cs
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.sourcelink.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\refint\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\Tilray.Integrations.Core.Common.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Common\obj\Debug\net8.0\ref\Tilray.Integrations.Core.Common.dll

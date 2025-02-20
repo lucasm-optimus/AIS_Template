@@ -1,0 +1,55 @@
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.deps.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfo.cs
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.sourcelink.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.I.2A6A4F16.Up2Date
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\refint\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\ref\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.deps.json
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.AssemblyReference.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfoInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfo.cs
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.CoreCompileInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.I.2A6A4F16.Up2Date
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\refint\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\ref\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.deps.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.AssemblyInfo.cs
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.sourcelink.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.I.2A6A4F16.Up2Date
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\refint\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\Tilray.Integrations.Services.OneDrive.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\obj\Debug\net8.0\ref\Tilray.Integrations.Services.OneDrive.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Services.OneDrive\bin\Debug\net8.0\Tilray.Integrations.Core.Common.pdb

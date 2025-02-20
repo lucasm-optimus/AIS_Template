@@ -1,0 +1,49 @@
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.deps.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfo.cs
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.sourcelink.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.I.F008043F.Up2Date
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\refint\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Core.Application\obj\Debug\net8.0\ref\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.deps.json
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.AssemblyReference.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfoInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfo.cs
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.CoreCompileInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.I.F008043F.Up2Date
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\refint\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\ref\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.deps.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.AssemblyInfo.cs
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.sourcelink.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.I.F008043F.Up2Date
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\refint\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\obj\Debug\net8.0\ref\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Core.Application\bin\Debug\net8.0\Tilray.Integrations.Core.Common.pdb

@@ -1,0 +1,55 @@
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.deps.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfo.cs
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.sourcelink.json
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.I.1D431D49.Up2Date
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\refint\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\vishal.thapa\OneDrive - Optimus Information Inc\Documents\SOX-Report_Integration\Tilray-SOXReport\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\ref\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.deps.json
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.AssemblyReference.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfoInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfo.cs
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.CoreCompileInputs.cache
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.I.1D431D49.Up2Date
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\refint\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\naveen.s\OneDrive - Optimus Information Inc\Desktop\AIS-Tilrayv3\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\ref\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.deps.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Application.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Domain.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.AssemblyReference.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfoInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.AssemblyInfo.cs
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.csproj.CoreCompileInputs.cache
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.sourcelink.json
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.I.1D431D49.Up2Date
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\refint\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\Tilray.Integrations.Service.Salesforce.pdb
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\obj\Debug\net8.0\ref\Tilray.Integrations.Service.Salesforce.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Common.dll
+C:\Users\vishal.thapa\source\Tilray_Integrations\SOX-Integrations\Tilray.Integrations.Service.Salesforce\bin\Debug\net8.0\Tilray.Integrations.Core.Common.pdb
