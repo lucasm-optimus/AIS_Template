@@ -23,6 +23,8 @@ public class SAPConcurStartup : IStartupRegister
         }).AddHttpMessageHandler<SAPConcurAuthHandler>();
 
         services.AddAutoMapper(typeof(SAPConcurExpenseMapper));
+
+        services.AddAutoMapper(typeof(SAPConcurPurchaseOrderMapping));
         return services;
     }
 }

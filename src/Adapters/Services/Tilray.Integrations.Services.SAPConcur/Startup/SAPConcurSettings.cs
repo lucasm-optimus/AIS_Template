@@ -14,4 +14,5 @@ public class SAPConcurSettings
     public int InvoicesFetchDurationInMinutes { get; set; }
     public int ExpensesFetchDurationInMinutes { get; set; }
     public string ExtractDefinitionName { get; set; }
+    public string? ConcurPolicyExternalId { get; set; }
 }

@@ -152,5 +152,39 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         return Result.Ok();
     }
 
+    public async Task<Result> UploadError_ImportbatchAsync<T>(IEnumerable<T> content, string path)
+    {
+        if (content == null || !content.Any())
+        {
+            logger.LogWarning("UploadFileWithDynamicPathAsync: No content provided for upload");
+            return Result.Fail("UploadFileWithDynamicPathAsync: No content provided for upload");
+        }
+
+        var driveResult = await GetDriveIdAsync();
+        if (driveResult.IsFailed) return driveResult.ToResult();
+
+        var fileContent = Helpers.ConvertToCsv(content);
+        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
+        var uploadPath = $"{basePath}/{path}";
+
+        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
+        {
+            var uploadedFile = await graphServiceClient
+                .Drives[driveResult.Value]
+                .Items["root"]
+                .ItemWithPath(uploadPath)
+                .Content
+                .PutAsync(memoryStream);
+
+            if (uploadedFile?.Id == null)
+            {
+                logger.LogError("UploadFileWithDynamicPathAsync: File upload failed");
+                return Result.Fail("UploadFileWithDynamicPathAsync: File upload failed");
+            }
+        }
+
+        return Result.Ok();
+    }
+
     #endregion
 }

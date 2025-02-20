@@ -20,3 +20,4 @@ global using System.Text;
 global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
 global using Tilray.Integrations.Core.Domain.Aggregates.Expenses.Events;
 global using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+global using Tilray.Integrations.Core.Domain.Aggregates.PurchaseOrders;

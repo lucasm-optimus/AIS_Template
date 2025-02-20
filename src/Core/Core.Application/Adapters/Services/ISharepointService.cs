@@ -9,4 +9,5 @@ public interface ISharepointService
     Task<Result> UploadInvoicesAsync(IEnumerable<Invoice> invoices, CompanyReference companyReference);
     Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference = null, string uploadPath = null,
         string[] ignoredProperties = null);
+    Task<Result> UploadError_ImportbatchAsync<T>(IEnumerable<T> content, string path);
 }

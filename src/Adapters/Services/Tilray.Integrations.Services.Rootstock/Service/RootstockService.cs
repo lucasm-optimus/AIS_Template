@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿
+using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
@@ -10,6 +11,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private const string QueryUrl = "services/data/v52.0/query";
     private const string SObjectUrl = "services/data/v59.0/sobjects";
+    private const string ChatterUrl = "services/data/v59.0/chatter/feed-elements";
 
     #endregion
 
@@ -37,6 +39,25 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return recordsResult.IsSuccess
             ? Result.Ok(recordsResult.Value.ToString().ToObject<IEnumerable<T>>())
             : Result.Fail<IEnumerable<T>>(recordsResult.Errors);
+    }
+
+    private async Task<Result<T>> GetObjectAsync<T>(string url)
+    {
+        var response = await httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            string errorMessage = Helpers.GetErrorFromResponse(response);
+            logger.LogError(errorMessage);
+            return Result.Fail<T>($"Failed to fetch data. Error: {errorMessage}");
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<T>(content);
+
+        return result == null
+            ? Result.Fail<T>("Failed to deserialize API response")
+            : Result.Ok(result);
     }
 
     private async Task<Result<JArray>> FetchRecordsAsync<T>(string query, string objectName)
@@ -141,6 +162,20 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         logger.LogInformation("Successfully posted message to Chatter group {groupName} with Id {GroupId}", groupName, groupResult.Value);
         return Result.Ok();
+    }
+
+    private async Task<Result<string>> CreateChatterPostAsync<T>(T entity)
+    {
+        var json = Helpers.CreateStringContent(entity);
+        var response = await httpClient.PostAsync(ChatterUrl, json);
+
+        if (!response.IsSuccessStatusCode)
+            return Result.Fail<string>($"{typeof(T).Name} creation failed. Error: {Helpers.GetErrorFromResponse(response)}");
+
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var id = JObject.Parse(responseBody)?["id"]?.ToString();
+
+        return Result.Ok(id ?? string.Empty);
     }
 
     private async Task<Result<IEnumerable<string>>> ValidateCustomers(IEnumerable<string> customers)
@@ -312,6 +347,41 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail(errorMessage);
         }
     }
+
+    private async Task<Result<string>> ExecuteSalesforceQueryAsync(string query)
+    {
+        var response = await httpClient.GetAsync($"{QueryUrl}?q={Uri.EscapeDataString(query)}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogInformation("Salesforce query failed");
+            return Result.Fail<string>("Salesforce query failed");
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        return Result.Ok(content);
+    }
+
+    private Result<string> ProcessSalesforceQueryResponse(string content)
+    {
+        var result = JObject.Parse(content);
+
+        if (result["records"] is JArray records && records.Count > 0)
+        {
+            var groupId = records[0]["Id"]?.ToString() ?? string.Empty;
+            return Result.Ok(groupId);
+        }
+        else
+        {
+            logger.LogInformation("Group not found");
+            return Result.Fail<string>("Group not found");
+        }
+    }
+    private async Task<Result<IEnumerable<RootstockVendorAddress>>> GetVendorAddressAsync(string query)
+    {
+        return await GetObjectListAsync<RootstockVendorAddress>(query, "rstk__povendpoaddr__c");
+    }
+
 
     #endregion
 
@@ -522,6 +592,148 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
     }
+
+    #region Purchase Orders
+    public async Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync()
+    {
+        var lastRunTimestamp = DateTime.UtcNow.AddMinutes(-rootstockSettings.PurchaseOrdersFetchDurationInMinutes).ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        var allReceipts = new List<RootstockPurchaseOrderReceipt>();
+        var nextPageUri = $"{QueryUrl}?q={Uri.EscapeDataString(string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp))}";
+
+        while (!string.IsNullOrEmpty(nextPageUri))
+        {
+            var pageResult = await GetObjectAsync<RootstockPurchaseOrderReceipts>(nextPageUri);
+
+            if (pageResult.IsFailed)
+                return Result.Fail<IEnumerable<PurchaseOrderReceipt>>(pageResult.Errors);
+
+            var currentPage = pageResult.Value;
+            allReceipts.AddRange(currentPage.records ?? new List<RootstockPurchaseOrderReceipt>());
+
+            // Append the query parameters to the nextPageUri
+            nextPageUri = string.IsNullOrEmpty(currentPage.nextRecordsUrl) ? string.Empty : $"{currentPage.nextRecordsUrl}?q={Uri.EscapeDataString(string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp))}";
+        }
+
+        logger.LogInformation("Total {TotalReceipts} PO response receipts found", allReceipts.Count);
+
+        // Map RootstockPurchaseOrderReceipt to UnifiedPurchaseOrderReceipt
+        var unifiedReceipts = allReceipts.Select(receipt => mapper.Map<PurchaseOrderReceipt>(receipt)).ToList();
+
+        return Result.Ok(unifiedReceipts.AsEnumerable());
+    }
+
+    public async Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrders)
+    {
+        var poIds = string.Join("', '", distinctPurchaseOrders);
+        var poQuery = string.Format(RootstockQueries.PurchaseOrderQuery, poIds);
+        var purchaseOrdersResult = await GetObjectListAsync<RootstockPurchaseOrder>(poQuery, "rstk__pohdr__c");
+
+        if (purchaseOrdersResult.IsFailed)
+        {
+            return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersResult.Errors);
+        }
+
+        var purchaseOrders = purchaseOrdersResult.Value;
+        var unifiedPurchaseOrders = purchaseOrders.Select(po => mapper.Map<PurchaseOrder>(po)).ToList();
+
+        return Result.Ok(unifiedPurchaseOrders.AsEnumerable());
+    }
+
+    public async Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrders)
+    {
+        var poIds = string.Join("', '", distinctPurchaseOrders);
+        var poLineQuery = string.Format(RootstockQueries.POLineQuery, poIds);
+        var lineItemsResult = await GetObjectListAsync<RootstockLineItem>(poLineQuery, "rstk__poline__c");
+
+        if (lineItemsResult.IsFailed)
+        {
+            return Result.Fail<IEnumerable<PurchaseOrderLineItem>>(lineItemsResult.Errors);
+        }
+
+        var lineItems = lineItemsResult.Value;
+        var unifiedLineItems = lineItems.Select(lineItem => mapper.Map<PurchaseOrderLineItem>(lineItem)).ToList();
+
+        return Result.Ok(unifiedLineItems.AsEnumerable());
+    }
+
+    public async Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync()
+    {
+        return await GetObjectListAsync<CompanyReference>(RootstockQueries.CompanyReferenceQuery, "External_Company_Reference__c");
+    }
+
+    public async Task<Result<PurchaseOrder>> SetVendorAddressAndMap(PurchaseOrder po)
+    {
+        var vendorAddressQuery = PurchaseOrder.FormatVendorAddressQuery(po.VendorCode, po.BillToAddress?.PostalCode, RootstockQueries.VendorAddressQueryTemplate);
+        var vendorAddressResponseResult = await GetVendorAddressAsync(vendorAddressQuery);
+
+        if (vendorAddressResponseResult.IsFailed)
+        {
+            return Result.Fail<PurchaseOrder>(vendorAddressResponseResult.Errors);
+        }
+
+        po.VendorAddressNumber = RootstockVendorAddress.ValidVendorAddress(vendorAddressResponseResult.Value);
+
+        var mappedPurchaseOrder = mapper.Map<PurchaseOrder>(po);
+        return Result.Ok(mappedPurchaseOrder);
+    }
+
+    public async Task<Result<string>> RetrieveGroupAsync()
+    {
+        var query = string.Format(RootstockQueries.RetrieveGroupQueryTemplate, rootstockSettings.PurchaseOrdersChatterGroupPrefix);
+
+        var queryResult = await ExecuteSalesforceQueryAsync(query);
+
+        if (queryResult.IsFailed)
+        {
+            return queryResult;
+        }
+
+        return ProcessSalesforceQueryResponse(queryResult.Value);
+    }
+
+    public async Task<Result<bool>> CheckIfChatterPostExistsAsync(string recordId, string messageText)
+    {
+        var query = string.Format(RootstockQueries.ChatterPostQueryTemplate, recordId);
+        var queryResult = await ExecuteSalesforceQueryAsync(query);
+
+        if (queryResult.IsFailed)
+        {
+            logger.LogInformation("Failed to retrieve Chatter posts");
+            return Result.Fail<bool>("Failed to retrieve Chatter posts");
+        }
+
+        var result = JObject.Parse(queryResult.Value);
+
+        if (result["records"] is JArray records && records.Count > 0)
+        {
+            var existingPost = records.FirstOrDefault(record => record["Body"]?.ToString().Contains(messageText) == true);
+            if (existingPost != null)
+            {
+                logger.LogInformation("Chatter post already exists for specified record, not adding new post");
+                return Result.Ok(true);
+            }
+        }
+
+        return Result.Ok(false);
+    }
+
+    public async Task<Result> CreateChatterPostAsync(ChatterMessage chatterMessage)
+    {
+        var chatterMessageRequest = ChatterMessageRequest.CreateFromChatterMessage(chatterMessage);
+        var createResult = await CreateChatterPostAsync(chatterMessageRequest);
+
+        if (createResult.IsSuccess)
+        {
+            logger.LogInformation("Chatter post created successfully");
+            return Result.Ok();
+        }
+        else
+        {
+            logger.LogError($"Failed to create Chatter post: {createResult.Errors.FirstOrDefault()}");
+            return Result.Fail($"Failed to create Chatter post: {createResult.Errors.FirstOrDefault()}");
+        }
+    }
+    #endregion
 
     #endregion
 }

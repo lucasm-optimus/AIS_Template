@@ -7,8 +7,11 @@
 
     <ItemGroup>
         <Compile Remove="Core.Common\**" />
+        <Compile Remove="PurchaseOrders\CommaandHandlers\**" />
         <EmbeddedResource Remove="Core.Common\**" />
+        <EmbeddedResource Remove="PurchaseOrders\CommaandHandlers\**" />
         <None Remove="Core.Common\**" />
+        <None Remove="PurchaseOrders\CommaandHandlers\**" />
     </ItemGroup>
 
     <ItemGroup>
