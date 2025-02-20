@@ -32,9 +32,14 @@ public static class Helpers
         return JsonConvert.SerializeObject(entity);
     }
 
-    public static StringContent CreateStringContent<T>(this T entity)
+    public static StringContent CreateStringContent<T>(T entity)
     {
         return new StringContent(entity.ToJsonString(), Encoding.UTF8, "application/json");
+    }
+
+    public static StringContent CreateStringContent(string entity)
+    {
+        return new StringContent(entity, Encoding.UTF8, "application/json");
     }
 
     public static DateTime? ParseDate(string date)

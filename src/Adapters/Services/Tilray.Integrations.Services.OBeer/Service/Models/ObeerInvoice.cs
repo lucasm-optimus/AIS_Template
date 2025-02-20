@@ -58,7 +58,7 @@ public class Item
 
 public class Import
 {
-    public IEnumerable<InvoiceHeader> InvoiceHeader { get; set; } = [];
+    public IEnumerable<InvoiceHeader> APInvoice { get; set; } = [];
     public IEnumerable<Item> Items { get; set; } = [];
 }
 
