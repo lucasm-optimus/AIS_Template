@@ -2,7 +2,9 @@ name: Deploy .NET to Prod Azure Functions
 
 on:
   push:
-    branches: ["prod"]
+    branches: ["main"]
+    paths:
+      - "!.github/workflows/**"
   workflow_dispatch:
 
 
@@ -19,6 +21,8 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
+      with:
+        ref: main
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
