@@ -42,10 +42,10 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
         if (typeof(T) == typeof(ExpenseError))
         {
-            return $"{basePath}/{companyName}{sharepointSettings.ExpensesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
+            return $"{basePath}/{companyName}/{sharepointSettings.ExpensesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
         }
 
-        return $"{basePath}/{companyName}{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
+        return $"{basePath}/{companyName}/{sharepointSettings.InvoicesFolderPath?.TrimEnd('/')}/{subFolderPath}{fileName}";
     }
 
     private async Task<Result<string>> GetSiteIdAsync()

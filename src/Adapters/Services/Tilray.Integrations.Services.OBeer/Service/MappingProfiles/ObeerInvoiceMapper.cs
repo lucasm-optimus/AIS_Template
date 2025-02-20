@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Tilray.Integrations.Services.OBeer.Service.Models;
 
 namespace Tilray.Integrations.Services.OBeer.Service.MappingProfiles;
 
@@ -30,7 +29,7 @@ public class ObeerInvoiceMapper : Profile
             .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => Math.Round(src.lineItem.UnitPrice * src.grpo.AllocatedQuantity, 2)));
 
         CreateMap<(Invoice invoice, IEnumerable<LineItem> lineItems, IEnumerable<Item> items, string documentType), ObeerInvoice>()
-            .ForPath(dest => dest.Import.InvoiceHeader, opt => opt.MapFrom(src =>
+            .ForPath(dest => dest.Import.APInvoice, opt => opt.MapFrom(src =>
                 new List<InvoiceHeader>
                 {
                     new()
@@ -93,7 +92,7 @@ public class ObeerInvoiceMapper : Profile
             ));
 
         CreateMap<(Invoice invoice, IEnumerable<LineItem> lineItems, string documentType, bool hasGrpoLines), ObeerInvoice>()
-            .ForPath(dest => dest.Import.InvoiceHeader, opt => opt.MapFrom(src =>
+            .ForPath(dest => dest.Import.APInvoice, opt => opt.MapFrom(src =>
                 new List<InvoiceHeader>
                 {
                     new()

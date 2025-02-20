@@ -106,7 +106,14 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail<string>(result.Errors);
         }
 
-        return Result.Ok(result.Value?.Id ?? string.Empty);
+        if(result.Value == null)
+        {
+            string errorMessage = $"Chatter group {groupName} not found.";
+            logger.LogWarning(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+
+        return Result.Ok(result.Value.Id);
     }
 
     private async Task<Result> PostMessageToChatterAsync(string message, string groupName)
@@ -497,6 +504,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         foreach (var entry in new[] { debit, credit })
         {
+            var j = JsonConvert.SerializeObject(entry);
             var result = await CreateAsync(entry, "rstkf__jeato__c");
             if (!result.IsFailed) continue;
 
