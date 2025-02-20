@@ -12,7 +12,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/Adapters/Web/FunctionApp'        # Path to your .NET project (e.g., 'src/MyFunctionApp')
   DOTNET_VERSION: '9.0.x'                    # .NET version 
   AZURE_RESOURCE_GROUP: 'rg-tilray-it-dev-cace' # Replace with your Azure resource group name
-  ENVIRONMENT: production
+  ENVIRONMENT: dev
 
 jobs:
   build-and-deploy:
@@ -20,8 +20,6 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
-      # with:
-      #   ref: dev
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
