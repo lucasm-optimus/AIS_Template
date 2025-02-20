@@ -504,7 +504,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         foreach (var entry in new[] { debit, credit })
         {
-            var j = JsonConvert.SerializeObject(entry);
             var result = await CreateAsync(entry, "rstkf__jeato__c");
             if (!result.IsFailed) continue;
 
