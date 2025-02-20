@@ -2,7 +2,7 @@ name: Deploy .NET to Dev Azure Functions
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
     paths:
       - "!.github/workflows/**"
   workflow_dispatch:
