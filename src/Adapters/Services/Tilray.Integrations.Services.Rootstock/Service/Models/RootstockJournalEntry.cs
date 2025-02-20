@@ -82,7 +82,7 @@ public class RootstockJournalEntry
 
     private static string GetCashAccount(string companyCode, Expense expense, RootstockGLAccountsSettings glAccountsSettings)
     {
-        var paymentType = expense.PaymentTypeCode.ToString().ToLower();
+        var paymentType = expense.PaymentTypeCode.ToLower();
         return companyCode switch
         {
             "003" => paymentType == "cash" ? glAccountsSettings.SWB.Cash : glAccountsSettings.SWB.Company,
@@ -93,8 +93,8 @@ public class RootstockJournalEntry
 
     private static string GetExpenseAccount(string companyCode, Expense expense)
     {
-        var department = expense.Department.ToString();
-        var expenseCode = expense.ExpenseCode.ToString();
+        var department = expense.Department;
+        var expenseCode = expense.ExpenseCode;
 
         return companyCode == "003"
             ? department == "0" ? $"000-{expenseCode}" : $"{department}-{expenseCode}"
