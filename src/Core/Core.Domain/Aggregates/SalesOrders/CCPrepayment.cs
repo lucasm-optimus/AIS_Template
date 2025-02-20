@@ -20,16 +20,16 @@
         #region Constructors
         private CCPrepayment() { }
 
-        private CCPrepayment(double amountPrepaidByCC, string prepaidCCTransactionID, string ccPaymentGateway)
-        {
-            AmountPrepaidByCC = amountPrepaidByCC;
-            PrepaidCCTransactionID = prepaidCCTransactionID;
-            CCPaymentGateway = ccPaymentGateway;
-        }
-
         public static CCPrepayment Create(double amountPrepaidByCC, string prepaidCCTransactionID, string ccPaymentGateway)
         {
-            return new CCPrepayment(amountPrepaidByCC, prepaidCCTransactionID, ccPaymentGateway);
+            var ccPrepayment = new CCPrepayment()
+            {
+                AmountPrepaidByCC = amountPrepaidByCC,
+                PrepaidCCTransactionID = prepaidCCTransactionID,
+                CCPaymentGateway = ccPaymentGateway,
+            };
+
+            return ccPrepayment;
         }
 
         #endregion
