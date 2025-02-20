@@ -97,11 +97,13 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
     public async Task<Result> UploadInvoicesAsync(IEnumerable<Invoice> invoices, CompanyReference companyReference)
     {
         var sharepointInvoices = invoices
+            .Where(invoice => invoice?.LineItems?.LineItem != null)
             .SelectMany(invoice =>
                 invoice.LineItems.LineItem.Select((lineItem, index) =>
                 new { invoice, lineItem, LineItemNumber = index + 1 })
-                    )
+            )
             .Select(x => mapper.Map<SharepointInvoice>((x.invoice, x.lineItem, x.LineItemNumber))).ToList();
+
 
         return await UploadFileAsync(sharepointInvoices, companyReference);
     }

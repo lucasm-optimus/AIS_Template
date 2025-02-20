@@ -1,9 +1,9 @@
 ﻿namespace Tilray.Integrations.Core.Application.Invoices.CommandHandlers;
 
-public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepointService, IBlobService blobService,
-    ILogger<UploadInvoicesToSharepointCommandHandler> logger) : ICommandHandler<UploadInvoicesToSharepointCommand>
+public class UploadObeerInvoicesToSharepointCommandHandler(ISharepointService sharepointService, IBlobService blobService,
+    ILogger<UploadObeerInvoicesToSharepointCommandHandler> logger) : ICommandHandler<UploadObeerInvoicesToSharepointCommand>
 {
-    public async Task<Result> Handle(UploadInvoicesToSharepointCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UploadObeerInvoicesToSharepointCommand request, CancellationToken cancellationToken)
     {
         string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
@@ -21,6 +21,8 @@ public class UploadInvoicesToSharepointCommandHandler(ISharepointService sharepo
             return Result.Ok();
         }
 
+        logger.LogInformation("Uploading {InvoiceCount} Obeer invoices for company {CompanyName} to Sharepoint. InvoiceNumbers: {InvoiceNumbers}",
+            invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c, invoiceGroup.Invoices.Select(inv => inv.InvoiceNumber));
         return await sharepointService.UploadInvoicesAsync(invoiceGroup.Invoices, invoiceGroup.Company);
     }
 }
