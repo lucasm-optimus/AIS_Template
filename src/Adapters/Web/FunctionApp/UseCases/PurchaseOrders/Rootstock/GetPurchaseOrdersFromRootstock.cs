@@ -6,7 +6,7 @@ public class GetPurchaseOrdersFromRootstock(ILogger<GetPurchaseOrdersFromRootsto
 {
     #region Function Implementation
     [Function("GetPurchaseOrderFromRootstock")]
-    public async Task Run([TimerTrigger("%GetPurchaseOrderFromRootstock%", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("%GetPurchaseOrderFromRootstock%")] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetRootstockPurchaseOrders());
         if (result.IsSuccess && result.Value != null)
