@@ -14,10 +14,10 @@ public class ServiceBusStartup : IStartupRegister
 {
     public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
     {
-        var settings = configuration.GetSection("ServiceBus").Get<ServiceBusSettings>();
-        if (settings != null && !string.IsNullOrWhiteSpace(settings.ConnectionString))
+        var serviceBusConnectionString = configuration["ServiceBusConnectionString"];
+        if (!string.IsNullOrWhiteSpace(serviceBusConnectionString))
         {
-            services.AddSingleton(new ServiceBusClient(settings.ConnectionString));
+            services.AddSingleton(new ServiceBusClient(serviceBusConnectionString));
         }
 
         services.AddKeyedSingleton<IStream, AzureServiceBusService>(nameof(AzureServiceBusService));
