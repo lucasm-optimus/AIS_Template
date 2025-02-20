@@ -8,7 +8,7 @@ on:
 env:
   AZURE_FUNCTIONAPP_NAME: 'func-tilray-it-ais-test-cace-01'   # Replace with your Azure Functions App name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/Adapters/Web/FunctionApp'        # Path to your .NET project (e.g., 'src/MyFunctionApp')
-  DOTNET_VERSION: '8.0.x'                    # .NET version 
+  DOTNET_VERSION: '9.0.x'                    # .NET version 
   AZURE_RESOURCE_GROUP: 'rg-tilray-it-dev-cace' # Replace with your Azure resource group name
   ENVIRONMENT: production
 
@@ -45,7 +45,7 @@ jobs:
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        package: './output'
 
     - name: 'Logout from Azure'
       run: az logout
