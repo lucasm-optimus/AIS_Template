@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Polly" Version="7.2.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
+    <ProjectReference Include="..\..\..\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
   </ItemGroup>
 
 </Project>

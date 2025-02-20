@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
-    <ProjectReference Include="..\src\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
   </ItemGroup>
 
 </Project>

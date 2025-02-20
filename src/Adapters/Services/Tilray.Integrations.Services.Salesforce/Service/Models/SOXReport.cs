@@ -1,6 +1,5 @@
 ﻿
 using Newtonsoft.Json;
-using Tilray.Integrations.Core.Domain.Aggregates;
 
 namespace Tilray.Integrations.Services.Salesforce.Service.Models
 {

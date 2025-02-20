@@ -33,8 +33,11 @@
         <ProjectReference Include="..\..\..\Core\Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
         <ProjectReference Include="..\..\Repositories\Tilray.Integrations.Repositories.Snowflake\Tilray.Integrations.Repositories.Snowflake.csproj" />
+        <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.CSV\Tilray.Integrations.Services.CSV.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.OBeer\Tilray.Integrations.Services.OBeer.csproj" />
+        <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.OneDrive\Tilray.Integrations.Services.OneDrive.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Rootstock\Tilray.Integrations.Services.Rootstock.csproj" />
+        <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Salesforce\Tilray.Integrations.Services.Salesforce.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.SAPConcur\Tilray.Integrations.Services.SAPConcur.csproj" />
         <ProjectReference Include="..\..\Services\Tilray.Integrations.Services.Sharepoint\Tilray.Integrations.Services.Sharepoint.csproj" />
         <ProjectReference Include="..\..\Storage\Tilray.Integrations.Storage.Blob\Tilray.Integrations.Storage.Blob.csproj" />
