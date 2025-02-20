@@ -16,3 +16,10 @@ global using Tilray.Integrations.Core.Common.Extensions;
 global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
 global using Tilray.Integrations.Core.Application.Adapters.Storage;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using Tilray.Integrations.Core.Domain.Aggregates;

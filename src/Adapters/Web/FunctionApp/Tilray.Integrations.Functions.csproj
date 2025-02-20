@@ -7,9 +7,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-      <Content Include="local.settings.json" />
-    </ItemGroup>
-    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Extensions.FluentValidation.Br" Version="1.0.2" />
         <PackageReference Include="FluentResults" Version="3.16.0" />
@@ -29,6 +26,9 @@
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.2.0" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\..\..\Tilray.Integrations.Service.Salesforce\Tilray.Integrations.Services.Salesforce.csproj" />
+        <ProjectReference Include="..\..\..\..\Tilray.Integrations.Services.CSV\Tilray.Integrations.Services.CSV.csproj" />
+        <ProjectReference Include="..\..\..\..\Tilray.Integrations.Services.OneDrive\Tilray.Integrations.Services.OneDrive.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Application\Tilray.Integrations.Core.Application.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Common\src\Tilray.Integrations.Core.Common.csproj" />
         <ProjectReference Include="..\..\..\Core\Core.Domain\Tilray.Integrations.Core.Domain.csproj" />
