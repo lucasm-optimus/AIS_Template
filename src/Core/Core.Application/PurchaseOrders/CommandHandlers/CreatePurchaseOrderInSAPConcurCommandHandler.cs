@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
+﻿using Tilray.Integrations.Core.Application.Constants;
+
+namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
 {
     public class CreatePurchaseOrderInSAPConcurCommandHandler : ICommandHandler<CreatePurchaseOrderInSAPConcurCommand, SAPConcurPurchaseOrdersProcessed>
     {
@@ -38,7 +40,7 @@
                 var updateResult = await sapConcurService.UpdatePurchaseOrderAsync(purchaseOrder, customFields);
                 if (updateResult.IsFailed)
                 {
-                    importErrorBatchItem.AddErrorBatchItem("PO", purchaseOrder.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
+                    importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
                 }
             }
             else
@@ -46,11 +48,11 @@
                 var createResult = await sapConcurService.CreatePurchaseOrderAsync(purchaseOrder, customFields);
                 if (createResult.IsFailed)
                 {
-                    importErrorBatchItem.AddErrorBatchItem("PO", purchaseOrder.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
+                    importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
                 }
                 else
                 {
-                    importErrorBatchItem.AddImportBatchItem("PO", purchaseOrder.PurchaseOrderNumber);
+                    importErrorBatchItem.AddImportBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber);
                 }
             }
 
@@ -83,7 +85,7 @@
                     var updateResult = await sapConcurService.UpdatePurchaseOrderReceiptAsync(receipt);
                     if (updateResult.IsFailed)
                     {
-                        importErrorBatchItem.AddErrorBatchItem("PO Receipt", receipt.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
+                        importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
                     }
                 }
                 else
@@ -91,11 +93,11 @@
                     var createResult = await sapConcurService.CreatePurchaseOrderReceiptAsync(receipt);
                     if (createResult.IsFailed)
                     {
-                        importErrorBatchItem.AddErrorBatchItem("PO Receipt", receipt.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
+                        importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
                     }
                     else
                     {
-                        importErrorBatchItem.AddImportBatchItem("PO Receipt", receipt.PurchaseOrderNumber);
+                        importErrorBatchItem.AddImportBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber);
                     }
                 }
             });

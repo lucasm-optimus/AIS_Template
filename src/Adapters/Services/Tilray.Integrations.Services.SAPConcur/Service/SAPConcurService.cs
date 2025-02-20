@@ -3,9 +3,8 @@ using System.Text;
 using Tilray.Integrations.Core.Domain.Aggregates.PurchaseOrders;
 using Tilray.Integrations.Services.SAPConcur.Service.Models;
 using Tilray.Integrations.Services.SAPConcur.Startup;
+
 namespace Tilray.Integrations.Services.SAPConcur.Service;
-
-
 
 public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSettings, ILogger<SAPConcurService> logger, IMapper mapper) : ISAPConcurService
 
@@ -347,7 +346,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     public async Task<Result> UpdatePurchaseOrderAsync(PurchaseOrder purchaseOrder, SAPConcurCustomValues customFields)
     {
         var purchaseOrderRequest = mapper.Map<SAPConcurPurchaseOrder>(purchaseOrder, opt => opt.Items["CustomFields"] = customFields);
-        
+        purchaseOrderRequest.PolicyExternalID = sapConcurSettings?.ConcurPolicyExternalId ?? string.Empty;
         var putRequestUri = $"/api/v3.0/invoice/purchaseorders/{purchaseOrderRequest?.PurchaseOrderNumber}";
         var putResponse = await PutAsync(putRequestUri, purchaseOrderRequest);
 

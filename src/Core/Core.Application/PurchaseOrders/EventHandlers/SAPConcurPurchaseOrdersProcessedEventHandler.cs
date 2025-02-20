@@ -1,4 +1,7 @@
-﻿namespace Tilray.Integrations.Core.Application.PurchaseOrders.EventHandlers;
+﻿using Tilray.Integrations.Core.Application.Constants;
+using static Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Constants;
+
+namespace Tilray.Integrations.Core.Application.PurchaseOrders.EventHandlers;
 
 public class SAPConcurPurchaseOrdersProcessedEventHandler : INotificationHandler<SAPConcurPurchaseOrdersProcessed>
 {
@@ -17,13 +20,13 @@ public class SAPConcurPurchaseOrdersProcessedEventHandler : INotificationHandler
     {
         if (notification.HasImportBatchItems())
         {
-            await UploadImportBatchItems(notification, "Rootstock");
+            await UploadImportBatchItems(notification, GroupNames.Rootstock);
         }
 
         if (notification.HasErrorBatchItems())
         {
-            await PostChatterMessageForErrors(notification, "Rootstock");
-            await UploadErrorBatchItemsToSharePoint(notification, "Rootstock");
+            await PostChatterMessageForErrors(notification, GroupNames.Rootstock);
+            await UploadErrorBatchItemsToSharePoint(notification, GroupNames.Rootstock);
         }
     }
 
