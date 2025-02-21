@@ -86,8 +86,4 @@ internal static class RootstockQueries
             FROM rstk__povendpoaddr__c 
             WHERE rstk__formula_extid__c LIKE '{0}%' 
             AND rstk__povendpoaddr_zippostalcode__c = '{1}'";
-
-    internal const string ChatterPostQueryTemplate = "SELECT Body FROM FeedItem WHERE ParentID = '{0}'";
-
-    internal const string RetrieveGroupQueryTemplate = "SELECT ID FROM CollaborationGroup WHERE Name = '{0}'";
 }

@@ -2,34 +2,25 @@
 
 namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
 {
-    public class CreatePurchaseOrderInSAPConcurCommandHandler : ICommandHandler<CreatePurchaseOrderInSAPConcurCommand, SAPConcurPurchaseOrdersProcessed>
+    public class CreatePurchaseOrderInSAPConcurCommandHandler(ISAPConcurService sapConcurService, IMediator mediator) : ICommandHandler<CreatePurchaseOrderInSAPConcurCommand, SAPConcurPurchaseOrdersProcessed>
     {
-        private readonly ISAPConcurService sapConcurService;
-        private readonly IMediator mediator;
-
-        public CreatePurchaseOrderInSAPConcurCommandHandler(ISAPConcurService sapConcurService, IMediator mediator)
-        {
-            this.sapConcurService = sapConcurService;
-            this.mediator = mediator;
-        }
-
         public async Task<Result<SAPConcurPurchaseOrdersProcessed>> Handle(CreatePurchaseOrderInSAPConcurCommand request, CancellationToken cancellationToken)
         {
-            var importErrorBatchItem = new SAPConcurPurchaseOrdersProcessed
+            var purchaseOrdersProcessingResult = new SAPConcurPurchaseOrdersProcessed
             {
-                ImportBatchItem = new List<ImportBatchItem>(),
-                ErrorBatchItem = new List<ErrorBatchItem>()
+                ProcessedPurchaseOrders = new List<ProcessedPurchaseOrder>(),
+                FailedPurchaseOrders = new List<FailedPurchaseOrder>()
             };
 
-            await ProcessPurchaseOrder(request.PurchaseOrder, importErrorBatchItem);
+            await ProcessPurchaseOrder(request.PurchaseOrder, purchaseOrdersProcessingResult);
 
             // Publish the PurchaseOrdersProcessed event
-            await mediator.Publish(importErrorBatchItem, cancellationToken);
+            await mediator.Publish(purchaseOrdersProcessingResult, cancellationToken);
 
-            return Result.Ok(importErrorBatchItem);
+            return Result.Ok(purchaseOrdersProcessingResult);
         }
 
-        private async Task ProcessPurchaseOrder(PurchaseOrder purchaseOrder, SAPConcurPurchaseOrdersProcessed importErrorBatchItem)
+        private async Task ProcessPurchaseOrder(PurchaseOrder purchaseOrder, SAPConcurPurchaseOrdersProcessed purchaseOrdersProcessingResult)
         {
             SAPConcurCustomValues customFields = await GetCustomFieldsForVendor(purchaseOrder);
 
@@ -40,7 +31,7 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
                 var updateResult = await sapConcurService.UpdatePurchaseOrderAsync(purchaseOrder, customFields);
                 if (updateResult.IsFailed)
                 {
-                    importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
+                    purchaseOrdersProcessingResult.AddFailedPurchaseOrder(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
                 }
             }
             else
@@ -48,17 +39,17 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
                 var createResult = await sapConcurService.CreatePurchaseOrderAsync(purchaseOrder, customFields);
                 if (createResult.IsFailed)
                 {
-                    importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
+                    purchaseOrdersProcessingResult.AddFailedPurchaseOrder(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
                 }
                 else
                 {
-                    importErrorBatchItem.AddImportBatchItem(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber);
+                    purchaseOrdersProcessingResult.AddProcessedPurchaseOrder(GroupNames.PurchaseOrder, purchaseOrder.PurchaseOrderNumber);
                 }
             }
 
             if (purchaseOrder.PurchaseOrderReceipts != null)
             {
-                await ProcessPurchaseOrderReceipts(purchaseOrder.PurchaseOrderReceipts, importErrorBatchItem);
+                await ProcessPurchaseOrderReceipts(purchaseOrder.PurchaseOrderReceipts, purchaseOrdersProcessingResult);
             }
         }
 
@@ -74,7 +65,7 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
             return customFields;
         }
 
-        private async Task ProcessPurchaseOrderReceipts(IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts, SAPConcurPurchaseOrdersProcessed importErrorBatchItem)
+        private async Task ProcessPurchaseOrderReceipts(IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts, SAPConcurPurchaseOrdersProcessed purchaseOrdersProcessingResult)
         {
             var receiptTasks = purchaseOrderReceipts.Select(async receipt =>
             {
@@ -85,7 +76,7 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
                     var updateResult = await sapConcurService.UpdatePurchaseOrderReceiptAsync(receipt);
                     if (updateResult.IsFailed)
                     {
-                        importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
+                        purchaseOrdersProcessingResult.AddFailedPurchaseOrder(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, updateResult.Errors.FirstOrDefault()?.Message);
                     }
                 }
                 else
@@ -93,11 +84,11 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
                     var createResult = await sapConcurService.CreatePurchaseOrderReceiptAsync(receipt);
                     if (createResult.IsFailed)
                     {
-                        importErrorBatchItem.AddErrorBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
+                        purchaseOrdersProcessingResult.AddFailedPurchaseOrder(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber, createResult.Errors.FirstOrDefault()?.Message);
                     }
                     else
                     {
-                        importErrorBatchItem.AddImportBatchItem(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber);
+                        purchaseOrdersProcessingResult.AddProcessedPurchaseOrder(GroupNames.PurchaseOrderReceipt, receipt.PurchaseOrderNumber);
                     }
                 }
             });

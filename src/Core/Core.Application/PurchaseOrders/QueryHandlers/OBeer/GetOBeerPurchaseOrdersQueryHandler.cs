@@ -2,15 +2,8 @@
 
 namespace Tilray.Integrations.Core.Application.PurchaseOrders.QueryHandlers.OBeer;
 
-public class GetOBeerPurchaseOrdersQueryHandler : IQueryManyHandler<GetOBeerPurchaseOrders, PurchaseOrder>
+public class GetOBeerPurchaseOrdersQueryHandler(ISnowflakeRepository snowflakeRepository) : IQueryManyHandler<GetOBeerPurchaseOrders, PurchaseOrder>
 {
-    private readonly ISnowflakeRepository snowflakeRepository;
-
-    public GetOBeerPurchaseOrdersQueryHandler(ISnowflakeRepository snowflakeRepository)
-    {
-        this.snowflakeRepository = snowflakeRepository;
-    }
-
     public async Task<Result<IEnumerable<PurchaseOrder>>> Handle(GetOBeerPurchaseOrders request, CancellationToken cancellationToken)
     {
         /*var purchaseOrdersResult = await snowflakeRepository.GetPurchaseOrdersAsync();

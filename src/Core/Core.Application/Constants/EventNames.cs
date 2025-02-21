@@ -6,8 +6,8 @@ public static class Topics
     public const string EcomSalesOrderReceived = "EcomSalesOrderReceived";
     public const string SAPConcurExpensesFetched = "sapconcurexpensesfetched";
     public const string SAPConcurInvoicesFetched = "sapconcurinvoicesfetched";
-    public const string RootstockPurchaseOrderFetched = "RootstockPurchaseOrderFetched";
-    public const string OBeerPurchaseOrderFetched = "OBeerPurchaseOrderFetched";
+    public const string RootstockPurchaseOrdersFetched = "RootstockPurchaseOrdersFetched";
+    public const string OBeerPurchaseOrdersFetched = "OBeerPurchaseOrdersFetched";
 }
 
 public static class Subscriptions
@@ -18,5 +18,5 @@ public static class Subscriptions
     public const string UploadExpensesToSharepoint = "UploadExpensesToSharepoint";
     public const string UploadInvoicesToSharepoint = "UploadObeerInvoicesToSharepoint";
     public const string CreateInvoicesInObeer = "CreateInvoicesInObeer";
-    public const string CreatePurchaseOrderInSAPConcur = "CreatePurchaseOrderInSAPConcur";
+    public const string CreatePurchaseOrdersInSAPConcur = "CreatePurchaseOrdersInSAPConcur";
 }

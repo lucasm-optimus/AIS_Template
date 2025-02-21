@@ -46,14 +46,13 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
             logger.LogError(errorMessage);
             return Result.Fail($"Failed to fetch data with requestUri {requestUri}. Error: {errorMessage}");
         }
-        var content = await response.Content.ReadAsStringAsync();
 
         return Result.Ok();
     }
 
     private async Task<Result> PostAsync<TRequest>(string requestUri, TRequest content)
     {
-        var jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+        var jsonContent = Helpers.CreateStringContent(content);
         var response = await client.PostAsync(requestUri, jsonContent);
 
         if (!response.IsSuccessStatusCode)
@@ -68,7 +67,7 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
 
     private async Task<Result> PutAsync<TRequest>(string requestUri, TRequest content)
     {
-        var jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+        var jsonContent = Helpers.CreateStringContent(content);
         var response = await client.PutAsync(requestUri, jsonContent);
 
         if (!response.IsSuccessStatusCode)
@@ -263,18 +262,15 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     }
 
     #region Purchase Orders
+
     public async Task<Result<VendorResponse>> GetVendorAsync(PurchaseOrder purchaseOrder)
     {
         var requestUri = "/api/v3.1/invoice/vendors";
-        var vendorCode = $"{purchaseOrder.VendorCode}-{purchaseOrder.Division}";
-        var queryParams = new Dictionary<string, string>
-        {
-            { "vendorCode", string.IsNullOrEmpty(vendorCode) ? "null" : vendorCode }
-        };
+        var queryParams = Helpers.CreateQueryParams(
+            ("vendorCode", $"{purchaseOrder.VendorCode}-{purchaseOrder.Division}")
+        );
 
-        var queryString = string.Join("&", queryParams
-            .Where(kvp => kvp.Value != null)
-            .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+        var queryString = Helpers.BuildQueryString(queryParams);
         var fullUri = $"{requestUri}?{queryString}";
 
         var result = await GetAsync<VendorResponse>(fullUri);
@@ -284,14 +280,11 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     public async Task<Result<VendorCustomResponse>> GetVendorCustomAsync(string itemId, string custom3Value)
     {
         var path = $"/list/v4/lists/{itemId}/children";
-        var queryParams = new Dictionary<string, string>
-        {
-            { "value", string.IsNullOrEmpty(custom3Value) ? "null" : custom3Value }
-        };
+        var queryParams = Helpers.CreateQueryParams(
+            ("value", custom3Value)
+        );
 
-        var queryString = string.Join("&", queryParams
-            .Where(kvp => kvp.Value != null)
-            .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+        var queryString = Helpers.BuildQueryString(queryParams);
         var fullUri = $"{path}?{queryString}";
 
         var result = await GetAsync<VendorCustomResponse>(fullUri);
@@ -301,14 +294,11 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     public async Task<Result<VendorCustomResponse>> GetVendorCustomsAsync(string itemId, string custom3Value)
     {
         var path = $"/list/v4/items/{itemId}/children";
-        var queryParams = new Dictionary<string, string>
-        {
-            { "value", string.IsNullOrEmpty(custom3Value) ? "null" : custom3Value }
-        };
+        var queryParams = Helpers.CreateQueryParams(
+            ("value", custom3Value)
+        );
 
-        var queryString = string.Join("&", queryParams
-            .Where(kvp => kvp.Value != null)
-            .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+        var queryString = Helpers.BuildQueryString(queryParams);
         var fullUri = $"{path}?{queryString}";
 
         var result = await GetAsync<VendorCustomResponse>(fullUri);
@@ -367,13 +357,12 @@ public class SAPConcurService(HttpClient client, SAPConcurSettings sapConcurSett
     {
         var purchaseOrderReceiptRequest = mapper.Map<SAPConcurPurchaseOrderReceipt>(purchaseOrderReceipt);
         var getRequestUri = $"/api/v3.0/invoice/purchaseorderreceipts";
-        var queryParams = new Dictionary<string, string>
-        {
-            { "goodsReceiptNumber", purchaseOrderReceiptRequest?.GoodsReceiptNumber ?? string.Empty },
-            { "lineItemExternalID", purchaseOrderReceiptRequest?.LineItemExternalID ?? string.Empty },
-            { "purchaseOrderNumber", purchaseOrderReceiptRequest?.PurchaseOrderNumber ?? string.Empty }
-        };
-        var queryString = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+        var queryParams = Helpers.CreateQueryParams(
+            ("goodsReceiptNumber", purchaseOrderReceiptRequest?.GoodsReceiptNumber ?? ""),
+            ("lineItemExternalID", purchaseOrderReceiptRequest?.LineItemExternalID ?? ""),
+            ("purchaseOrderNumber", purchaseOrderReceiptRequest?.PurchaseOrderNumber ?? "")
+        );
+        var queryString = Helpers.BuildQueryString(queryParams);
         var fullUri = $"{getRequestUri}?{queryString}";
 
         var getResponse = await GetAsync(fullUri);

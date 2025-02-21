@@ -2,11 +2,12 @@
 
 namespace Tilray.Integrations.Functions.UseCases.PurchaseOrders.Rootstock;
 
-public class GetPurchaseOrdersFromRootstock(ILogger<GetPurchaseOrdersFromRootstock> _logger, IMediator mediator, ServiceBusClient serviceBusClient)
+public class GetPurchaseOrdersFromRootstockCRON(IMediator mediator)
 {
     #region Function Implementation
-    [Function("GetPurchaseOrderFromRootstock")]
-    public async Task Run([TimerTrigger("%GetPurchaseOrderFromRootstock%")] TimerInfo myTimer)
+
+    [Function("GetPurchaseOrdersFromRootstockCRON")]
+    public async Task Run([TimerTrigger("%GetPurchaseOrdersFromRootstockCRON%", RunOnStartup = true)] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetRootstockPurchaseOrders());
         if (result.IsSuccess && result.Value != null)
@@ -14,5 +15,6 @@ public class GetPurchaseOrdersFromRootstock(ILogger<GetPurchaseOrdersFromRootsto
             await mediator.Publish(result.Value);
         }
     }
+
     #endregion
 }

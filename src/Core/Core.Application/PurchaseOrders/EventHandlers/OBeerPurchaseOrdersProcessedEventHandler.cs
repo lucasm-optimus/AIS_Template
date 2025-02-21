@@ -11,7 +11,7 @@ public class OBeerPurchaseOrdersProcessedEventHandler(IStream stream) : IDomainE
     {
         var tasks = notification.PurchaseOrders.Select(async purchaseOrder =>
         {
-            await stream.SendEventAsync(purchaseOrder, Topics.OBeerPurchaseOrderFetched);
+            await stream.SendEventAsync(purchaseOrder, Topics.OBeerPurchaseOrdersFetched);
         });
 
         await Task.WhenAll(tasks);

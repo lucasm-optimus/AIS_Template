@@ -3,80 +3,45 @@ using static Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Constants;
 
 namespace Tilray.Integrations.Core.Application.PurchaseOrders.EventHandlers;
 
-public class SAPConcurPurchaseOrdersProcessedEventHandler : INotificationHandler<SAPConcurPurchaseOrdersProcessed>
+public class SAPConcurPurchaseOrdersProcessedEventHandler(ISharepointService sharepointService, IRootstockService rootstockService, ILogger<SAPConcurPurchaseOrdersProcessedEventHandler> logger) : INotificationHandler<SAPConcurPurchaseOrdersProcessed>
 {
-    private readonly ISharepointService sharepointService;
-    private readonly IRootstockService rootstockService;
-    private readonly ILogger<SAPConcurPurchaseOrdersProcessedEventHandler> logger;
-
-    public SAPConcurPurchaseOrdersProcessedEventHandler(ISharepointService sharepointService, IRootstockService rootstockService, ILogger<SAPConcurPurchaseOrdersProcessedEventHandler> logger)
-    {
-        this.sharepointService = sharepointService;
-        this.rootstockService = rootstockService;
-        this.logger = logger;
-    }
-
     public async Task Handle(SAPConcurPurchaseOrdersProcessed notification, CancellationToken cancellationToken)
     {
-        if (notification.HasImportBatchItems())
+        if (notification.HasProcessedPurchaseOrders())
         {
-            await UploadImportBatchItems(notification, GroupNames.Rootstock);
+            await UploadProcessedPurchaseOrders(notification, GroupNames.Rootstock);
         }
 
-        if (notification.HasErrorBatchItems())
+        if (notification.HasFailedPurchaseOrders())
         {
             await PostChatterMessageForErrors(notification, GroupNames.Rootstock);
-            await UploadErrorBatchItemsToSharePoint(notification, GroupNames.Rootstock);
+            await UploadFailedPurchaseOrdersToSharePoint(notification, GroupNames.Rootstock);
         }
     }
 
-    private async Task UploadImportBatchItems(SAPConcurPurchaseOrdersProcessed importErrorBatchItem, string erp)
+    private async Task UploadProcessedPurchaseOrders(SAPConcurPurchaseOrdersProcessed processedPurchaseOrders, string erp)
     {
         var importPath = $"General/PurchaseOrders/PurchaseOrderSync_{erp}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
-        var result = await sharepointService.UploadError_ImportbatchAsync(importErrorBatchItem.ImportBatchItem, importPath);
+        var result = await sharepointService.UploadProcessedPurchaseOrdersAsync(processedPurchaseOrders.ProcessedPurchaseOrders, importPath);
         if (result.IsFailed)
         {
-            LogErrors(result.Errors, "ImportBatch");
+            LogErrors(result.Errors, "processedPurchaseOrders");
         }
     }
 
-    private async Task PostChatterMessageForErrors(SAPConcurPurchaseOrdersProcessed importErrorBatchItem, string erp)
+    private async Task PostChatterMessageForErrors(SAPConcurPurchaseOrdersProcessed failedPurchaseOrders, string erp)
     {
-        var chatterGroupIdResult = await rootstockService.RetrieveGroupAsync();
-
-        if (chatterGroupIdResult.IsSuccess)
-        {
-            var chatterGroupId = chatterGroupIdResult.Value;
-            var chatterMessage = ChatterMessage.CreateForPurchaseOrderSync(chatterGroupId, erp, importErrorBatchItem.ErrorBatchItem.Count());
-
-            await PostChatterMessageAsync(chatterMessage);
-        }
+        var chatterGroupResult  = await rootstockService.PostPurchaseOrdersMessageToChatterAsync(erp, failedPurchaseOrders.FailedPurchaseOrders.Count());
     }
 
-    private async Task UploadErrorBatchItemsToSharePoint(SAPConcurPurchaseOrdersProcessed importErrorBatchItem, string erp)
+    private async Task UploadFailedPurchaseOrdersToSharePoint(SAPConcurPurchaseOrdersProcessed failedPurchaseOrders, string erp)
     {
         var errorPath = $"General/PurchaseOrders/Errors/PurchaseOrderSync_{erp}_Errors_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
-        var result = await sharepointService.UploadError_ImportbatchAsync(importErrorBatchItem.ErrorBatchItem, errorPath);
+        var result = await sharepointService.UploadFailedPurchaseOrdersAsync(failedPurchaseOrders.FailedPurchaseOrders, errorPath);
         if (result.IsFailed)
         {
-            LogErrors(result.Errors, "ErrorBatch");
+            LogErrors(result.Errors, "failedPurchaseOrders");
         }
-    }
-
-    private async Task<Result> PostChatterMessageAsync(ChatterMessage chatterMessage)
-    {
-        var existingPostResult = await rootstockService.CheckIfChatterPostExistsAsync(chatterMessage.RecordIDToAddFeedItemTo, chatterMessage.MessagePieces?.FirstOrDefault()?.Text ?? string.Empty);
-        if (existingPostResult.IsFailed)
-        {
-            return Result.Fail(existingPostResult.Errors);
-        }
-
-        if (existingPostResult.Value)
-        {
-            return Result.Ok();
-        }
-
-        return await rootstockService.CreateChatterPostAsync(chatterMessage);
     }
 
     private void LogErrors(IEnumerable<IError> errors, string errorType)

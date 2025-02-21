@@ -2,22 +2,22 @@
 {
     public class SAPConcurPurchaseOrdersProcessed : IDomainEvent
     {
-        public IEnumerable<ImportBatchItem>? ImportBatchItem { get; set; } = new List<ImportBatchItem>();
+        public IEnumerable<ProcessedPurchaseOrder>? ProcessedPurchaseOrders { get; set; } = new List<ProcessedPurchaseOrder>();
 
-        public IEnumerable<ErrorBatchItem>? ErrorBatchItem { get; set; } = new List<ErrorBatchItem>();
+        public IEnumerable<FailedPurchaseOrder>? FailedPurchaseOrders { get; set; } = new List<FailedPurchaseOrder>();
 
-        public void AddImportBatchItem(string type, string name)
+        public void AddProcessedPurchaseOrder(string type, string name)
         {
-            ImportBatchItem = ImportBatchItem.Append(new ImportBatchItem
+            ProcessedPurchaseOrders = ProcessedPurchaseOrders.Append(new ProcessedPurchaseOrder
             {
                 Type = type,
                 Name = name
             });
         }
 
-        public void AddErrorBatchItem(string type, string name, string error)
+        public void AddFailedPurchaseOrder(string type, string name, string error)
         {
-            ErrorBatchItem = ErrorBatchItem.Append(new ErrorBatchItem
+            FailedPurchaseOrders = FailedPurchaseOrders.Append(new FailedPurchaseOrder
             {
                 Type = type,
                 Name = name,
@@ -25,24 +25,24 @@
             });
         }
 
-        public bool HasImportBatchItems()
+        public bool HasProcessedPurchaseOrders()
         {
-            return ImportBatchItem != null && ImportBatchItem.Any();
+            return ProcessedPurchaseOrders != null && ProcessedPurchaseOrders.Any();
         }
 
-        public bool HasErrorBatchItems()
+        public bool HasFailedPurchaseOrders()
         {
-            return ErrorBatchItem != null && ErrorBatchItem.Any();
+            return FailedPurchaseOrders != null && FailedPurchaseOrders.Any();
         }
     }
 
-    public class ImportBatchItem
+    public class ProcessedPurchaseOrder
     {
         public string Type { get; set; }
         public string Name { get; set; }
     }
 
-    public class ErrorBatchItem
+    public class FailedPurchaseOrder
     {
         public string Type { get; set; }
         public string Name { get; set; }

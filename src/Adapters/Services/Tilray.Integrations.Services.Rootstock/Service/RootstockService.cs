@@ -107,7 +107,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<bool>> CheckForExistingMessageInChatterGroupAsync(string groupId, string message)
     {
-        var result = await GetObjectListAsync<RootstockFeedItem>(string.Format(RootstockQueries.GetChatterGroupIdQuery, groupId), "FeedItem");
+        var result = await GetObjectListAsync<RootstockFeedItem>(string.Format(RootstockQueries.GetChatterBodyQuery, groupId), "FeedItem");
         if (result.IsFailed)
         {
             logger.LogError("Failed to fetch Chatter messages. Error: {Error}", result.Errors);
@@ -617,16 +617,14 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             var currentPage = pageResult.Value;
             allReceipts.AddRange(currentPage.records ?? new List<RootstockPurchaseOrderReceipt>());
 
-            // Append the query parameters to the nextPageUri
             nextPageUri = string.IsNullOrEmpty(currentPage.nextRecordsUrl) ? string.Empty : $"{currentPage.nextRecordsUrl}?q={Uri.EscapeDataString(string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp))}";
         }
 
         logger.LogInformation("Total {TotalReceipts} PO response receipts found", allReceipts.Count);
 
-        // Map RootstockPurchaseOrderReceipt to UnifiedPurchaseOrderReceipt
-        var unifiedReceipts = allReceipts.Select(receipt => mapper.Map<PurchaseOrderReceipt>(receipt)).ToList();
+        var unifiedReceipts = allReceipts.Select(receipt => mapper.Map<PurchaseOrderReceipt>(receipt));
 
-        return Result.Ok(unifiedReceipts.AsEnumerable());
+        return Result.Ok(unifiedReceipts);
     }
 
     public async Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrders)
@@ -641,9 +639,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
 
         var purchaseOrders = purchaseOrdersResult.Value;
-        var unifiedPurchaseOrders = purchaseOrders.Select(po => mapper.Map<PurchaseOrder>(po)).ToList();
+        var unifiedPurchaseOrders = purchaseOrders.Select(po => mapper.Map<PurchaseOrder>(po));
 
-        return Result.Ok(unifiedPurchaseOrders.AsEnumerable());
+        return Result.Ok(unifiedPurchaseOrders);
     }
 
     public async Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrders)
@@ -684,62 +682,12 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok(mappedPurchaseOrder);
     }
 
-    public async Task<Result<string>> RetrieveGroupAsync()
+    public async Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount)
     {
-        var query = string.Format(RootstockQueries.RetrieveGroupQueryTemplate, rootstockSettings.PurchaseOrdersChatterGroupPrefix);
-
-        var queryResult = await ExecuteSalesforceQueryAsync(query);
-
-        if (queryResult.IsFailed)
-        {
-            return queryResult;
-        }
-
-        return ProcessSalesforceQueryResponse(queryResult.Value);
+        var message = $"The latest PO Sync between {erp} and Concur produced {errorCount} errors.";
+        return await PostMessageToChatterAsync(message, rootstockSettings.PurchaseOrdersChatterGroupPrefix);
     }
 
-    public async Task<Result<bool>> CheckIfChatterPostExistsAsync(string recordId, string messageText)
-    {
-        var query = string.Format(RootstockQueries.ChatterPostQueryTemplate, recordId);
-        var queryResult = await ExecuteSalesforceQueryAsync(query);
-
-        if (queryResult.IsFailed)
-        {
-            logger.LogInformation("Failed to retrieve Chatter posts");
-            return Result.Fail<bool>("Failed to retrieve Chatter posts");
-        }
-
-        var result = JObject.Parse(queryResult.Value);
-
-        if (result["records"] is JArray records && records.Count > 0)
-        {
-            var existingPost = records.FirstOrDefault(record => record["Body"]?.ToString().Contains(messageText) == true);
-            if (existingPost != null)
-            {
-                logger.LogInformation("Chatter post already exists for specified record, not adding new post");
-                return Result.Ok(true);
-            }
-        }
-
-        return Result.Ok(false);
-    }
-
-    public async Task<Result> CreateChatterPostAsync(ChatterMessage chatterMessage)
-    {
-        var chatterMessageRequest = ChatterMessageRequest.CreateFromChatterMessage(chatterMessage);
-        var createResult = await CreateChatterPostAsync(chatterMessageRequest);
-
-        if (createResult.IsSuccess)
-        {
-            logger.LogInformation("Chatter post created successfully");
-            return Result.Ok();
-        }
-        else
-        {
-            logger.LogError($"Failed to create Chatter post: {createResult.Errors.FirstOrDefault()}");
-            return Result.Fail($"Failed to create Chatter post: {createResult.Errors.FirstOrDefault()}");
-        }
-    }
     #endregion
 
     #endregion

@@ -7,10 +7,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-      <Content Include="local.settings.json" />
-    </ItemGroup>
-    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <None Include="local.settings.json" />
         <PackageReference Include="Extensions.FluentValidation.Br" Version="1.0.2" />
         <PackageReference Include="FluentResults" Version="3.16.0" />
         <PackageReference Include="MediatR" Version="12.4.1" />

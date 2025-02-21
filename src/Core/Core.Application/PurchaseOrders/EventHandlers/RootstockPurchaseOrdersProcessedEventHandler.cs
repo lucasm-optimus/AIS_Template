@@ -11,7 +11,7 @@ public class RootstockPurchaseOrdersProcessedEventHandler(IStream stream) : IDom
     {
         var tasks = notification.PurchaseOrders.Select(async purchaseOrder =>
         {
-            await stream.SendEventAsync(purchaseOrder, Topics.RootstockPurchaseOrderFetched);
+            await stream.SendEventAsync(purchaseOrder, Topics.RootstockPurchaseOrdersFetched);
         });
 
         await Task.WhenAll(tasks);

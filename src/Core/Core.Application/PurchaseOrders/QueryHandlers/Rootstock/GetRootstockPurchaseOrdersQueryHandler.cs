@@ -1,14 +1,7 @@
 ﻿namespace Tilray.Integrations.Core.Application.PurchaseOrders.QueryHandlers.Rootstock
 {
-    public class GetRootstockPurchaseOrdersQueryHandler : IQueryHandler<GetRootstockPurchaseOrders, RootstockPurchaseOrdersProcessed>
+    public class GetRootstockPurchaseOrdersQueryHandler(IRootstockService rootstockService) : IQueryHandler<GetRootstockPurchaseOrders, RootstockPurchaseOrdersProcessed>
     {
-        private readonly IRootstockService rootstockService;
-
-        public GetRootstockPurchaseOrdersQueryHandler(IRootstockService rootstockService)
-        {
-            this.rootstockService = rootstockService;
-        }
-
         public async Task<Result<RootstockPurchaseOrdersProcessed>> Handle(GetRootstockPurchaseOrders request, CancellationToken cancellationToken)
         {
             var purchaseOrderReceiptsResult = await GetPurchaseOrderReceiptsAsync();
@@ -26,7 +19,7 @@
                 return Result.Ok(new RootstockPurchaseOrdersProcessed(Enumerable.Empty<PurchaseOrder>()));
             }
 
-            var purchaseOrdersResult = await GetPurchaseOrdersAsync(distinctPurchaseOrders);
+            var purchaseOrdersResult = await GetPurchaseOrdersAsync(distinctPurchaseOrders.Take(100));
             if (purchaseOrdersResult.IsFailed)
             {
                 return Result.Fail<RootstockPurchaseOrdersProcessed>(purchaseOrdersResult.Errors);
@@ -34,7 +27,7 @@
 
             var purchaseOrders = purchaseOrdersResult.Value ?? Enumerable.Empty<PurchaseOrder>();
 
-            var purchaseOrdersLineItemResult = await GetPurchaseOrdersLineItemAsync(distinctPurchaseOrders);
+            var purchaseOrdersLineItemResult = await GetPurchaseOrdersLineItemAsync(distinctPurchaseOrders.Take(100));
             if (purchaseOrdersLineItemResult.IsFailed)
             {
                 return Result.Fail<RootstockPurchaseOrdersProcessed>(purchaseOrdersLineItemResult.Errors);

@@ -25,9 +25,7 @@ public interface IRootstockService
     Task<Result<string>> GetSoHdr(string soapiId);
     Task<Result<List<ExpenseError>>> CreateJournalEntryAsync(Expense expense, CompanyReference company);
     Task<Result> PostExpenseMessageToChatterAsync(string companyNumber, int errorCount);
-    Task<Result<string>> RetrieveGroupAsync();
-    Task<Result<bool>> CheckIfChatterPostExistsAsync(string recordId, string messageText);
-    Task<Result> CreateChatterPostAsync(ChatterMessage chatterMessage);
+    Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount);
     Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync();
     Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPOs);
     Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync();
