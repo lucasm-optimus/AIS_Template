@@ -27,7 +27,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             SAPConcurInvoiceNumber: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.CustomerRefNo},
             Error: {Helpers.GetErrorFromResponse(response)}";
         logger.LogError(errorMessage);
-        return Result.Fail(errorMessage);
+        return Result.Fail(Helpers.GetErrorFromResponse(response));
     }
 
     private async Task<IEnumerable<GrpoDetails>> GetGrpoDetails(MatchedPurchaseOrderReceipt grpo)
