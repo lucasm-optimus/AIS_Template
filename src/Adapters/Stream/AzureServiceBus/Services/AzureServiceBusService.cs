@@ -6,7 +6,14 @@ namespace Tilray.Integrations.Stream.Bus.Services;
 
 public class AzureServiceBusService(ServiceBusClient client) : IStream
 {
-    public async Task SendEventAsync<T>(T notification, string topicName, Dictionary<string, object>? properties = null)
+    public async Task SendEventAsync<T>(T notification, string topicName)
+    {
+        var sender = client.CreateSender(topicName);
+        var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
+        await sender.SendMessageAsync(message);
+    }
+
+    public async Task SendEventAsync(string notification, string topicName, Dictionary<string, object>? properties = null)
     {
         var sender = client.CreateSender(topicName);
         var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
