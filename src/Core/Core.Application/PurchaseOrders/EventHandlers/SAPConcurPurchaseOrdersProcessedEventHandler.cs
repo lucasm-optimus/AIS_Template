@@ -21,7 +21,7 @@ public class SAPConcurPurchaseOrdersProcessedEventHandler(ISharepointService sha
 
     private async Task UploadProcessedPurchaseOrders(SAPConcurPurchaseOrdersProcessed processedPurchaseOrders, string erp)
     {
-        var importPath = $"General/PurchaseOrders/PurchaseOrderSync_{erp}_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
+        var importPath = $"General/PurchaseOrders/PurchaseOrderSync_{erp}_{DateTime.Now:yyyy-MM-dd-HHmmss-fff}.csv";
         var result = await sharepointService.UploadProcessedPurchaseOrdersAsync(processedPurchaseOrders.ProcessedPurchaseOrders, importPath);
         if (result.IsFailed)
         {
@@ -36,7 +36,7 @@ public class SAPConcurPurchaseOrdersProcessedEventHandler(ISharepointService sha
 
     private async Task UploadFailedPurchaseOrdersToSharePoint(SAPConcurPurchaseOrdersProcessed failedPurchaseOrders, string erp)
     {
-        var errorPath = $"General/PurchaseOrders/Errors/PurchaseOrderSync_{erp}_Errors_{DateTime.Now:yyyy-MM-dd-HHmmss}.csv";
+        var errorPath = $"General/PurchaseOrders/Errors/PurchaseOrderSync_{erp}_Errors_{DateTime.Now:yyyy-MM-dd-HHmmss-fff}.csv";
         var result = await sharepointService.UploadFailedPurchaseOrdersAsync(failedPurchaseOrders.FailedPurchaseOrders, errorPath);
         if (result.IsFailed)
         {

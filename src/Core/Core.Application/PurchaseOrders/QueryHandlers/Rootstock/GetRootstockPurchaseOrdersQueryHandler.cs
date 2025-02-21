@@ -1,13 +1,13 @@
 ﻿namespace Tilray.Integrations.Core.Application.PurchaseOrders.QueryHandlers.Rootstock
 {
-    public class GetRootstockPurchaseOrdersQueryHandler(IRootstockService rootstockService) : IQueryHandler<GetRootstockPurchaseOrders, RootstockPurchaseOrdersProcessed>
+    public class GetRootstockPurchaseOrdersQueryHandler(IRootstockService rootstockService) : IQueryManyHandler<GetRootstockPurchaseOrders, PurchaseOrder>
     {
-        public async Task<Result<RootstockPurchaseOrdersProcessed>> Handle(GetRootstockPurchaseOrders request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<PurchaseOrder>>> Handle(GetRootstockPurchaseOrders request, CancellationToken cancellationToken)
         {
             var purchaseOrderReceiptsResult = await GetPurchaseOrderReceiptsAsync();
             if (purchaseOrderReceiptsResult.IsFailed)
             {
-                return Result.Fail<RootstockPurchaseOrdersProcessed>(purchaseOrderReceiptsResult.Errors);
+                return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrderReceiptsResult.Errors);
             }
 
             var purchaseOrderReceipts = purchaseOrderReceiptsResult.Value ?? Enumerable.Empty<PurchaseOrderReceipt>();
@@ -16,21 +16,21 @@
 
             if (!distinctPurchaseOrders.Any())
             {
-                return Result.Ok(new RootstockPurchaseOrdersProcessed(Enumerable.Empty<PurchaseOrder>()));
+                return Result.Ok(Enumerable.Empty<PurchaseOrder>());
             }
 
-            var purchaseOrdersResult = await GetPurchaseOrdersAsync(distinctPurchaseOrders.Take(100));
+            var purchaseOrdersResult = await GetPurchaseOrdersAsync(distinctPurchaseOrders);
             if (purchaseOrdersResult.IsFailed)
             {
-                return Result.Fail<RootstockPurchaseOrdersProcessed>(purchaseOrdersResult.Errors);
+                return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersResult.Errors);
             }
 
             var purchaseOrders = purchaseOrdersResult.Value ?? Enumerable.Empty<PurchaseOrder>();
 
-            var purchaseOrdersLineItemResult = await GetPurchaseOrdersLineItemAsync(distinctPurchaseOrders.Take(100));
+            var purchaseOrdersLineItemResult = await GetPurchaseOrdersLineItemAsync(distinctPurchaseOrders);
             if (purchaseOrdersLineItemResult.IsFailed)
             {
-                return Result.Fail<RootstockPurchaseOrdersProcessed>(purchaseOrdersLineItemResult.Errors);
+                return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersLineItemResult.Errors);
             }
 
             var purchaseOrdersLineItem = purchaseOrdersLineItemResult.Value ?? Enumerable.Empty<PurchaseOrderLineItem>();
@@ -38,7 +38,7 @@
             var companyReferencesResult = await GetCompanyReferencesAsync();
             if (companyReferencesResult.IsFailed)
             {
-                return Result.Fail<RootstockPurchaseOrdersProcessed>(companyReferencesResult.Errors);
+                return Result.Fail<IEnumerable<PurchaseOrder>>(companyReferencesResult.Errors);
             }
 
             var companyReferences = companyReferencesResult.Value ?? Enumerable.Empty<CompanyReference>();
@@ -48,10 +48,10 @@
             var mapResult = await MapPurchaseOrdersAsync(purchaseOrders, purchaseOrderReceipts, purchaseOrdersLineItem);
             if (mapResult.IsFailed)
             {
-                return Result.Fail<RootstockPurchaseOrdersProcessed>(mapResult.Errors);
+                return Result.Fail<IEnumerable<PurchaseOrder>>(mapResult.Errors);
             }
 
-            return Result.Ok(new RootstockPurchaseOrdersProcessed(mapResult.Value));
+            return Result.Ok(mapResult.Value);
         }
 
         private async Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync()

@@ -62,27 +62,42 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<JArray>> FetchRecordsAsync<T>(string query, string objectName)
     {
-        var response = await httpClient.GetAsync($"{QueryUrl}?q={query}");
-        if (!response.IsSuccessStatusCode)
-        {
-            string errorMessage = Helpers.GetErrorFromResponse(response);
-            logger.LogError($"Failed to fetch {objectName}. Error: {errorMessage}");
-            return Result.Fail<JArray>(errorMessage);
-        }
+        var allRecords = new JArray();
+        string nextRecordsUrl = $"{QueryUrl}?q={Uri.EscapeDataString(query)}";
 
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JObject.Parse(content);
-
-        if (result["records"] is JArray records && records.Count > 0)
+        do
         {
-            logger.LogInformation("Fetched {RecordCount} records for {ObjectName}.", records.Count, objectName);
-            return Result.Ok(records);
+            var response = await httpClient.GetAsync(nextRecordsUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = Helpers.GetErrorFromResponse(response);
+                logger.LogError($"SalesforceService.GetByQueryAsync: Failed to get {objectName} details from Salesforce. Error: {errorMessage}");
+                return Result.Fail<JArray>(errorMessage);
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<JObject>(content);
+
+            if (result["records"] is JArray records && records.Count > 0)
+            {
+                allRecords.Merge(records);
+            }
+
+            nextRecordsUrl = result["nextRecordsUrl"]?.Value<string>();
+
+        } while (!string.IsNullOrEmpty(nextRecordsUrl));
+
+        if (allRecords.Count > 0)
+        {
+            logger.LogInformation($"SalesforceService.GetByQueryAsync: Successfully retrieved {objectName} details.");
         }
         else
         {
-            logger.LogWarning("No records found for {ObjectName}. Returning empty array.", objectName);
-            return Result.Ok(new JArray());
+            logger.LogInformation($"SalesforceService.GetByQueryAsync: No {objectName} records found.");
         }
+
+        return Result.Ok(allRecords);
     }
 
     private async Task<Result<string>> CreateAsync<T>(T entity, string objectName)
@@ -355,35 +370,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
     }
 
-    private async Task<Result<string>> ExecuteSalesforceQueryAsync(string query)
-    {
-        var response = await httpClient.GetAsync($"{QueryUrl}?q={Uri.EscapeDataString(query)}");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            logger.LogInformation("Salesforce query failed");
-            return Result.Fail<string>("Salesforce query failed");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-        return Result.Ok(content);
-    }
-
-    private Result<string> ProcessSalesforceQueryResponse(string content)
-    {
-        var result = JObject.Parse(content);
-
-        if (result["records"] is JArray records && records.Count > 0)
-        {
-            var groupId = records[0]["Id"]?.ToString() ?? string.Empty;
-            return Result.Ok(groupId);
-        }
-        else
-        {
-            logger.LogInformation("Group not found");
-            return Result.Fail<string>("Group not found");
-        }
-    }
     private async Task<Result<IEnumerable<RootstockVendorAddress>>> GetVendorAddressAsync(string query)
     {
         return await GetObjectListAsync<RootstockVendorAddress>(query, "rstk__povendpoaddr__c");
@@ -601,26 +587,21 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     }
 
     #region Purchase Orders
+
     public async Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync()
     {
         var lastRunTimestamp = DateTime.UtcNow.AddMinutes(-rootstockSettings.PurchaseOrdersFetchDurationInMinutes).ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        var allReceipts = new List<RootstockPurchaseOrderReceipt>();
-        var nextPageUri = $"{QueryUrl}?q={Uri.EscapeDataString(string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp))}";
+        var query = string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp);
 
-        while (!string.IsNullOrEmpty(nextPageUri))
+        var receiptsResult = await GetObjectListAsync<RootstockPurchaseOrderReceipt>(query, "RootstockPurchaseOrderReceipt");
+
+        if (receiptsResult.IsFailed)
         {
-            var pageResult = await GetObjectAsync<RootstockPurchaseOrderReceipts>(nextPageUri);
-
-            if (pageResult.IsFailed)
-                return Result.Fail<IEnumerable<PurchaseOrderReceipt>>(pageResult.Errors);
-
-            var currentPage = pageResult.Value;
-            allReceipts.AddRange(currentPage.records ?? new List<RootstockPurchaseOrderReceipt>());
-
-            nextPageUri = string.IsNullOrEmpty(currentPage.nextRecordsUrl) ? string.Empty : $"{currentPage.nextRecordsUrl}?q={Uri.EscapeDataString(string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp))}";
+            return Result.Fail<IEnumerable<PurchaseOrderReceipt>>(receiptsResult.Errors);
         }
 
-        logger.LogInformation("Total {TotalReceipts} PO response receipts found", allReceipts.Count);
+        var allReceipts = receiptsResult.Value;
+        logger.LogInformation("Total {TotalReceipts} PO response receipts found", allReceipts.Count());
 
         var unifiedReceipts = allReceipts.Select(receipt => mapper.Map<PurchaseOrderReceipt>(receipt));
 
@@ -631,6 +612,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     {
         var poIds = string.Join("', '", distinctPurchaseOrders);
         var poQuery = string.Format(RootstockQueries.PurchaseOrderQuery, poIds);
+        logger.LogInformation("Fetching Purchase Orders with query: {Query}", poQuery);
+
         var purchaseOrdersResult = await GetObjectListAsync<RootstockPurchaseOrder>(poQuery, "rstk__pohdr__c");
 
         if (purchaseOrdersResult.IsFailed)
@@ -641,6 +624,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var purchaseOrders = purchaseOrdersResult.Value;
         var unifiedPurchaseOrders = purchaseOrders.Select(po => mapper.Map<PurchaseOrder>(po));
 
+        logger.LogInformation("Successfully fetched {Count} Purchase Orders", unifiedPurchaseOrders.Count());
         return Result.Ok(unifiedPurchaseOrders);
     }
 
@@ -648,6 +632,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     {
         var poIds = string.Join("', '", distinctPurchaseOrders);
         var poLineQuery = string.Format(RootstockQueries.POLineQuery, poIds);
+        logger.LogInformation("Fetching Purchase Order Line Items with query: {Query}", poLineQuery);
+
         var lineItemsResult = await GetObjectListAsync<RootstockLineItem>(poLineQuery, "rstk__poline__c");
 
         if (lineItemsResult.IsFailed)
@@ -658,17 +644,21 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var lineItems = lineItemsResult.Value;
         var unifiedLineItems = lineItems.Select(lineItem => mapper.Map<PurchaseOrderLineItem>(lineItem)).ToList();
 
+        logger.LogInformation("Successfully fetched {Count} Purchase Order Line Items", unifiedLineItems.Count());
         return Result.Ok(unifiedLineItems.AsEnumerable());
     }
 
     public async Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync()
     {
+        logger.LogInformation("Fetching Company References with query: {Query}", RootstockQueries.CompanyReferenceQuery);
         return await GetObjectListAsync<CompanyReference>(RootstockQueries.CompanyReferenceQuery, "External_Company_Reference__c");
     }
 
     public async Task<Result<PurchaseOrder>> SetVendorAddressAndMap(PurchaseOrder po)
     {
         var vendorAddressQuery = PurchaseOrder.FormatVendorAddressQuery(po.VendorCode, po.BillToAddress?.PostalCode, RootstockQueries.VendorAddressQueryTemplate);
+        logger.LogInformation("Fetching Vendor Address with query: {Query}", vendorAddressQuery);
+
         var vendorAddressResponseResult = await GetVendorAddressAsync(vendorAddressQuery);
 
         if (vendorAddressResponseResult.IsFailed)
@@ -679,6 +669,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         po.VendorAddressNumber = RootstockVendorAddress.ValidVendorAddress(vendorAddressResponseResult.Value);
 
         var mappedPurchaseOrder = mapper.Map<PurchaseOrder>(po);
+        logger.LogInformation("Successfully set Vendor Address and mapped Purchase Order");
         return Result.Ok(mappedPurchaseOrder);
     }
 
