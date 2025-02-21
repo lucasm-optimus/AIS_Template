@@ -71,9 +71,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (!response.IsSuccessStatusCode)
         {
-            string errorMessage = $"{objectName} creation failed. Error: {Helpers.GetErrorFromResponse(response)}";
-            logger.LogError(errorMessage);
-            return Result.Fail<string>(Helpers.GetErrorFromResponse(response));
+            string errorMessage = Helpers.GetErrorFromResponse(response);
+            logger.LogError($"{objectName} creation failed. Error: {errorMessage}");
+            return Result.Fail<string>(errorMessage);
         }
 
         var responseBody = await response.Content.ReadAsStringAsync();

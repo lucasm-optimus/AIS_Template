@@ -23,11 +23,11 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             return Result.Ok();
         }
 
-        string errorMessage = $@"Failed to create invoice in Obeer. SAPConcurInvoiceId: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.ConcurOrderID},
+        string errorMessage = Helpers.GetErrorFromResponse(response);
+        logger.LogError($@"Failed to create invoice in Obeer. SAPConcurInvoiceId: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.ConcurOrderID},
             SAPConcurInvoiceNumber: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.CustomerRefNo},
-            Error: {Helpers.GetErrorFromResponse(response)}";
-        logger.LogError(errorMessage);
-        return Result.Fail(Helpers.GetErrorFromResponse(response));
+            Error: {errorMessage}");
+        return Result.Fail(errorMessage);
     }
 
     private async Task<IEnumerable<GrpoDetails>> GetGrpoDetails(MatchedPurchaseOrderReceipt grpo)
