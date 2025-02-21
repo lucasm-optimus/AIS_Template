@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Core.Application.Expenses.QueryHandlers;
+﻿using Tilray.Integrations.Core.Application.Constants;
+
+namespace Tilray.Integrations.Core.Application.Expenses.QueryHandlers;
 
 public class GetAllExpensesQueryHandler(ISAPConcurService sapConcurService, IBlobService blobService) : IQueryManyHandler<GetAllExpenses, string>
 {
@@ -12,7 +14,7 @@ public class GetAllExpensesQueryHandler(ISAPConcurService sapConcurService, IBlo
             return Result.Ok<IEnumerable<string>>([]);
 
         var blobList = await Task.WhenAll(expensesResult.Value.Select(expense =>
-            blobService.UploadBlobContentAsync(expense, "expense")));
+            blobService.UploadBlobContentAsync(expense, BlobNames.GetExpenseBlobName())));
 
         return Result.Ok(blobList.AsEnumerable());
     }

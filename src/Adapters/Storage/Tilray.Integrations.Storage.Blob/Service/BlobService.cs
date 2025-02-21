@@ -1,12 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Text;
-using Tilray.Integrations.Core.Application.Adapters.Storage;
-using Tilray.Integrations.Core.Common.Extensions;
-using Tilray.Integrations.Storage.Blob.Startup;
-
-namespace Tilray.Integrations.Storage.Blob;
+﻿namespace Tilray.Integrations.Storage.Blob;
 
 internal class BlobService(BlobServiceClient blobServiceClient, BlobSettings blobSettings, ILogger<BlobService> logger) : IBlobService
 {
@@ -29,9 +21,8 @@ internal class BlobService(BlobServiceClient blobServiceClient, BlobSettings blo
 
     #region Public Methods
 
-    public async Task<string> UploadBlobContentAsync<T>(T content, string blob)
+    public async Task<string> UploadBlobContentAsync<T>(T content, string blobName)
     {
-        string blobName = $"{blob}-{Guid.NewGuid()}-{DateTime.UtcNow:yyyyMMddHHmmss}.json";
         var blobClient = await GetBlobClientAsync(blobName);
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content.ToJsonString()));
         await blobClient.UploadAsync(memoryStream);

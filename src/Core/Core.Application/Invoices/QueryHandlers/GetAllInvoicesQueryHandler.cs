@@ -1,6 +1,9 @@
-﻿namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
+﻿using Tilray.Integrations.Core.Application.Constants;
+using Tilray.Integrations.Core.Common.Stream;
 
-public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService,
+namespace Tilray.Integrations.Core.Application.Invoices.QueryHandlers;
+
+public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRootstockService rootstockService, IStream stream,
     IBlobService blobService, ILogger<GetAllInvoicesQueryHandler> logger)
     : IQueryManyHandler<GetAllInvoices, string>
 {
@@ -29,9 +32,20 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
             return Result.Fail<IEnumerable<string>>("No invoices found for any company");
         }
 
-        var blobList = await Task.WhenAll(companyWithInvoices.Select(company =>
-            blobService.UploadBlobContentAsync(company, "invoice")));
+        var tasks = companyWithInvoices.Select(async group =>
+        {
+            var blob = await blobService.UploadBlobContentAsync(group, BlobNames.GetInvoiceBlobName());
 
-        return Result.Ok(blobList.AsEnumerable());
+            var properties = new Dictionary<string, object>
+            {
+                { "ObeerFlag", group.Company.OBeer_Invoices__c }
+            };
+
+            await stream.SendEventAsync(blob, Topics.SAPConcurInvoicesFetched, properties);
+            return blob;
+        });
+
+        var blobUrls = await Task.WhenAll(tasks);
+        return Result.Ok(blobUrls.AsEnumerable());
     }
 }
