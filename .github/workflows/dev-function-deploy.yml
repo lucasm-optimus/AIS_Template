@@ -2,17 +2,17 @@ name: Deploy .NET to Dev Azure Functions
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
     paths:
       - "!.github/workflows/**"
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'rg-tilray-it-dev-cace'   # Replace with your Azure Functions App name
+  AZURE_FUNCTIONAPP_NAME: 'func-tilray-it-ais-dev-cace'   # Replace with your Azure Functions App name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'src/Adapters/Web/FunctionApp'        # Path to your .NET project (e.g., 'src/MyFunctionApp')
   DOTNET_VERSION: '9.0.x'                    # .NET version 
   AZURE_RESOURCE_GROUP: 'rg-tilray-it-dev-cace' # Replace with your Azure resource group name
-  ENVIRONMENT: production
+  ENVIRONMENT: dev
 
 jobs:
   build-and-deploy:
@@ -20,8 +20,6 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
-      with:
-        ref: dev
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1

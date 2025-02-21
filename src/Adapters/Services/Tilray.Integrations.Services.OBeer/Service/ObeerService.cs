@@ -9,16 +9,22 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
     {
         string apiUrl = $"api?APICommand={obeerSettings.APICommand}&EncompassID={obeerSettings.EncompassId}&APIToken={obeerSettings.APIToken}";
 
-        var content = Helpers.CreateStringContent(obeerInvoice);
+        var jsonContent = obeerInvoice.ToJsonString();
+        logger.LogInformation("Obeer Invoice payload: {ObeerInvoice}", jsonContent);
+
+        var content = Helpers.CreateStringContent(jsonContent);
 
         HttpResponseMessage response = await client.PostAsync(apiUrl, content);
         if (response.IsSuccessStatusCode)
         {
-            logger.LogInformation($"Obeer Invoice created successfully for {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.ConcurOrderID}");
+            logger.LogInformation(@$"Obeer Invoice created successfully. SAPConcurInvoiceId: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.ConcurOrderID},
+                SAPConcurInvoiceNumber: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.CustomerRefNo},
+                ResponseMessage: {await response.Content.ReadAsStringAsync()}");
             return Result.Ok();
         }
 
-        string errorMessage = $@"Failed to create invoice in Obeer. InvoiceId: {obeerInvoice?.Import?.InvoiceHeader?.FirstOrDefault()?.ConcurOrderID}
+        string errorMessage = $@"Failed to create invoice in Obeer. SAPConcurInvoiceId: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.ConcurOrderID},
+            SAPConcurInvoiceNumber: {obeerInvoice?.Import?.APInvoice?.FirstOrDefault()?.CustomerRefNo},
             Error: {Helpers.GetErrorFromResponse(response)}";
         logger.LogError(errorMessage);
         return Result.Fail(errorMessage);
@@ -109,7 +115,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             if (result.IsFailed)
             {
                 errorsGrpo.AddRange(obeerInvoice.Import.Items.Select(item =>
-                    ErrorFactory.CreateGrpoLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
+                    ErrorFactory.CreateGrpoLineItemError(item, obeerInvoice.Import.APInvoice.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
             }
         }
     }
@@ -147,12 +153,13 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             return;
         }
 
+        logger.LogInformation("Posting NonPO line items to Obeer for invoice {InvoiceId} with InvoiceNumber {InvoiceNumber}", invoice.ID, invoice.InvoiceNumber);
         var obeerInvoice = mapper.Map<ObeerInvoice>((invoice, nonPOLineItems, "dDocument_Service", hasGrpoLines));
         var result = await CreateInvoiceAsync(obeerInvoice);
         if (result.IsFailed)
         {
             errorsNonPO.AddRange(obeerInvoice.Import.Items.Select(item =>
-                ErrorFactory.CreateNonPOLineItemError(item, obeerInvoice.Import.InvoiceHeader.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
+                ErrorFactory.CreateNonPOLineItemError(item, obeerInvoice.Import.APInvoice.FirstOrDefault(), Helpers.GetErrorMessage(result.Errors))));
         }
     }
 
@@ -167,7 +174,7 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
 
         if (invoice.IsValid())
         {
-            logger.LogInformation("Processing invoice {InvoiceNumber}", invoice.ID);
+            logger.LogInformation("Processing invoice {InvoiceNumber}, InvoiceNumber {InvoiceNumber}", invoice.ID, invoice.InvoiceNumber);
 
             var validLineItems = invoice.LineItems.ValidLineItems();
             await SetGlAccountForLineItemsAsync(invoice, validLineItems);
@@ -178,8 +185,8 @@ public class ObeerService(HttpClient client, ISnowflakeRepository snowflakeRepos
             logger.LogInformation("Invoice {InvoiceId} has {GRPOCount} GRPO line items and {NonPOCount} NonPO line items",
                 invoice.ID, grpoLineItems.Count(), nonPOLineItems.Count());
 
-            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, grpoErrors);
             await PostNonPOLineItemsAsync(invoice, nonPOLineItems, grpoLineItems.Any(), nonPOErrors);
+            await ProcessGrpoLineItemsAsync(invoice, grpoLineItems, grpoErrors);
         }
 
         return Result.Ok((grpoErrors, nonPOErrors));

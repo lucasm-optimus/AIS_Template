@@ -9,7 +9,7 @@ public class CreateJournalEntriesInRootstockCommandHandler(IRootstockService roo
         var expenseDetails = expensesContent.ToObject<ExpenseDetails>();
         logger.LogInformation("Total expenses received: {TotalExpenses}", expenseDetails.Expenses.Count());
 
-    var expensesProcessed = new ExpensesProcessed();
+        var expensesProcessed = new ExpensesProcessed();
         var companyResult = await rootstockService.GetAllCompanyReferencesAsync();
         if (companyResult.IsFailed)
             return Result.Fail<ExpensesProcessed>(companyResult.Errors);

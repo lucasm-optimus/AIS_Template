@@ -8,15 +8,15 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
         string invoicesContent = await blobService.DownloadBlobContentAsync(request.InvoiceGroupBlobName);
         var invoiceGroup = invoicesContent.ToObject<InvoiceGroup>();
 
-        logger.LogInformation("Total {InvoiceCount} invoices for company {CompanyName} received",
-            invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c);
-
         if (!invoiceGroup.Company.CanProcessInvoicesForObeer)
         {
             logger.LogInformation("Company {CompanyName} is not configured to process invoices for Obeer",
                 invoiceGroup.Company.Company_Name__c);
             return Result.Ok();
         }
+
+        logger.LogInformation("Processing {InvoiceCount} invoices for company {CompanyName} for Obeer. InvoiceNumbers: {InvoiceNumbers}",
+            invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c, invoiceGroup.Invoices.Select(inv => inv.InvoiceNumber));
 
         var invoicesProcessed = new InvoicesProcessed();
         foreach (var invoice in invoiceGroup.Invoices)

@@ -17,6 +17,8 @@ public class RootstockJournalEntry
     public RootstockFinancialSystemUser rstkf__jeato_owner__r { get; set; } = new();
     public string rstkf__jeato_uploadgroup__c { get; set; }
     public string rstkf__jeato_vatclass__c { get; set; }
+    public RootstockGLAccount rstkf__jeato_glacct__r { get; set; } = new();
+    public RootstockFinancialDivision rstkf__jeato_gldiv__r { get; set; } = new();
 
     public static RootstockJournalEntry CreateBase(CompanyReference company, Expense expense, string integrationUserName)
     {
@@ -29,6 +31,7 @@ public class RootstockJournalEntry
             rstkf__jeato_uploadgroup__c = expense.ReportID,
             rstkf__jeato_glcmp__r = new RootstockFinancialCompany { rstkf__externalid__c = company.Rootstock_Company__c },
             rstkf__jeato_owner__r = new RootstockFinancialSystemUser { Name = integrationUserName },
+            rstkf__jeato_gldiv__r = new RootstockFinancialDivision { rstkf__externalid__c = $"{company.Rootstock_Company__c}_{company.Rootstock_Company__c}" },
             rstkf__jeato_jeno__c = string.Empty,
             rstkf__jeato_vatclass__c = string.Empty
         };
@@ -43,13 +46,13 @@ public class RootstockJournalEntry
 
         if (isNegative)
         {
-            debit.SetDebitAccount(cashAccount, amount * -1);
-            credit.SetCreditAccount(account, amount * -1);
+            debit.SetDebitAccount(company.Rootstock_Company__c, cashAccount, amount * -1);
+            credit.SetCreditAccount(company.Rootstock_Company__c, account, amount * -1);
         }
         else
         {
-            debit.SetDebitAccount(account, amount);
-            credit.SetCreditAccount(cashAccount, amount);
+            debit.SetDebitAccount(company.Rootstock_Company__c, account, amount);
+            credit.SetCreditAccount(company.Rootstock_Company__c, cashAccount, amount);
         }
 
         return (debit, credit);
@@ -79,7 +82,7 @@ public class RootstockJournalEntry
 
     private static string GetCashAccount(string companyCode, Expense expense, RootstockGLAccountsSettings glAccountsSettings)
     {
-        var paymentType = expense.PaymentTypeCode.ToString().ToLower();
+        var paymentType = expense.PaymentTypeCode.ToLower();
         return companyCode switch
         {
             "003" => paymentType == "cash" ? glAccountsSettings.SWB.Cash : glAccountsSettings.SWB.Company,
@@ -90,23 +93,25 @@ public class RootstockJournalEntry
 
     private static string GetExpenseAccount(string companyCode, Expense expense)
     {
-        var department = expense.Department.ToString();
-        var expenseCode = expense.ExpenseCode.ToString();
+        var department = expense.Department;
+        var expenseCode = expense.ExpenseCode;
 
         return companyCode == "003"
             ? department == "0" ? $"000-{expenseCode}" : $"{department}-{expenseCode}"
             : expenseCode;
     }
 
-    private void SetDebitAccount(string account, decimal amount)
+    private void SetDebitAccount(string companyNumber, string account, decimal amount)
     {
+        rstkf__jeato_glacct__r = new RootstockGLAccount { rstkf__externalid__c = $"{companyNumber}_{account}" };
         rstkf__jeato_acct__c = account;
         rstkf__jeato_dramt__c = amount;
         rstkf__jeato_cramt__c = 0;
     }
 
-    private void SetCreditAccount(string account, decimal amount)
+    private void SetCreditAccount(string companyNumber, string account, decimal amount)
     {
+        rstkf__jeato_glacct__r = new RootstockGLAccount { rstkf__externalid__c = $"{companyNumber}_{account}" };
         rstkf__jeato_acct__c = account;
         rstkf__jeato_cramt__c = amount;
         rstkf__jeato_dramt__c = 0;
@@ -121,4 +126,14 @@ public class RootstockFinancialCompany
 public class RootstockFinancialSystemUser
 {
     public string Name { get; set; }
+}
+
+public class RootstockFinancialDivision
+{
+    public string rstkf__externalid__c { get; set; }
+}
+
+public class RootstockGLAccount
+{
+    public string rstkf__externalid__c { get; set; }
 }

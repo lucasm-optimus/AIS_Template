@@ -127,7 +127,14 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail<string>(result.Errors);
         }
 
-        return Result.Ok(result.Value?.Id ?? string.Empty);
+        if(result.Value == null)
+        {
+            string errorMessage = $"Chatter group {groupName} not found.";
+            logger.LogWarning(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+
+        return Result.Ok(result.Value.Id);
     }
 
     private async Task<Result> PostMessageToChatterAsync(string message, string groupName)
