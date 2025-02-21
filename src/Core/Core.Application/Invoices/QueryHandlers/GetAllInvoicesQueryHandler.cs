@@ -34,7 +34,7 @@ public class GetAllInvoicesQueryHandler(ISAPConcurService sapConcurService, IRoo
 
         var tasks = companyWithInvoices.Select(async group =>
         {
-            var blob = await blobService.UploadBlobContentAsync(group, "invoice");
+            var blob = await blobService.UploadBlobContentAsync(group, BlobNames.GetInvoiceBlobName());
 
             var properties = new Dictionary<string, object>
             {
