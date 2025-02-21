@@ -2,23 +2,33 @@
 using Newtonsoft.Json;
 using Tilray.Integrations.Core.Common.Stream;
 
-namespace Tilray.Integrations.Stream.Bus.Services
+namespace Tilray.Integrations.Stream.Bus.Services;
+
+public class AzureServiceBusService(ServiceBusClient client) : IStream
 {
-    public class AzureServiceBusService(ServiceBusClient client) : IStream
+    public async Task SendEventAsync<T>(T notification, string topicName, Dictionary<string, object>? properties = null)
     {
-        public async Task SendEventAsync<T>(T notification, string queueName)
+        var sender = client.CreateSender(topicName);
+        var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
+
+        if (properties != null)
         {
-            var sender = client.CreateSender(queueName);
-            var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
-            await sender.SendMessageAsync(message);
+            foreach (var property in properties)
+            {
+                message.ApplicationProperties[property.Key] = property.Value;
+            }
         }
 
-        public async Task SendEventAsync<T>(T notification, string queueName, DateTime? scheduleMessage)
+        await sender.SendMessageAsync(message);
+    }
+
+    public async Task SendEventAsync<T>(T notification, string topicName, DateTime? scheduleMessage)
+    {
+        var sender = client.CreateSender(topicName);
+        var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification))
         {
-            var sender = client.CreateSender(queueName);
-            var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
-            message.ScheduledEnqueueTime = scheduleMessage.Value.ToUniversalTime();
-            await sender.SendMessageAsync(message);
-        }
+            ScheduledEnqueueTime = scheduleMessage.HasValue ? scheduleMessage.Value.ToUniversalTime() : DateTime.UtcNow
+        };
+        await sender.SendMessageAsync(message);
     }
 }

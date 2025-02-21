@@ -51,7 +51,7 @@ public class CreateJournalEntriesInRootstockCommandHandler(IRootstockService roo
         {
             logger.LogWarning("Expenses processing completed with {ErrorCount} errors", expensesProcessed.ExpenseErrors.Count);
             await mediator.Publish(expensesProcessed, cancellationToken);
-            return Result.Fail(expensesProcessed.ExpenseErrors.Select(e => e.Error));
+            return Result.Fail(expensesProcessed.Message);
         }
 
         logger.LogInformation("Successfully processed {ExpensesCount} expenses", expenseDetails.Expenses.Count());
