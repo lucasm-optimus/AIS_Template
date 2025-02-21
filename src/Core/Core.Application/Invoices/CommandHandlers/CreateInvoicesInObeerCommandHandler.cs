@@ -19,9 +19,12 @@ public class CreateInvoicesInObeerCommandHandler(IObeerService obeerService, IMe
             invoiceGroup.Invoices.Count(), invoiceGroup.Company.Company_Name__c, invoiceGroup.Invoices.Select(inv => inv.InvoiceNumber));
 
         var invoicesProcessed = new InvoicesProcessed();
-        foreach (var invoice in invoiceGroup.Invoices)
+        var invoiceTasks = invoiceGroup.Invoices
+            .Select(invoice => obeerService.CreateInvoiceAsync(invoice))
+            .ToList();
+        var results = await Task.WhenAll(invoiceTasks);
+        foreach (var result in results)
         {
-            var result = await obeerService.CreateInvoiceAsync(invoice);
             invoicesProcessed.ErrorsGrpo.AddRange(result.Value.ErrorsGrpo);
             invoicesProcessed.ErrorsNonPO.AddRange(result.Value.ErrorsNonPO);
         }
