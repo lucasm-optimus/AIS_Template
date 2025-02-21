@@ -86,7 +86,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<bool>> CheckForExistingMessageInChatterGroupAsync(string groupId, string message)
     {
-        var result = await GetObjectListAsync<RootstockFeedItem>(string.Format(RootstockQueries.GetChatterGroupIdQuery, groupId), "FeedItem");
+        var result = await GetObjectListAsync<RootstockFeedItem>(string.Format(RootstockQueries.GetChatterBodyQuery, groupId), "FeedItem");
         if (result.IsFailed)
         {
             logger.LogError("Failed to fetch Chatter messages. Error: {Error}", result.Errors);

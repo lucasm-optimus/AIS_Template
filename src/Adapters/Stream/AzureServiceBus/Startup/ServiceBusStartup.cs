@@ -8,7 +8,7 @@ using Tilray.Integrations.Stream.Bus.Services;
 namespace Tilray.Integrations.Stream.Bus.Startup;
 
 /// <summary>
-/// This class is responsible for reading the ServiceBus settings from the configuration file.
+/// This class is responsible for registering the AzureServiceBusService in the DI container.
 /// </summary>
 public class ServiceBusStartup : IStartupRegister
 {

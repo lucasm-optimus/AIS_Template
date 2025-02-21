@@ -1,7 +1,7 @@
 ﻿namespace Tilray.Integrations.Stream.Bus.Startup;
 
 /// <summary>
-/// This class is responsible for reading the Rootstock settings from the configuration file.
+/// This class is responsible for reading the Service Bus settings from the configuration file.
 /// </summary>
 public class ServiceBusSettings
 {
