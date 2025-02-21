@@ -16,7 +16,7 @@ public class AzureServiceBusService(ServiceBusClient client) : IStream
     public async Task SendEventAsync(string notification, string topicName, Dictionary<string, object>? properties = null)
     {
         var sender = client.CreateSender(topicName);
-        var message = new ServiceBusMessage(JsonConvert.SerializeObject(notification));
+        var message = new ServiceBusMessage(notification);
 
         if (properties != null)
         {
