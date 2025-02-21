@@ -71,8 +71,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         if (!response.IsSuccessStatusCode)
         {
-            string errorMessage = $"{objectName} creation failed. Error: {Helpers.GetErrorFromResponse(response)}";
-            logger.LogError(errorMessage);
+            string errorMessage = Helpers.GetErrorFromResponse(response);
+            logger.LogError($"{objectName} creation failed. Error: {errorMessage}");
             return Result.Fail<string>(errorMessage);
         }
 
@@ -499,6 +499,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     public async Task<Result<List<ExpenseError>>> CreateJournalEntryAsync(Expense expense, CompanyReference company)
     {
+        logger.LogInformation($"Expense payload: {expense.ToJsonString()}");
+
         var (debit, credit) = CreateJournalPair(company, expense);
         var errors = new List<ExpenseError>();
 
