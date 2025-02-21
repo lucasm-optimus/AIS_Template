@@ -41,25 +41,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             : Result.Fail<IEnumerable<T>>(recordsResult.Errors);
     }
 
-    private async Task<Result<T>> GetObjectAsync<T>(string url)
-    {
-        var response = await httpClient.GetAsync(url);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            string errorMessage = Helpers.GetErrorFromResponse(response);
-            logger.LogError(errorMessage);
-            return Result.Fail<T>($"Failed to fetch data. Error: {errorMessage}");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonConvert.DeserializeObject<T>(content);
-
-        return result == null
-            ? Result.Fail<T>("Failed to deserialize API response")
-            : Result.Ok(result);
-    }
-
     private async Task<Result<JArray>> FetchRecordsAsync<T>(string query, string objectName)
     {
         var allRecords = new JArray();
