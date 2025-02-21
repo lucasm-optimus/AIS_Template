@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
+using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
@@ -313,6 +314,37 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
     }
 
+    private async Task<Result<string>> ExecuteSalesforceQueryAsync(string query)
+    {
+        var response = await httpClient.GetAsync($"{QueryUrl}?q={Uri.EscapeDataString(query)}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogInformation("Salesforce query failed");
+            return Result.Fail<string>("Salesforce query failed");
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        return Result.Ok(content);
+    }
+
+    private Result<IEnumerable<AuditItem>> ProcessSalesforceQueryResponse(string content)
+    {
+        var soxReport = JsonConvert.DeserializeObject<SOXAuditReport>(content);
+        if (soxReport == null || soxReport.Records == null || !soxReport.Records.Any())
+        {
+            logger.LogInformation("No records found");
+            return Result.Fail<IEnumerable<AuditItem>>("No records found");
+        }
+        foreach (var item in soxReport.Records)
+        {
+            item.Display = item.Display?.Replace("\n", "  ")
+                                         .Replace("\t", "  ")
+                                         .Replace(",", " ") ?? string.Empty;
+        }
+        return Result.Ok(soxReport.Records);
+    }
+
     #endregion
 
     #region Public methods
@@ -521,6 +553,30 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var message = $"The latest Journal Entry Upload for Expenses produced {errorCount} errors.";
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
+    }
+
+
+    public async Task<Result<IEnumerable<AuditItem>>> GetAuditItemsAsync(string reportDate)
+    {
+        var query = string.Format(RootstockQueries.GetSOXReportQuery, reportDate);
+
+        var queryResult = await ExecuteSalesforceQueryAsync(query);
+
+        if (queryResult.IsFailed)
+        {
+            logger.LogInformation("Failed to fetch auditItems from salesforce.");
+            return Result.Fail<IEnumerable<AuditItem>>($"Failed to fetch auditItems from salesforce.");
+        }
+
+        var auditItems = ProcessSalesforceQueryResponse(queryResult.Value);
+
+        return Result.Ok(auditItems.Value);
+
+    }
+
+    public string GetQuery(string reportDate)
+    {
+        return string.Format(RootstockQueries.GetSOXReportQuery, reportDate);
     }
 
     #endregion

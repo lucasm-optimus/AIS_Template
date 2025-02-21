@@ -1,4 +1,7 @@
-﻿using Tilray.Integrations.Services.Sharepoint.Startup;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
+using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
+using Tilray.Integrations.Services.Sharepoint.Service.Models;
+using Tilray.Integrations.Services.Sharepoint.Startup;
 
 namespace Tilray.Integrations.Services.Sharepoint.Service;
 
@@ -33,6 +36,30 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         };
     }
 
+
+    private string GetSOXReportUploadPath(CompanyReference companyReference)
+    {
+        var companyName = companyReference?.Company_Name__c?.Trim() ?? "";
+        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
+        var soxReportFolder = sharepointSettings.SOXReportFolderPath?.TrimEnd('/') ?? "SOXReport";
+
+       
+        string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        return $"{basePath}/{companyName}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.csv";
+    }
+
+    private string GetSOXQueryUploadPath(CompanyReference companyReference)
+    {
+        var companyName = companyReference?.Company_Name__c?.Trim() ?? "";
+        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
+        var soxReportFolder = sharepointSettings.SOXReportFolderPath?.TrimEnd('/') ?? "SOXReport";
+
+
+        string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        return $"{basePath}/{companyName}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.txt";
+    }
     private string GetUploadPath<T>(CompanyReference companyReference)
     {
         string subFolderPath = GetSubFolderPath<T>();
@@ -128,6 +155,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         var driveResult = await GetDriveIdAsync();
         if (driveResult.IsFailed) return driveResult.ToResult();
 
+      
         var fileContent = Helpers.ConvertToCsv(content, ignoredProperties);
         uploadPath ??= GetUploadPath<T>(companyReference);
 
@@ -151,6 +179,49 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         logger.LogInformation("UploadFileAsync: {ObjectName} uploaded. Upload Path {UploadPath}", typeof(T).Name, uploadPath);
         return Result.Ok();
     }
+
+    public async Task<Result> UploadSOXReportAsync(IEnumerable<AuditItem> auditItems, CompanyReference companyReference = null)
+    {
+        var uploadPath = GetSOXReportUploadPath(companyReference);
+        string[] ignoredProperties = { "Attributes.Url" };
+
+        return await UploadFileAsync(auditItems, uploadPath: uploadPath, ignoredProperties: ignoredProperties);
+    }
+
+    public async Task<Result> UploadSFQueryAsync(string query,CompanyReference companyReference=null)
+    {
+
+        if (query == null)
+        {
+            logger.LogWarning("UploadQueryAsync: No query provided for upload");
+            return Result.Fail("UploadQueryAsync: No query provided for upload");
+        }
+
+        var driveResult = await GetDriveIdAsync();
+        if (driveResult.IsFailed) return driveResult.ToResult();
+        var uploadPath = GetSOXQueryUploadPath(companyReference);
+        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(query)))
+        {
+            var uploadedFile = await graphServiceClient
+                .Drives[driveResult.Value]
+                .Items["root"]
+                .ItemWithPath(uploadPath)
+                .Content
+                .PutAsync(memoryStream);
+
+            if (uploadedFile?.Id == null)
+            {
+                string errorMessage = $"UploadSFQueryAsync: File upload failed ";
+                logger.LogError(errorMessage);
+                return Result.Fail(errorMessage);
+            }
+        }
+
+        logger.LogInformation("UploadSFQueryAsync: query uploaded. Upload Path {UploadPath}", uploadPath);
+        return Result.Ok();
+    }
+
+
 
     #endregion
 }

@@ -9,8 +9,8 @@ using Tilray.Integrations.Core.Common;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.SOXReport.Queries
 {
-    public class GenerateSOXReportQuery(string reportDate) : IQuery<List<AuditItem>>
+    public class GenerateSOXReportQuery: IQuery<SOXReportAgg>
     {
-        public string ReportDate { get; } = reportDate;
+      
     }
 }

@@ -9,9 +9,9 @@ using Tilray.Integrations.Core.Common;
 
 namespace Tilray.Integrations.Core.Domain.Aggregates.SOXReport.Commands
 {
-    public class SaveQueryToOneDriveCommand(string query, string fileName) : ICommand
+    public class UploadQueryToOneDriveCommand(string query) : ICommand
     {
         public string Query { get; } = query;
-        public string FileName { get; } = fileName;
+       
     }
 }

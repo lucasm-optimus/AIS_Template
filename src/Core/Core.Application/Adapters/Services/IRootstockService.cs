@@ -1,4 +1,5 @@
 ﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
@@ -14,6 +15,8 @@ public interface IRootstockService
     Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string addressType);
     Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip);
     Task<Result<string?>> CreateSalesOrder(RstkSalesOrder salesOrder);
+    Task<Result<IEnumerable<AuditItem>>> GetAuditItemsAsync(string reportDate);
+    string GetQuery(string reportDate);
     Task<Result<string?>> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem);
     Task<Result<string?>> CreatePrePayment(RstkSalesOrderPrePayment rstkPrePayment);
     Task<Result<string?>> CreatePrePayment(RstkSyDataPrePayment prePayment);
