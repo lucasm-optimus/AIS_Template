@@ -13,7 +13,7 @@ namespace Tilray.Integrations.Functions.UseCases.SOXReport.Rootstock
     public class GetAuditItemsFromRootstock(IMediator mediator)
     {
         /// <summary>
-        /// This function is responsible for fetching invoices from SAP Concur.
+        /// This function is responsible for fetching list of updated audit items from rootstock using SOQL query.
         /// </summary>
         [Function("GetAuditItemsFromRootstock")]
         [ServiceBusOutput(Topics.SOXAuditItemsFetched, Connection = "ServiceBusConnectionString")]
