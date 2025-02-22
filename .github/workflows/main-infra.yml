@@ -1,0 +1,30 @@
+name: Deploy Bicep Templates
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, test, prod]  # Define environments here
+    environment: ${{ matrix.environment }} 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log into Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep file
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourceGroup
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          template: ./Infra/main.bicep
+          parameters: ./Infra/${{ matrix.environment }}.params.json
+          deploymentMode: 'Incremental'

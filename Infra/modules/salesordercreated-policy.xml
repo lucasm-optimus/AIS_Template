@@ -1,0 +1,28 @@
+<policies>
+    <inbound>
+        <base />
+        <set-backend-service id="apim-generated-policy" backend-id="func-tilray-it-ais-test-cace-01" />
+        <validate-azure-ad-token tenant-id="9a65278b-de4d-46dc-9d62-7b8524c7935f">
+            <client-application-ids>
+                <application-id>64f54f72-f384-4b6e-8d26-30b9424fd37d</application-id>
+            </client-application-ids>
+            <audiences>
+                <audience>api://64f54f72-f384-4b6e-8d26-30b9424fd37d/default</audience>
+            </audiences>
+            <required-claims>
+                <claim name="idp">
+                    <value>https://sts.windows.net/9a65278b-de4d-46dc-9d62-7b8524c7935f/</value>
+                </claim>
+            </required-claims>
+        </validate-azure-ad-token>
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

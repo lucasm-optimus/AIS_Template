@@ -89,6 +89,7 @@ resource azureFunction 'Microsoft.Web/sites@2024-04-01' = {
 }
 
 // Outputs
-output functionAppId string = azureFunction.id
+output functionAppName string = azureFunction.name
 output appServicePlanId string = appServicePlan.id
 output functionAppPrincipalId string = azureFunction.identity.principalId
+output functionAppurl string = 'https://${azureFunction.properties.defaultHostName}'

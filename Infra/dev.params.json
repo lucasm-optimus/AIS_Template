@@ -119,6 +119,31 @@
     },
     "nsgName": {
       "value": "nsg-tilray-it-ais-dev-cace-01"
+    },
+    "apis": {
+      "value": [
+        {
+          "name": "func-tilray-it-ais-dev-cace",
+          "displayName": "func-tilray-it-ais-dev-cace",
+          "serviceUrl": "https://func-tilray-it-ais-dev-cace.azurewebsites.net/api",
+          "path": "func-tilray-it-ais-dev-cace",
+          "subscriptionRequired": true,
+          "operations": [
+            {
+              "name": "post-ecomsalesordersreceived-webhook",
+              "displayName": "EcomSalesOrdersReceived_Webhook",
+              "method": "POST",
+              "urlTemplate": "/EcomSalesOrdersReceived_Webhook"
+            },
+            {
+              "name": "post-SalesOrderCreated_Webhook",
+              "displayName": "SalesOrderCreated_Webhook",
+              "method": "POST",
+              "urlTemplate": "/SalesOrderCreated_Webhook"
+            }
+          ]
+        }
+      ]
     }
   }
 }

@@ -110,6 +110,8 @@ param nsgName string
 param pvirtualNetworkName string
 
 
+param apis array 
+
 targetScope = 'resourceGroup'
 
 module apimModule './modules/1.apim.bicep' = {
@@ -244,5 +246,29 @@ module vnetModule './modules/13.vnet.bicep' = {
     location: location
     networkSecurityGroupId: nsgModule.outputs.nsgId
     virtualNetworkName: pvirtualNetworkName
+  }
+}
+
+module apiModule './modules/14.apimApi.bicep' = [for api in apis: {
+  name: '${api.name}-module'
+  params: {
+    apiName: api.name
+    apimServiceName: apimModule.outputs.apimServiceName
+    displayName: api.displayName
+    serviceUrl: api.serviceUrl
+    path: api.path
+    subscriptionRequired: api.subscriptionRequired
+    operations: api.operations
+  }
+}]
+
+
+module backendModule './modules/15.apimBackend.bicep' = {
+  name: 'backend'
+  params: {
+    apimServiceName: apimModule.outputs.apimServiceName
+    backendUrl: 'https://${functionAppModule.outputs.functionAppName}.azurewebsites.net/api'
+    backendName: functionAppModule.outputs.functionAppName
+    resourceId: functionAppModule.outputs.functionAppurl
   }
 }

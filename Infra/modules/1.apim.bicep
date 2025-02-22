@@ -64,3 +64,6 @@ resource apiManagementService 'Microsoft.ApiManagement/service@2024-06-01-previe
     developerPortalStatus: 'Enabled'
   }
 }
+
+output apimServiceName string = apiManagementService.name
+
