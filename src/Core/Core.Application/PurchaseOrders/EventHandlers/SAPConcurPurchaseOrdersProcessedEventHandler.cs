@@ -1,5 +1,4 @@
 ﻿using Tilray.Integrations.Core.Application.Constants;
-using static Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Constants;
 
 namespace Tilray.Integrations.Core.Application.PurchaseOrders.EventHandlers;
 

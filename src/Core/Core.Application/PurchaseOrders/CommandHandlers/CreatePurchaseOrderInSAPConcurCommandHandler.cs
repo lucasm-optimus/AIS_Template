@@ -8,19 +8,18 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
         {
             var purchaseOrdersProcessingResult = new SAPConcurPurchaseOrdersProcessed
             {
-                ProcessedPurchaseOrders = new List<ProcessedPurchaseOrder>(),
-                FailedPurchaseOrders = new List<FailedPurchaseOrder>()
+                ProcessedPurchaseOrders = [],
+                FailedPurchaseOrders = []
             };
 
-            await ProcessPurchaseOrder(request.PurchaseOrder, purchaseOrdersProcessingResult);
+            await ProcessPurchaseOrderAsync(request.PurchaseOrder, purchaseOrdersProcessingResult);
 
-            // Publish the PurchaseOrdersProcessed event
             await mediator.Publish(purchaseOrdersProcessingResult, cancellationToken);
 
             return Result.Ok(purchaseOrdersProcessingResult);
         }
 
-        private async Task ProcessPurchaseOrder(PurchaseOrder purchaseOrder, SAPConcurPurchaseOrdersProcessed purchaseOrdersProcessingResult)
+        private async Task ProcessPurchaseOrderAsync(PurchaseOrder purchaseOrder, SAPConcurPurchaseOrdersProcessed purchaseOrdersProcessingResult)
         {
             SAPConcurCustomValues customFields = await GetCustomFieldsForVendor(purchaseOrder);
 
@@ -100,10 +99,10 @@ namespace Tilray.Integrations.Core.Application.PurchaseOrders.CommandHandlers
         {
             var customFields = new SAPConcurCustomValues();
 
-            var custom1Result = await GetCustomFieldAsync("e9eaccb8-4c0e-274b-b6ed-58a7de10fc60", vendor.Custom1, true);
-            customFields.Custom1 = custom1Result.ShortCode;
+            var (Id, ShortCode) = await GetCustomFieldAsync("e9eaccb8-4c0e-274b-b6ed-58a7de10fc60", vendor.Custom1, true);
+            customFields.Custom1 = ShortCode;
 
-            var custom2Result = await GetCustomFieldAsync(custom1Result.Id, vendor.Custom2);
+            var custom2Result = await GetCustomFieldAsync(Id, vendor.Custom2);
             customFields.Custom2 = custom2Result.ShortCode;
 
             var custom3Result = await GetCustomFieldAsync(custom2Result.Id, vendor.Custom3);

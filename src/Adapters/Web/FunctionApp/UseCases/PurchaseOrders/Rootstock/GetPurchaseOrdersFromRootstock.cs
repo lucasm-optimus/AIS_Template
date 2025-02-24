@@ -7,7 +7,7 @@ public class GetPurchaseOrdersFromRootstockCRON(IMediator mediator)
 {
     #region Function Implementation
 
-    [Function("GetPurchaseOrdersFromRootstockCRON")]
+    [Function("GetPurchaseOrdersFromRootstock")]
     [ServiceBusOutput(Topics.RootstockPurchaseOrdersFetched, Connection = "ServiceBusConnectionString")]
     public async Task<IEnumerable<PurchaseOrder>> Run([TimerTrigger("%GetPurchaseOrdersFromRootstockCRON%")] TimerInfo myTimer)
     {
@@ -16,6 +16,7 @@ public class GetPurchaseOrdersFromRootstockCRON(IMediator mediator)
         {
             return result.Value;
         }
+
         return [];
     }
 

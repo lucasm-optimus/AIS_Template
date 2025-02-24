@@ -1,5 +1,4 @@
 ﻿using Tilray.Integrations.Core.Application.Constants;
-using Tilray.Integrations.Core.Common.Stream;
 
 namespace Tilray.Integrations.Functions.UseCases.PurchaseOrders.SAPConcur;
 
@@ -13,12 +12,11 @@ public class RootstockPurchaseOrderFetched_CreatePurchaseOrderInSAPConcur(IMedia
         try
         {
             var purchaseOrders = message.Body.ToString().ToObject<PurchaseOrder>();
-            var command = new CreatePurchaseOrderInSAPConcurCommand(purchaseOrders, "Rootstock");
-            var commandResult = await mediator.Send(command);
+            var result = await mediator.Send(new CreatePurchaseOrderInSAPConcurCommand(purchaseOrders, "Rootstock"));
 
-            if (commandResult.IsFailed)
+            if (result.IsFailed)
             {
-                await messageActions.DeadLetterMessageAsync(message, deadLetterReason: string.Join(", ", commandResult.Errors));
+                await messageActions.DeadLetterMessageAsync(message, deadLetterReason: Helpers.GetErrorMessage(result.Errors));
             }
         }
         catch (Exception ex)
