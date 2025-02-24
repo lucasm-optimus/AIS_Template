@@ -89,16 +89,7 @@ public class RootstockAddress
 public class RootstockVendorAddress
 {
     public string Id { get; set; }
-    public double rstk__povendpoaddr_seq__c { get; set; }
-
-    public static double ValidVendorAddress(IEnumerable<RootstockVendorAddress> vendorAddressResponseResult)
-    {
-        if (vendorAddressResponseResult.Any())
-        {
-            return vendorAddressResponseResult.First().rstk__povendpoaddr_seq__c;
-        }
-        return 0; // Default value when there is no valid vendor address
-    }
+    public double? rstk__povendpoaddr_seq__c { get; set; }
 }
 
 public class RootstockLineItem

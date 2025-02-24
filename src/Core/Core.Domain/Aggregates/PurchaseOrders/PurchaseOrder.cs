@@ -47,8 +47,13 @@ public class PurchaseOrder
     public PurchaseOrderAddress? ShipToAddress { get; set; }
     public IEnumerable<PurchaseOrderLineItem>? LineItems { get; set; }
     public IEnumerable<PurchaseOrderReceipt>? PurchaseOrderReceipts { get; set; }
-    public double VendorAddressNumber { get; set; }
+    public double? VendorAddressNumber { get; set; }
     public int OPOR_DocEntry { get; set; }
+
+    public void SetVendorAddress(double? vendorAddressNumber)
+    {
+        VendorAddressNumber = vendorAddressNumber ?? 0;
+    }
 
     public static IEnumerable<string> GetDistinctPurchaseOrders(IEnumerable<PurchaseOrderReceipt> poReceiptResponse)
     {
@@ -61,11 +66,6 @@ public class PurchaseOrder
     {
         var rootstockCompanies = companyReferences.Select(cr => cr.Rootstock_Company__c);
         return poData.Where(item => item.Status != "2-Firmed" && item.Status != "3-Approvals Processing" && rootstockCompanies.Contains(item.Division));
-    }
-
-    public static string FormatVendorAddressQuery(string vendorExternalId, string? billToAddress_PostalCode, string vendorAddressQueryTemplate)
-    {
-        return string.Format(vendorAddressQueryTemplate, vendorExternalId, billToAddress_PostalCode);
     }
 
     public void SetPurchaseOrdersReceipt(IEnumerable<PurchaseOrderReceipt> poReceiptResponse)

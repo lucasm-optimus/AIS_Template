@@ -81,9 +81,9 @@ internal static class RootstockQueries
             SELECT ID, Company_Name__c, Concur_Company__c, Rootstock_Company__c, Expenses__c, Non_PO_Invoices__c, PO_AP_Match_Invoices__c 
             FROM External_Company_Reference__c WHERE Rootstock_Company__c != null";
 
-    internal const string VendorAddressQueryTemplate = @"
-            SELECT Id, rstk__povendpoaddr_seq__c 
-            FROM rstk__povendpoaddr__c 
-            WHERE rstk__formula_extid__c LIKE '{0}%' 
+    internal const string GetVendorAddressQuery = @"
+            SELECT Id, rstk__povendpoaddr_seq__c
+            FROM rstk__povendpoaddr__c
+            WHERE rstk__formula_extid__c LIKE '{0}%'
             AND rstk__povendpoaddr_zippostalcode__c = '{1}'";
 }

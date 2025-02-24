@@ -1,8 +1,5 @@
 ﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
-using Microsoft.AspNetCore.Mvc;
-
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 
 public interface IRootstockService
@@ -29,6 +26,6 @@ public interface IRootstockService
     Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync();
     Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPOs);
     Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync();
-    Task<Result<PurchaseOrder>> SetVendorAddressAndMap(PurchaseOrder po);
+    Task<Result> SetVendorAddressNumberAsync(PurchaseOrder purchaseOrder);
     Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPOs);
 }

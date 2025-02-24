@@ -17,10 +17,15 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     #region Private methods
 
-    private async Task<Result<T>> GetObjectByIdAsync<T>(string id, string query, string objectName)
+    private string GetFormattedQuery(string query, params object[] formatArgs)
     {
-        var formattedQuery = string.Format(query, id);
-        var recordsResult = await FetchRecordsAsync<T>(formattedQuery, objectName);
+        string formattedQuery = formatArgs != null ? string.Format(query, formatArgs) : query;
+        return formattedQuery;
+    }
+
+    private async Task<Result<T>> GetObjectAsync<T>(string query, string objectName)
+    {
+        var recordsResult = await FetchRecordsAsync<T>(query, objectName);
 
         if (recordsResult.IsFailed)
             return Result.Fail<T>(recordsResult.Errors);
@@ -116,7 +121,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<string>> GetChatterGroupIdAsync(string groupName)
     {
-        var result = await GetObjectByIdAsync<RootstockCollaborationGroup>(groupName, RootstockQueries.GetChatterGroupIdQuery, "CollaborationGroup");
+        var result = await GetObjectAsync<RootstockCollaborationGroup>(
+            GetFormattedQuery(RootstockQueries.GetChatterGroupIdQuery, groupName), "CollaborationGroup");
         if (result.IsFailed)
         {
             logger.LogError($"Failed to fetch Chatter Group ID. Error: {Helpers.GetErrorMessage(result.Errors)}");
@@ -167,20 +173,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok();
     }
 
-    private async Task<Result<string>> CreateChatterPostAsync<T>(T entity)
-    {
-        var json = Helpers.CreateStringContent(entity);
-        var response = await httpClient.PostAsync(ChatterUrl, json);
-
-        if (!response.IsSuccessStatusCode)
-            return Result.Fail<string>($"{typeof(T).Name} creation failed. Error: {Helpers.GetErrorFromResponse(response)}");
-
-        var responseBody = await response.Content.ReadAsStringAsync();
-        var id = JObject.Parse(responseBody)?["id"]?.ToString();
-
-        return Result.Ok(id ?? string.Empty);
-    }
-
     private async Task<Result<IEnumerable<string>>> ValidateCustomers(IEnumerable<string> customers)
     {
         var invalidCustomers = customers
@@ -192,11 +184,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = validCustomers.Select(async customer =>
         {
-            var result = await GetObjectByIdAsync<RootstockCustomer>(
-                customer,
-                RootstockQueries.GetCustomerByIdQuery,
-                "rstk__socust__c");
-
+            var result = await GetObjectAsync<RootstockCustomer>(GetFormattedQuery(RootstockQueries.GetCustomerByIdQuery, customer), "Customer");
             return result.IsFailed || result.Value == null ? customer : null;
         });
 
@@ -224,7 +212,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = items.Select(async item =>
         {
-            var itemResult = await GetObjectByIdAsync<RootstockItem>(item, RootstockQueries.GetItemByIdQuery, "rstk__peitem__c");
+            var itemResult = await GetObjectAsync<RootstockItem>(GetFormattedQuery(RootstockQueries.GetItemByIdQuery, item), "Item");
             return itemResult.IsFailed || itemResult.Value == null ? item : null;
         });
 
@@ -255,8 +243,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = uploadGroups.Select(async uploadGroup =>
         {
-            var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup,
-                RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
+            var uploadGroupResult = await GetObjectAsync<RootstockSalesOrder>(GetFormattedQuery(RootstockQueries.GetUploadGroupByIdQuery, uploadGroup), "rstk__soapi__c");
             return uploadGroupResult.IsFailed || uploadGroupResult.Value != null ? uploadGroup : null;
         });
 
@@ -290,7 +277,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result> CreateSalesOrderLinesAsync(SalesOrder salesOrder, string salesOrderId)
     {
-        var rootstockOrderResult = await GetObjectByIdAsync<RootstockSalesOrder>(salesOrderId, RootstockQueries.GetSalesOrderByIdQuery, "rstk__soapi__c");
+        var rootstockOrderResult = await GetObjectAsync<RootstockSalesOrder>(GetFormattedQuery(RootstockQueries.GetSalesOrderByIdQuery, salesOrderId), "rstk__soapi__c");
         if (rootstockOrderResult.IsFailed) { return Result.Fail("Sales Order not found"); }
         var errors = new List<string>();
 
@@ -351,11 +338,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
     }
 
-    private async Task<Result<IEnumerable<RootstockVendorAddress>>> GetVendorAddressAsync(string query)
+    private async Task<Result<RootstockVendorAddress>> GetVendorAddressAsync(string query)
     {
-        return await GetObjectListAsync<RootstockVendorAddress>(query, "rstk__povendpoaddr__c");
+        return await GetObjectAsync<RootstockVendorAddress>(query, "rstk__povendpoaddr__c");
     }
-
 
     #endregion
 
@@ -572,10 +558,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     public async Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync()
     {
         var lastRunTimestamp = DateTime.UtcNow.AddMinutes(-rootstockSettings.PurchaseOrdersFetchDurationInMinutes).ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-        var query = string.Format(RootstockQueries.POReceiptQuery, lastRunTimestamp);
-
-        var receiptsResult = await GetObjectListAsync<RootstockPurchaseOrderReceipt>(query, "RootstockPurchaseOrderReceipt");
-
+        var receiptsResult = await GetObjectListAsync<RootstockPurchaseOrderReceipt>(
+            GetFormattedQuery(RootstockQueries.POReceiptQuery, lastRunTimestamp), "RootstockPurchaseOrderReceipt");
         if (receiptsResult.IsFailed)
         {
             return Result.Fail<IEnumerable<PurchaseOrderReceipt>>(receiptsResult.Errors);
@@ -635,23 +619,17 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return await GetObjectListAsync<CompanyReference>(RootstockQueries.CompanyReferenceQuery, "External_Company_Reference__c");
     }
 
-    public async Task<Result<PurchaseOrder>> SetVendorAddressAndMap(PurchaseOrder po)
+    public async Task<Result> SetVendorAddressNumberAsync(PurchaseOrder purchaseOrder)
     {
-        var vendorAddressQuery = PurchaseOrder.FormatVendorAddressQuery(po.VendorCode, po.BillToAddress?.PostalCode, RootstockQueries.VendorAddressQueryTemplate);
-        logger.LogInformation("Fetching Vendor Address with query: {Query}", vendorAddressQuery);
-
-        var vendorAddressResponseResult = await GetVendorAddressAsync(vendorAddressQuery);
-
+        var vendorAddressResponseResult = await GetVendorAddressAsync(GetFormattedQuery(RootstockQueries.GetVendorAddressQuery,
+            purchaseOrder.VendorCode, purchaseOrder.BillToAddress?.PostalCode ?? string.Empty));
         if (vendorAddressResponseResult.IsFailed)
         {
-            return Result.Fail<PurchaseOrder>(vendorAddressResponseResult.Errors);
+            return vendorAddressResponseResult.ToResult();
         }
 
-        po.VendorAddressNumber = RootstockVendorAddress.ValidVendorAddress(vendorAddressResponseResult.Value);
-
-        var mappedPurchaseOrder = mapper.Map<PurchaseOrder>(po);
-        logger.LogInformation("Successfully set Vendor Address and mapped Purchase Order");
-        return Result.Ok(mappedPurchaseOrder);
+        purchaseOrder.SetVendorAddress(vendorAddressResponseResult.Value.rstk__povendpoaddr_seq__c);
+        return Result.Ok();
     }
 
     public async Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount)
