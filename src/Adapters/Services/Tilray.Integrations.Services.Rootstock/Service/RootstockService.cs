@@ -1,4 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
+﻿using Tilray.Integrations.Core.Domain.AuditItems;
 using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
@@ -555,10 +555,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return await PostMessageToChatterAsync(message, groupName);
     }
 
-
     public async Task<Result<IEnumerable<AuditItem>>> GetAuditItemsAsync(string reportDate)
     {
-        var query = string.Format(RootstockQueries.GetSOXReportQuery, reportDate);
+        var query = string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
 
         var queryResult = await ExecuteSalesforceQueryAsync(query);
 
@@ -576,7 +575,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     public string GetQuery(string reportDate)
     {
-        return string.Format(RootstockQueries.GetSOXReportQuery, reportDate);
+        return string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
     }
 
     #endregion

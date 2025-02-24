@@ -1,5 +1,5 @@
 ﻿using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
-using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
+using Tilray.Integrations.Core.Domain.AuditItems;
 
 namespace Tilray.Integrations.Core.Application.Adapters.Services;
 

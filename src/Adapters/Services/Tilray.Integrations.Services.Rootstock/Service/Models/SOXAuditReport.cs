@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tilray.Integrations.Core.Domain.Aggregates.SOXReport;
+using Tilray.Integrations.Core.Domain.AuditItems;
 
 namespace Tilray.Integrations.Services.Rootstock.Service.Models
 {
