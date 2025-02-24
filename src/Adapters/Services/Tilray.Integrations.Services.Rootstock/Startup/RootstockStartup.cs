@@ -25,6 +25,7 @@ public class RootstockStartup : IStartupRegister
         }).AddHttpMessageHandler<RootstockAuthHandler>();
 
         services.AddAutoMapper(typeof(RootstockSalesOrderMapper));
+        services.AddAutoMapper(typeof(RootstockPurchaseOrderMapper));
 
         return services;
     }

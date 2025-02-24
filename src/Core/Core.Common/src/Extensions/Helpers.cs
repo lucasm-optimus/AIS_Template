@@ -91,4 +91,16 @@ public static class Helpers
     {
         return result.WithError(new Error(property).WithMetadata(error, property));
     }
+
+    public static string BuildQueryString(Dictionary<string, string> queryParams)
+    {
+        return string.Join("&", queryParams
+            .Where(kvp => kvp.Value != null)
+            .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+    }
+
+    public static Dictionary<string, string> CreateQueryParams(params (string Key, string Value)[] parameters)
+    {
+        return parameters.ToDictionary(param => param.Key, param => string.IsNullOrEmpty(param.Value) ? "null" : param.Value);
+    }
 }

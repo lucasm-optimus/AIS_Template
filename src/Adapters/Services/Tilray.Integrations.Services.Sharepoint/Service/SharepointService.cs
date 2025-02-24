@@ -154,5 +154,15 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         return Result.Ok();
     }
 
+    public async Task<Result> UploadProcessedPurchaseOrdersAsync<T>(IEnumerable<T> content, string path)
+    {
+        return await UploadFileAsync(content, null, path);
+    }
+
+    public async Task<Result> UploadFailedPurchaseOrdersAsync<T>(IEnumerable<T> content, string path)
+    {
+        return await UploadFileAsync(content, null, path);
+    }
+
     #endregion
 }

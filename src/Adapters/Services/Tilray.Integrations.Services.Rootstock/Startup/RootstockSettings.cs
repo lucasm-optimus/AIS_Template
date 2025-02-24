@@ -10,6 +10,8 @@ public class RootstockSettings
     public string? ClientSecret { get; set; }
     public string JournalEntryChatterGroupPrefix { get; set; }
     public string IntegrationUserName { get; set; }
+    public int PurchaseOrdersFetchDurationInMinutes { get; set; }
+    public string PurchaseOrdersChatterGroupPrefix { get; set; }
 }
 
 public class RootstockGLAccountsSettings

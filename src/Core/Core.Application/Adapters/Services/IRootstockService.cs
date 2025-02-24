@@ -22,4 +22,10 @@ public interface IRootstockService
     Task<Result<string>> GetSoHdr(string soapiId);
     Task<Result<List<ExpenseError>>> CreateJournalEntryAsync(Expense expense, CompanyReference company);
     Task<Result> PostExpenseMessageToChatterAsync(string companyNumber, int errorCount);
+    Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount);
+    Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync();
+    Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrdersIds);
+    Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync();
+    Task<Result> SetVendorAddressNumberAsync(PurchaseOrder purchaseOrder);
+    Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrdersIds);
 }

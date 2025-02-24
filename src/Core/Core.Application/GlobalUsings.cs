@@ -16,3 +16,6 @@ global using Tilray.Integrations.Core.Common.Extensions;
 global using Tilray.Integrations.Core.Domain.Aggregates.Expenses;
 global using Tilray.Integrations.Core.Application.Adapters.Storage;
 global using Tilray.Integrations.Core.Domain.Aggregates.Invoices.Events;
+global using Tilray.Integrations.Core.Domain.Aggregates.PurchaseOrders;
+global using Tilray.Integrations.Core.Domain.Aggregates.PurchaseOrders.Commands;
+global using Tilray.Integrations.Core.Domain.Aggregates.PurchaseOrders.Events;

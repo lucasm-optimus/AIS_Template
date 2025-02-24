@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿
+using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
@@ -10,15 +11,21 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private const string QueryUrl = "services/data/v52.0/query";
     private const string SObjectUrl = "services/data/v59.0/sobjects";
+    private const string ChatterUrl = "services/data/v59.0/chatter/feed-elements";
 
     #endregion
 
     #region Private methods
 
-    private async Task<Result<T>> GetObjectByIdAsync<T>(string id, string query, string objectName)
+    private string GetFormattedQuery(string query, params object[] formatArgs)
     {
-        var formattedQuery = string.Format(query, id);
-        var recordsResult = await FetchRecordsAsync<T>(formattedQuery, objectName);
+        string formattedQuery = formatArgs != null ? string.Format(query, formatArgs) : query;
+        return formattedQuery;
+    }
+
+    private async Task<Result<T>> GetObjectAsync<T>(string query, string objectName)
+    {
+        var recordsResult = await FetchRecordsAsync<T>(query, objectName);
 
         if (recordsResult.IsFailed)
             return Result.Fail<T>(recordsResult.Errors);
@@ -41,27 +48,42 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<JArray>> FetchRecordsAsync<T>(string query, string objectName)
     {
-        var response = await httpClient.GetAsync($"{QueryUrl}?q={query}");
-        if (!response.IsSuccessStatusCode)
-        {
-            string errorMessage = Helpers.GetErrorFromResponse(response);
-            logger.LogError($"Failed to fetch {objectName}. Error: {errorMessage}");
-            return Result.Fail<JArray>(errorMessage);
-        }
+        var allRecords = new JArray();
+        string nextRecordsUrl = $"{QueryUrl}?q={Uri.EscapeDataString(query)}";
 
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JObject.Parse(content);
-
-        if (result["records"] is JArray records && records.Count > 0)
+        do
         {
-            logger.LogInformation("Fetched {RecordCount} records for {ObjectName}.", records.Count, objectName);
-            return Result.Ok(records);
+            var response = await httpClient.GetAsync(nextRecordsUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = Helpers.GetErrorFromResponse(response);
+                logger.LogError($"SalesforceService.GetByQueryAsync: Failed to get {objectName} details from Salesforce. Error: {errorMessage}");
+                return Result.Fail<JArray>(errorMessage);
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<JObject>(content);
+
+            if (result["records"] is JArray records && records.Count > 0)
+            {
+                allRecords.Merge(records);
+            }
+
+            nextRecordsUrl = result["nextRecordsUrl"]?.Value<string>();
+
+        } while (!string.IsNullOrEmpty(nextRecordsUrl));
+
+        if (allRecords.Count > 0)
+        {
+            logger.LogInformation($"SalesforceService.GetByQueryAsync: Successfully retrieved {objectName} details.");
         }
         else
         {
-            logger.LogWarning("No records found for {ObjectName}. Returning empty array.", objectName);
-            return Result.Ok(new JArray());
+            logger.LogInformation($"SalesforceService.GetByQueryAsync: No {objectName} records found.");
         }
+
+        return Result.Ok(allRecords);
     }
 
     private async Task<Result<string>> CreateAsync<T>(T entity, string objectName)
@@ -99,7 +121,8 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result<string>> GetChatterGroupIdAsync(string groupName)
     {
-        var result = await GetObjectByIdAsync<RootstockCollaborationGroup>(groupName, RootstockQueries.GetChatterGroupIdQuery, "CollaborationGroup");
+        var result = await GetObjectAsync<RootstockCollaborationGroup>(
+            GetFormattedQuery(RootstockQueries.GetChatterGroupIdQuery, groupName), "CollaborationGroup");
         if (result.IsFailed)
         {
             logger.LogError($"Failed to fetch Chatter Group ID. Error: {Helpers.GetErrorMessage(result.Errors)}");
@@ -161,11 +184,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = validCustomers.Select(async customer =>
         {
-            var result = await GetObjectByIdAsync<RootstockCustomer>(
-                customer,
-                RootstockQueries.GetCustomerByIdQuery,
-                "rstk__socust__c");
-
+            var result = await GetObjectAsync<RootstockCustomer>(GetFormattedQuery(RootstockQueries.GetCustomerByIdQuery, customer), "rstk__socust__c");
             return result.IsFailed || result.Value == null ? customer : null;
         });
 
@@ -193,7 +212,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = items.Select(async item =>
         {
-            var itemResult = await GetObjectByIdAsync<RootstockItem>(item, RootstockQueries.GetItemByIdQuery, "rstk__peitem__c");
+            var itemResult = await GetObjectAsync<RootstockItem>(GetFormattedQuery(RootstockQueries.GetItemByIdQuery, item), "rstk__peitem__c");
             return itemResult.IsFailed || itemResult.Value == null ? item : null;
         });
 
@@ -224,8 +243,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = uploadGroups.Select(async uploadGroup =>
         {
-            var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup,
-                RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
+            var uploadGroupResult = await GetObjectAsync<RootstockSalesOrder>(GetFormattedQuery(RootstockQueries.GetUploadGroupByIdQuery, uploadGroup), "rstk__soapi__c");
             return uploadGroupResult.IsFailed || uploadGroupResult.Value != null ? uploadGroup : null;
         });
 
@@ -259,7 +277,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
     private async Task<Result> CreateSalesOrderLinesAsync(SalesOrder salesOrder, string salesOrderId)
     {
-        var rootstockOrderResult = await GetObjectByIdAsync<RootstockSalesOrder>(salesOrderId, RootstockQueries.GetSalesOrderByIdQuery, "rstk__soapi__c");
+        var rootstockOrderResult = await GetObjectAsync<RootstockSalesOrder>(GetFormattedQuery(RootstockQueries.GetSalesOrderByIdQuery, salesOrderId), "rstk__soapi__c");
         if (rootstockOrderResult.IsFailed) { return Result.Fail("Sales Order not found"); }
         var errors = new List<string>();
 
@@ -318,6 +336,11 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             logger.LogError($"Failed to fetch. Error: {errorMessage}");
             return Result.Fail(errorMessage);
         }
+    }
+
+    private async Task<Result<RootstockVendorAddress>> GetVendorAddressAsync(string query)
+    {
+        return await GetObjectAsync<RootstockVendorAddress>(query, "rstk__povendpoaddr__c");
     }
 
     #endregion
@@ -531,6 +554,88 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
     }
+
+    #region Purchase Orders
+
+    public async Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync()
+    {
+        var lastRunTimestamp = DateTime.UtcNow.AddMinutes(-rootstockSettings.PurchaseOrdersFetchDurationInMinutes).ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        var receiptsResult = await GetObjectListAsync<RootstockPurchaseOrderReceipt>(
+            GetFormattedQuery(RootstockQueries.POReceiptQuery, lastRunTimestamp), "RootstockPurchaseOrderReceipt");
+        if (receiptsResult.IsFailed)
+        {
+            return Result.Fail<IEnumerable<PurchaseOrderReceipt>>(receiptsResult.Errors);
+        }
+
+        var allReceipts = receiptsResult.Value;
+        logger.LogInformation("Total {TotalReceipts} PO response receipts found", allReceipts.Count());
+
+        var unifiedReceipts = allReceipts.Select(receipt => mapper.Map<PurchaseOrderReceipt>(receipt));
+
+        return Result.Ok(unifiedReceipts);
+    }
+
+    public async Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrdersIds)
+    {
+        var poQuery = GetFormattedQuery(RootstockQueries.GetPurchaseOrderQuery, string.Join("', '", distinctPurchaseOrdersIds));
+        logger.LogInformation("Fetching Purchase Orders with query: {Query}", poQuery);
+
+        var purchaseOrdersResult = await GetObjectListAsync<RootstockPurchaseOrder>(poQuery, "rstk__pohdr__c");
+        if (purchaseOrdersResult.IsFailed)
+        {
+            return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersResult.Errors);
+        }
+
+        var purchaseOrders = purchaseOrdersResult.Value.Select(po => mapper.Map<PurchaseOrder>(po));
+
+        logger.LogInformation("Successfully fetched {Count} Purchase Orders", purchaseOrders.Count());
+        return Result.Ok(purchaseOrders);
+    }
+
+    public async Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrdersIds)
+    {
+        var poLineQuery = GetFormattedQuery(RootstockQueries.GetPurchaseOrderLineQuery, string.Join("', '", distinctPurchaseOrdersIds));
+        logger.LogInformation("Fetching Purchase Order Line Items with query: {Query}", poLineQuery);
+
+        var lineItemsResult = await GetObjectListAsync<RootstockLineItem>(poLineQuery, "rstk__poline__c");
+
+        if (lineItemsResult.IsFailed)
+        {
+            return Result.Fail<IEnumerable<PurchaseOrderLineItem>>(lineItemsResult.Errors);
+        }
+
+        var lineItems = lineItemsResult.Value.Select(lineItem => mapper.Map<PurchaseOrderLineItem>(lineItem));
+
+        logger.LogInformation("Successfully fetched {Count} Purchase Order Line Items", lineItems.Count());
+        return Result.Ok(lineItems);
+    }
+
+    public async Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync()
+    {
+        logger.LogInformation("Fetching Company References with query: {Query}", RootstockQueries.CompanyReferenceQuery);
+        return await GetObjectListAsync<CompanyReference>(RootstockQueries.CompanyReferenceQuery, "External_Company_Reference__c");
+    }
+
+    public async Task<Result> SetVendorAddressNumberAsync(PurchaseOrder purchaseOrder)
+    {
+        var vendorAddressResponseResult = await GetVendorAddressAsync(GetFormattedQuery(RootstockQueries.GetVendorAddressQuery,
+            purchaseOrder.VendorCode, purchaseOrder.BillToAddress?.PostalCode ?? string.Empty));
+        if (vendorAddressResponseResult.IsFailed)
+        {
+            return vendorAddressResponseResult.ToResult();
+        }
+
+        purchaseOrder.SetVendorAddress(vendorAddressResponseResult.Value.rstk__povendpoaddr_seq__c);
+        return Result.Ok();
+    }
+
+    public async Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount)
+    {
+        var message = $"The latest PO Sync between {erp} and Concur produced {errorCount} errors.";
+        return await PostMessageToChatterAsync(message, rootstockSettings.PurchaseOrdersChatterGroupPrefix);
+    }
+
+    #endregion
 
     #endregion
 }
