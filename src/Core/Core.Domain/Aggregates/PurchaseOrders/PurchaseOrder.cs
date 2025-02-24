@@ -55,11 +55,17 @@ public class PurchaseOrder
         VendorAddressNumber = vendorAddressNumber ?? 0;
     }
 
-    public static IEnumerable<string> GetDistinctPurchaseOrders(IEnumerable<PurchaseOrderReceipt> poReceiptResponse)
+    public static IEnumerable<string> GetDistinctPurchaseOrdersIds(IEnumerable<PurchaseOrderReceipt> poReceiptResponse)
     {
         return poReceiptResponse
             .Select(x => x.PurchaseOrderId)
             .Distinct();
+    }
+
+    public void UpdatePurchaseOrder(IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts, IEnumerable<PurchaseOrderLineItem> purchaseOrderLineItems)
+    {
+        SetPurchaseOrdersReceipt(purchaseOrderReceipts);
+        SetLineItems(purchaseOrderLineItems);
     }
 
     public static IEnumerable<PurchaseOrder> FilterPurchaseOrders(IEnumerable<PurchaseOrder> poData, IEnumerable<CompanyReference> companyReferences)
@@ -68,16 +74,16 @@ public class PurchaseOrder
         return poData.Where(item => item.Status != "2-Firmed" && item.Status != "3-Approvals Processing" && rootstockCompanies.Contains(item.Division));
     }
 
-    public void SetPurchaseOrdersReceipt(IEnumerable<PurchaseOrderReceipt> poReceiptResponse)
+    public void SetPurchaseOrdersReceipt(IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts)
     {
-        PurchaseOrderReceipts = poReceiptResponse
+        PurchaseOrderReceipts = purchaseOrderReceipts
             .Where(r => r.PurchaseOrderNumber == PurchaseOrderNumber)
             .ToList();
     }
 
-    public void SetLineItems(IEnumerable<PurchaseOrderLineItem> poLineResponse)
+    public void SetLineItems(IEnumerable<PurchaseOrderLineItem> purchaseOrderLineItems)
     {
-        LineItems = poLineResponse
+        LineItems = purchaseOrderLineItems
             .Where(x => x.OrderNumber == Id && x.Amount > 0)
             .ToList();
     }

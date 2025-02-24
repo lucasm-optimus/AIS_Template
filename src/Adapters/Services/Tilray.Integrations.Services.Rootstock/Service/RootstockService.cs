@@ -184,7 +184,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = validCustomers.Select(async customer =>
         {
-            var result = await GetObjectAsync<RootstockCustomer>(GetFormattedQuery(RootstockQueries.GetCustomerByIdQuery, customer), "Customer");
+            var result = await GetObjectAsync<RootstockCustomer>(GetFormattedQuery(RootstockQueries.GetCustomerByIdQuery, customer), "rstk__socust__c");
             return result.IsFailed || result.Value == null ? customer : null;
         });
 
@@ -212,7 +212,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
 
         var tasks = items.Select(async item =>
         {
-            var itemResult = await GetObjectAsync<RootstockItem>(GetFormattedQuery(RootstockQueries.GetItemByIdQuery, item), "Item");
+            var itemResult = await GetObjectAsync<RootstockItem>(GetFormattedQuery(RootstockQueries.GetItemByIdQuery, item), "rstk__peitem__c");
             return itemResult.IsFailed || itemResult.Value == null ? item : null;
         });
 
@@ -573,30 +573,26 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok(unifiedReceipts);
     }
 
-    public async Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrders)
+    public async Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrdersIds)
     {
-        var poIds = string.Join("', '", distinctPurchaseOrders);
-        var poQuery = string.Format(RootstockQueries.PurchaseOrderQuery, poIds);
+        var poQuery = GetFormattedQuery(RootstockQueries.GetPurchaseOrderQuery, string.Join("', '", distinctPurchaseOrdersIds));
         logger.LogInformation("Fetching Purchase Orders with query: {Query}", poQuery);
 
         var purchaseOrdersResult = await GetObjectListAsync<RootstockPurchaseOrder>(poQuery, "rstk__pohdr__c");
-
         if (purchaseOrdersResult.IsFailed)
         {
             return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersResult.Errors);
         }
 
-        var purchaseOrders = purchaseOrdersResult.Value;
-        var unifiedPurchaseOrders = purchaseOrders.Select(po => mapper.Map<PurchaseOrder>(po));
+        var purchaseOrders = purchaseOrdersResult.Value.Select(po => mapper.Map<PurchaseOrder>(po));
 
-        logger.LogInformation("Successfully fetched {Count} Purchase Orders", unifiedPurchaseOrders.Count());
-        return Result.Ok(unifiedPurchaseOrders);
+        logger.LogInformation("Successfully fetched {Count} Purchase Orders", purchaseOrders.Count());
+        return Result.Ok(purchaseOrders);
     }
 
-    public async Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrders)
+    public async Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrdersIds)
     {
-        var poIds = string.Join("', '", distinctPurchaseOrders);
-        var poLineQuery = string.Format(RootstockQueries.POLineQuery, poIds);
+        var poLineQuery = GetFormattedQuery(RootstockQueries.GetPurchaseOrderLineQuery, string.Join("', '", distinctPurchaseOrdersIds));
         logger.LogInformation("Fetching Purchase Order Line Items with query: {Query}", poLineQuery);
 
         var lineItemsResult = await GetObjectListAsync<RootstockLineItem>(poLineQuery, "rstk__poline__c");
@@ -606,11 +602,10 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail<IEnumerable<PurchaseOrderLineItem>>(lineItemsResult.Errors);
         }
 
-        var lineItems = lineItemsResult.Value;
-        var unifiedLineItems = lineItems.Select(lineItem => mapper.Map<PurchaseOrderLineItem>(lineItem)).ToList();
+        var lineItems = lineItemsResult.Value.Select(lineItem => mapper.Map<PurchaseOrderLineItem>(lineItem));
 
-        logger.LogInformation("Successfully fetched {Count} Purchase Order Line Items", unifiedLineItems.Count());
-        return Result.Ok(unifiedLineItems.AsEnumerable());
+        logger.LogInformation("Successfully fetched {Count} Purchase Order Line Items", lineItems.Count());
+        return Result.Ok(lineItems);
     }
 
     public async Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync()

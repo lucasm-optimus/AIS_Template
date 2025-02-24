@@ -12,13 +12,13 @@
 
             var purchaseOrderReceipts = purchaseOrderReceiptsResult.Value ?? [];
 
-            var distinctPurchaseOrders = PurchaseOrder.GetDistinctPurchaseOrders(purchaseOrderReceipts);
-            if (!distinctPurchaseOrders.Any())
+            var distinctPurchaseOrdersIds = PurchaseOrder.GetDistinctPurchaseOrdersIds(purchaseOrderReceipts);
+            if (!distinctPurchaseOrdersIds.Any())
             {
                 return Result.Ok(Enumerable.Empty<PurchaseOrder>());
             }
 
-            var purchaseOrdersResult = await rootstockService.GetPurchaseOrdersAsync(distinctPurchaseOrders);
+            var purchaseOrdersResult = await rootstockService.GetPurchaseOrdersAsync(distinctPurchaseOrdersIds);
             if (purchaseOrdersResult.IsFailed)
             {
                 return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersResult.Errors);
@@ -26,13 +26,11 @@
 
             var purchaseOrders = purchaseOrdersResult.Value ?? [];
 
-            var purchaseOrdersLineItemResult = await rootstockService.GetPurchaseOrdersLineItemAsync(distinctPurchaseOrders);
+            var purchaseOrdersLineItemResult = await rootstockService.GetPurchaseOrdersLineItemAsync(distinctPurchaseOrdersIds);
             if (purchaseOrdersLineItemResult.IsFailed)
             {
                 return Result.Fail<IEnumerable<PurchaseOrder>>(purchaseOrdersLineItemResult.Errors);
             }
-
-            var purchaseOrdersLineItem = purchaseOrdersLineItemResult.Value ?? [];
 
             var companyReferencesResult = await rootstockService.GetCompanyReferencesAsync();
             if (companyReferencesResult.IsFailed)
@@ -40,25 +38,16 @@
                 return Result.Fail<IEnumerable<PurchaseOrder>>(companyReferencesResult.Errors);
             }
 
-            var companyReferences = companyReferencesResult.Value ?? [];
-
-            purchaseOrders = PurchaseOrder.FilterPurchaseOrders(purchaseOrders, companyReferences);
-
-            var mapResult = await MapPurchaseOrdersAsync(purchaseOrders, purchaseOrderReceipts, purchaseOrdersLineItem);
-            if (mapResult.IsFailed)
-            {
-                return Result.Fail<IEnumerable<PurchaseOrder>>(mapResult.Errors);
-            }
-
-            return Result.Ok(mapResult.Value);
+            return await GetFormattedPurchaseOrdersAsync(purchaseOrders, companyReferencesResult.Value,
+                purchaseOrderReceipts, purchaseOrdersLineItemResult.Value);
         }
 
-        private async Task<Result<IEnumerable<PurchaseOrder>>> MapPurchaseOrdersAsync(IEnumerable<PurchaseOrder> purchaseOrders, IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts, IEnumerable<PurchaseOrderLineItem> purchaseOrdersLineItem)
+        private async Task<Result<IEnumerable<PurchaseOrder>>> GetFormattedPurchaseOrdersAsync(IEnumerable<PurchaseOrder> purchaseOrders, IEnumerable<CompanyReference> companyReferences,
+            IEnumerable<PurchaseOrderReceipt> purchaseOrderReceipts, IEnumerable<PurchaseOrderLineItem> purchaseOrderLineItems)
         {
-            var tasks = purchaseOrders.Select(async purchaseOrder =>
+            var tasks = PurchaseOrder.FilterPurchaseOrders(purchaseOrders, companyReferences).Select(async purchaseOrder =>
             {
-                purchaseOrder.SetPurchaseOrdersReceipt(purchaseOrderReceipts);
-                purchaseOrder.SetLineItems(purchaseOrdersLineItem);
+                purchaseOrder.UpdatePurchaseOrder(purchaseOrderReceipts, purchaseOrderLineItems);
                 return await rootstockService.SetVendorAddressNumberAsync(purchaseOrder);
             });
 

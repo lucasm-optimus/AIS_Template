@@ -24,8 +24,8 @@ public interface IRootstockService
     Task<Result> PostExpenseMessageToChatterAsync(string companyNumber, int errorCount);
     Task<Result> PostPurchaseOrdersMessageToChatterAsync(string erp, int errorCount);
     Task<Result<IEnumerable<PurchaseOrderReceipt>>> GetPurchaseOrderReceiptsAsync();
-    Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPOs);
+    Task<Result<IEnumerable<PurchaseOrder>>> GetPurchaseOrdersAsync(IEnumerable<string> distinctPurchaseOrdersIds);
     Task<Result<IEnumerable<CompanyReference>>> GetCompanyReferencesAsync();
     Task<Result> SetVendorAddressNumberAsync(PurchaseOrder purchaseOrder);
-    Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPOs);
+    Task<Result<IEnumerable<PurchaseOrderLineItem>>> GetPurchaseOrdersLineItemAsync(IEnumerable<string> distinctPurchaseOrdersIds);
 }

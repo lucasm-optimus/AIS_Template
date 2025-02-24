@@ -67,13 +67,13 @@ internal static class RootstockQueries
             FROM rstk__porcptap__c
             WHERE rstk__porcptap_ttaphdr__c = NULL AND LastModifiedDate > {0}";
 
-    internal const string PurchaseOrderQuery = @"
+    internal const string GetPurchaseOrderQuery = @"
             SELECT ID, Name, rstk__pohdr_ordno__c, rstk__pohdr_pohdraddr_bt__c, rstk__pohdr_pohdraddr_st__c, rstk__pohdr_maintcurr__r.rstk__externalid__c, CreatedDate, rstk__pohdr_ordsts__c, rstk__pohdr_div__r.rstk__externalid__c, rstk__pohdr_vendno__r.rstk__externalid__c, rstk__pohdr_actplacedate__c, 
             rstk__pohdr_pohdraddr_bt__r.Name, rstk__pohdr_pohdraddr_bt__r.rstk__externalid__c, rstk__pohdr_pohdraddr_bt__r.rstk__pohdraddr_street__c, rstk__pohdr_pohdraddr_bt__r.rstk__pohdraddr_city__c, rstk__pohdr_pohdraddr_bt__r.rstk__pohdraddr_stateprov__c, rstk__pohdr_pohdraddr_bt__r.rstk__pohdraddr_country__c, rstk__pohdr_pohdraddr_bt__r.rstk__pohdraddr_zippostalcode__c, 
             rstk__pohdr_pohdraddr_st__r.Name, rstk__pohdr_pohdraddr_st__r.rstk__externalid__c, rstk__pohdr_pohdraddr_st__r.rstk__pohdraddr_street__c, rstk__pohdr_pohdraddr_st__r.rstk__pohdraddr_city__c, rstk__pohdr_pohdraddr_st__r.rstk__pohdraddr_stateprov__c, rstk__pohdr_pohdraddr_st__r.rstk__pohdraddr_country__c, rstk__pohdr_pohdraddr_st__r.rstk__pohdraddr_zippostalcode__c 
             FROM rstk__pohdr__c WHERE ID IN ('{0}')";
 
-    internal const string POLineQuery = @"
+    internal const string GetPurchaseOrderLineQuery = @"
             SELECT ID, Name, rstk__externalid__c, rstk__poline_ordno__c, rstk__poline_ordsts__c, rstk__poline_lne__c, rstk__poline_longdescr__c, rstk__poline_qtyreq__c, rstk__poline_unitpricemcurr__c, UOM_Code__c, CreatedDate, rstk__poline_expenseacct__r.rstk__syacc_mfgacct__c, rstk__poline_amtreqmcurr__c 
             FROM rstk__poline__c WHERE rstk__poline_ordno__c IN ('{0}')";
 
