@@ -262,19 +262,6 @@ module apiModule './modules/14.apimApi.bicep' = [for api in apis: {
   }
 }]
 
-
-/*
-module backendModule './modules/15.apimBackend.bicep' = {
-  name: 'backend'
-  params: {
-    apimServiceName: apimModule.outputs.apimServiceName
-    backendUrl: 'https://${functionAppModule.outputs.functionAppName}.azurewebsites.net/api'
-    backendName: functionAppModule.outputs.functionAppName
-    resourceId: functionAppModule.outputs.functionAppurl
-  }
-}
-*/
-
 module namedValueModule './modules/16.namedvalue.bicep' = {
   name: 'namedValue'
   params: {
