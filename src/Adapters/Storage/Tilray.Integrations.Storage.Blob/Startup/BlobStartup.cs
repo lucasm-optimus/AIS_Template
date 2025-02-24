@@ -1,7 +1,5 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Tilray.Integrations.Core.Application.Adapters.Storage;
 using Tilray.Integrations.Core.Common.Startup;
 
 namespace Tilray.Integrations.Storage.Blob.Startup;

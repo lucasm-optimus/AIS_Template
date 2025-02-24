@@ -34,7 +34,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
             {
                 return Result.Ok(new RstkCustomerAddressInfoResponse
                 {
-                    CustomerID = records.First()["ID"].ToString(),
+                    CustomerID = records.First()["Id"].ToString(),
                     CustomerAddressID = records.First()["rstk__externalid__c"].ToString(),
                     Name = records.First()["Name"].ToString(),
                     LocationReference = records.First()["External_Customer_Number__c"].ToString()
