@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿using Tilray.Integrations.Core.Domain.AuditItems;
+using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
@@ -530,6 +531,17 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var message = $"The latest Journal Entry Upload for Expenses produced {errorCount} errors.";
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
+    }
+
+    public async Task<Result<IEnumerable<AuditItem>>> GetAuditItemsAsync(string reportDate)
+    {
+        var query = string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
+        return await GetObjectListAsync<AuditItem>(query, "SetupAuditTrail");
+    }
+
+    public string GetAuditItemsQuery(string reportDate)
+    {
+        return string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
     }
 
     #endregion

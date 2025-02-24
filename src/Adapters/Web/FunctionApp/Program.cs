@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Tilray.Integrations.Core.Common.Startup;
 
 var builder = FunctionsApplication.CreateBuilder(args);

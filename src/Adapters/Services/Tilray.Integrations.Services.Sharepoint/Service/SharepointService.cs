@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Sharepoint.Startup;
+﻿using Tilray.Integrations.Core.Domain.AuditItems;
+using Tilray.Integrations.Services.Sharepoint.Startup;
 
 namespace Tilray.Integrations.Services.Sharepoint.Service;
 
@@ -31,6 +32,16 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
             ExpenseType.Company => $"{basePath}/{companyName}/{expensesFolder}/Expenses_Company_{companyName}_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv",
             _ => $"{basePath}/General/Expenses/Expenses_{DateTime.Parse(stopTime):yyyy-MM-dd-HHmmss}.csv"
         };
+    }
+
+    private string GetAuditDataUploadPath(string fileExtension)
+    {
+        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
+        var soxReportFolder = sharepointSettings.AuditItemsFolderPath?.TrimEnd('/') ?? "SOXReport";
+
+        string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}{fileExtension}";
     }
 
     private string GetUploadPath<T>(CompanyReference companyReference)
@@ -90,6 +101,30 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         return Result.Ok(drive.Id);
     }
 
+    private async Task<Result> UploadAsync(string content, string uploadPath)
+    {
+        var driveResult = await GetDriveIdAsync();
+        if (driveResult.IsFailed) return driveResult.ToResult();
+
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+        var uploadedFile = await graphServiceClient
+            .Drives[driveResult.Value]
+            .Items["root"]
+            .ItemWithPath(uploadPath)
+            .Content
+            .PutAsync(memoryStream);
+
+        if (uploadedFile?.Id == null)
+        {
+            string errorMessage = $"UploadAsync: File upload failed for {uploadPath}";
+            logger.LogError(errorMessage);
+            return Result.Fail(errorMessage);
+        }
+
+        return Result.Ok();
+    }
+
     #endregion
 
     #region Public methods
@@ -130,27 +165,46 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         var driveResult = await GetDriveIdAsync();
         if (driveResult.IsFailed) return driveResult.ToResult();
 
+
         var fileContent = Helpers.ConvertToCsv(content, ignoredProperties);
         uploadPath ??= GetUploadPath<T>(companyReference);
 
-        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(fileContent)))
+        var result = await UploadAsync(fileContent, uploadPath);
+        if(result.IsFailed)
         {
-            var uploadedFile = await graphServiceClient
-                .Drives[driveResult.Value]
-                .Items["root"]
-                .ItemWithPath(uploadPath)
-                .Content
-                .PutAsync(memoryStream);
-
-            if (uploadedFile?.Id == null)
-            {
-                string errorMessage = $"UploadFileAsync: File upload failed for {typeof(T).Name}";
-                logger.LogError(errorMessage);
-                return Result.Fail(errorMessage);
-            }
+            logger.LogError("UploadFileAsync: Failed to upload {ObjectName} to Sharepoint", typeof(T).Name);
+            return result;
         }
 
         logger.LogInformation("UploadFileAsync: {ObjectName} uploaded. Upload Path {UploadPath}", typeof(T).Name, uploadPath);
+        return Result.Ok();
+    }
+
+    public async Task<Result> UploadAuditItemsAsync(IEnumerable<AuditItem> auditItems)
+    {
+        var uploadPath = GetAuditDataUploadPath(".csv");
+        string[] ignoredProperties = { "Attributes.Url" };
+
+        return await UploadFileAsync(auditItems, uploadPath: uploadPath, ignoredProperties: ignoredProperties);
+    }
+
+    public async Task<Result> UploadAuditItemsQueryAsync(string query)
+    {
+        if (query == null)
+        {
+            logger.LogWarning("UploadAuditItemsQueryAsync: No query provided for upload");
+            return Result.Fail("UploadAuditItemsQueryAsync: No query provided for upload");
+        }
+
+        var uploadPath = GetAuditDataUploadPath(".txt");
+        var result = await UploadAsync(query, uploadPath);
+        if (result.IsFailed)
+        {
+            logger.LogError("UploadAuditItemsQueryAsync: Failed to upload audit items query to Sharepoint");
+            return result;
+        }
+
+        logger.LogInformation("UploadAuditItemsQueryAsync: audit items query uploaded. Upload Path {UploadPath}", uploadPath);
         return Result.Ok();
     }
 

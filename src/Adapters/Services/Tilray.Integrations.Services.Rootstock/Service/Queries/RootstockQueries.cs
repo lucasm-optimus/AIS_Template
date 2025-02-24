@@ -13,6 +13,23 @@ internal static class RootstockQueries
             FROM rstk__socust__c
             WHERE rstk__socust_custno__c = '{0}'";
 
+    internal const string GetAuditItemsQuery = @"
+            SELECT Action, CreatedBy.Username, CreatedDate, DelegateUser, Display, Id, ResponsibleNamespacePrefix, Section
+            FROM SetupAuditTrail
+            WHERE Action NOT IN ('addeduserpackagelicense', 'granteduserpackagelicense', 'removeduserpackagelicense',
+                'revokeduserpackagelicense', 'activateduser', 'changedApproverRequestEmails', 'changedcommunitynickname',
+                'changedDelegateApprover', 'changedemail', 'changedfederationid', 'changedinteractionuseroffon', 'changedliveagentuseronoff',
+                'changedManager', 'changedpassword', 'changedprofileforuser', 'changedprofileforusercusttostd', 'changedroleforuser',
+                'changedroleforuserfromnone', 'changedroleforusertonone', 'changedsupportuseroffon', 'changedsupportuseronoff',
+                'changedUserEmailVerifiedStatusUnverified', 'changedUserEmailVerifiedStatusVerified', 'changedusername',
+                'createdrole', 'createduser', 'deactivateduser', 'frozeuser', 'PermSetAssign', 'PermSetDisableUserPerm',
+                'PermSetEnableUserPerm', 'PermSetUnassign', 'registeredUserPhoneNumber', 'resetpassword', 'suNetworkAdminLogin',
+                'suNetworkAdminLogout', 'suOrgAdminLogin', 'suOrgAdminLogout', 'unlockeduser', 'unregisterdUserPhoneNumber',
+                'useremailchangesent', 'groupMembership', 'queueMembership', 'createdcustomersuccessuser', 'value_PROV_SCRATCH_DAILY_LIMIT',
+                'value_PROV_SCRATCH_ACTIVE_LIMIT', 'value_MAX_STREAMING_TOPICS_PROV')
+                AND DAY_ONLY(convertTimezone(CreatedDate)) = '{0}'
+            ORDER BY CreatedDate";
+
     internal const string GetUploadGroupByIdQuery = @"
             SELECT ID
             FROM rstk__soapi__c
