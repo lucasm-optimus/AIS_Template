@@ -7,14 +7,14 @@ public class UploadAuditDataToSharepointCommandHandler(ISharepointService sharep
     {
         var errors = new List<IError>();
 
-        var auditItemsQueryResult = await sharepointService.UploadSFQueryAsync(request.AuditItemsQuery);
+        var auditItemsQueryResult = await sharepointService.UploadAuditItemsQueryAsync(request.AuditItemsQuery);
         if (auditItemsQueryResult.IsFailed)
         {
             _logger.LogError("Failed to upload audit items query to Sharepoint");
             errors.AddRange(auditItemsQueryResult.Errors);
         }
 
-        var auditItemsResult = await sharepointService.UploadSOXReportAsync(request.AuditItems);
+        var auditItemsResult = await sharepointService.UploadAuditItemsAsync(request.AuditItems);
         if (auditItemsResult.IsFailed)
         {
             _logger.LogError("Failed to upload audit items to Sharepoint");

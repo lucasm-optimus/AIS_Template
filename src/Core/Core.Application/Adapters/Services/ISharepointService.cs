@@ -11,7 +11,7 @@ public interface ISharepointService
     Task<Result> UploadFileAsync<T>(IEnumerable<T> content, CompanyReference companyReference = null, string uploadPath = null,
         string[] ignoredProperties = null);
 
-    Task<Result> UploadSOXReportAsync(IEnumerable<AuditItem> auditItems, CompanyReference companyReference = null);
+    Task<Result> UploadAuditItemsAsync(IEnumerable<AuditItem> auditItems);
 
-    Task<Result> UploadSFQueryAsync(string query, CompanyReference companyReference = null);
+    Task<Result> UploadAuditItemsQueryAsync(string query);
 }

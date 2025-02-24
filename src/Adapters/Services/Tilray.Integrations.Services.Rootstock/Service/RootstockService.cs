@@ -314,37 +314,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         }
     }
 
-    private async Task<Result<string>> ExecuteSalesforceQueryAsync(string query)
-    {
-        var response = await httpClient.GetAsync($"{QueryUrl}?q={Uri.EscapeDataString(query)}");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            logger.LogInformation("Salesforce query failed");
-            return Result.Fail<string>("Salesforce query failed");
-        }
-
-        var content = await response.Content.ReadAsStringAsync();
-        return Result.Ok(content);
-    }
-
-    private Result<IEnumerable<AuditItem>> ProcessSalesforceQueryResponse(string content)
-    {
-        var soxReport = JsonConvert.DeserializeObject<SOXAuditReport>(content);
-        if (soxReport == null || soxReport.Records == null || !soxReport.Records.Any())
-        {
-            logger.LogInformation("No records found");
-            return Result.Fail<IEnumerable<AuditItem>>("No records found");
-        }
-        foreach (var item in soxReport.Records)
-        {
-            item.Display = item.Display?.Replace("\n", "  ")
-                                         .Replace("\t", "  ")
-                                         .Replace(",", " ") ?? string.Empty;
-        }
-        return Result.Ok(soxReport.Records);
-    }
-
     #endregion
 
     #region Public methods
@@ -559,7 +528,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     {
         var query = string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
 
-        var queryResult = await ExecuteSalesforceQueryAsync(query);
+        var queryResult = await GetObjectListAsync<AuditItem>(query, "auditItems");
 
         if (queryResult.IsFailed)
         {
@@ -567,13 +536,11 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail<IEnumerable<AuditItem>>($"Failed to fetch auditItems from salesforce.");
         }
 
-        var auditItems = ProcessSalesforceQueryResponse(queryResult.Value);
-
-        return Result.Ok(auditItems.Value);
+        return Result.Ok(queryResult.Value);
 
     }
 
-    public string GetQuery(string reportDate)
+    public string GetAuditItemsQuery(string reportDate)
     {
         return string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
     }

@@ -7,7 +7,7 @@ public class GetAuditDataFromRootstock(IMediator mediator)
     /// </summary>
     [Function("GetAuditItemsFromRootstock")]
     [ServiceBusOutput(Topics.RootstockAuditItemsFetched, Connection = "ServiceBusConnectionString")]
-    public async Task<SOXReportAgg> Run([TimerTrigger("%GetAuditItemsFromRootstockCRON%")] TimerInfo myTimer)
+    public async Task<AuditItemAgg> Run([TimerTrigger("%GetAuditItemsFromRootstockCRON%")] TimerInfo myTimer)
     {
         var result = await mediator.Send(new GetAuditData());
         if (result.IsSuccess)

@@ -34,26 +34,24 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         };
     }
 
-    private string GetSOXReportUploadPath(CompanyReference companyReference)
+    private string GetSOXReportUploadPath()
     {
-        var companyName = companyReference?.Company_Name__c?.Trim() ?? "";
         var basePath = sharepointSettings.BasePath?.TrimEnd('/');
         var soxReportFolder = sharepointSettings.AuditItemsFolderPath?.TrimEnd('/') ?? "SOXReport";
 
         string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
-        return $"{basePath}/{companyName}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.csv";
+        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.csv";
     }
 
-    private string GetSOXQueryUploadPath(CompanyReference companyReference)
+    private string GetSOXQueryUploadPath()
     {
-        var companyName = companyReference?.Company_Name__c?.Trim() ?? "";
         var basePath = sharepointSettings.BasePath?.TrimEnd('/');
         var soxReportFolder = sharepointSettings.AuditItemsFolderPath?.TrimEnd('/') ?? "SOXReport";
 
         string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
-        return $"{basePath}/{companyName}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.txt";
+        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.txt";
     }
 
     private string GetUploadPath<T>(CompanyReference companyReference)
@@ -190,15 +188,15 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         return Result.Ok();
     }
 
-    public async Task<Result> UploadSOXReportAsync(IEnumerable<AuditItem> auditItems, CompanyReference companyReference = null)
+    public async Task<Result> UploadAuditItemsAsync(IEnumerable<AuditItem> auditItems)
     {
-        var uploadPath = GetSOXReportUploadPath(companyReference);
+        var uploadPath = GetSOXReportUploadPath();
         string[] ignoredProperties = { "Attributes.Url" };
 
         return await UploadFileAsync(auditItems, uploadPath: uploadPath, ignoredProperties: ignoredProperties);
     }
 
-    public async Task<Result> UploadSFQueryAsync(string query,CompanyReference companyReference=null)
+    public async Task<Result> UploadAuditItemsQueryAsync(string query)
     {
         if (query == null)
         {
@@ -206,7 +204,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
             return Result.Fail("UploadQueryAsync: No query provided for upload");
         }
 
-        var uploadPath = GetSOXQueryUploadPath(companyReference);
+        var uploadPath = GetSOXQueryUploadPath();
         var result = await UploadAsync(query, uploadPath);
         if (result.IsFailed)
         {
