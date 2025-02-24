@@ -7,7 +7,7 @@ public class GetExpensesFromSAPConcur(IMediator mediator)
     /// <summary>
     /// This function is responsible for fetching expenses from SAP Concur.
     /// </summary>
-    //[Function("GetExpensesFromSAPConcur")]
+    [Function("GetExpensesFromSAPConcur")]
     [ServiceBusOutput(Topics.SAPConcurExpensesFetched, Connection = "ServiceBusConnectionString")]
     public async Task<IEnumerable<string>> Run([TimerTrigger("%GetExpensesFromSAPConcurCRON%")] TimerInfo myTimer)
     {
