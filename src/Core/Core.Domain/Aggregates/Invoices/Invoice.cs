@@ -187,6 +187,22 @@ public class Invoice
                 ? InvoiceDate.Value.ToString("yyyy-MM-dd")
                 : FiscalYear.ToString("yyyy-MM-dd"))
             : FiscalYear.ToString("yyyy-MM-dd");
+
+    public  Result<IEnumerable<MatchedPurchaseOrderReceipt>> HasGoodsReceipts()
+    {
+        if (string.IsNullOrEmpty(PurchaseOrderNumber))
+        {
+            return Result.Fail<IEnumerable<MatchedPurchaseOrderReceipt>>("Invoice does not have a purchase order number");
+        }
+
+        var receipts = LineItems
+            .GrpoLineItems()
+            .SelectMany(li => li.MatchedPurchaseOrderReceipts.MatchedPurchaseOrderReceipt);
+
+        return receipts.Any()
+            ? Result.Ok(receipts)
+            : Result.Fail<IEnumerable<MatchedPurchaseOrderReceipt>>("Invoice does not have any goods receipts");
+    }
 }
 
 public class InvoiceGroup

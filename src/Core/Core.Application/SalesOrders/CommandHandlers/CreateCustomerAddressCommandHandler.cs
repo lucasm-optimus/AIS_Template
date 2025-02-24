@@ -1,83 +1,90 @@
-﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Customer;
 using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
 
 namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class CreateCustomerAddressCommandHandler(
-        IRootstockService rootstockService,
-        ILogger<ProcessSalesOrderCommandHandler> logger,
-        OrderDefaultsSettings orderDefaults) : ICommandHandler<CreateCustomerAddressCommand, CustomerAddressCreated>
+                IRootstockService rootstockService,
+                ILogger<ProcessSalesOrderCommandHandler> logger) : ICommandHandler<CreateCustomerAddressCommand, CustomerAddressCreated>
     {
         public async Task<Result<CustomerAddressCreated>> Handle(CreateCustomerAddressCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"Begin creating customer address for {request.CustomerAccountId}.");
+            logger.LogInformation("Begin creating customer address for {CustomerAccountId}.", request.CustomerAccountId);
 
-            #region Get Customer Information
-
-            var customerInfoResult = await rootstockService.GetCustomerInfo(request.CustomerAccountId);
-
+            var customerInfoResult = await GetCustomerInfo(request.CustomerAccountId);
             if (customerInfoResult.IsFailed)
             {
-                var errorMessage = $"Customer {request.CustomerAccountId} not found.";
-                logger.LogError(errorMessage);
                 return Result.Fail<CustomerAddressCreated>(customerInfoResult.Errors);
             }
 
             var customerInfo = customerInfoResult.Value;
 
-            #endregion
-
-            #region Update foreign keys
-
-            var result = Result.Ok();
-            var taxResult = await rootstockService.GetIdFromExternalColumnReference("rstk__sotax__c", "rstk__externalid__c", request.Address.TaxLocation);
-            if (taxResult.IsFailed)
+            var result = await UpdateForeignKeys(request.Address);
+            if (result.IsFailed)
             {
-                var errorMessage = $"Failed to get tax location id for {request.Address.TaxLocation}.";
-                logger.LogError(errorMessage);
-                result.WithError(errorMessage);
+                return Result.Fail<CustomerAddressCreated>(result.Errors);
             }
-            request.Address.UpdateTaxLocation(taxResult.Value);
 
-            #endregion
-
-            #region Create customer address
-
-            logger.LogInformation($"Getting next address sequence for customer {customerInfo.CustomerId}.");
-            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(customerInfo.CustomerId) ?? 1;
-
-            logger.LogInformation($"Creating customer address {nextAddressSequence} for customer {customerInfo.CustomerId}.");
-            var rootstockCustomerAddressResult = RstkCustomerAddress.Create(request.Address, customerInfo.CustomerId, nextAddressSequence);
-
-            if (rootstockCustomerAddressResult.IsFailed)
-            {
-                var errorMessage = $"Failed to create customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.";
-                logger.LogError(errorMessage);
-                return Result.Fail<CustomerAddressCreated>(rootstockCustomerAddressResult.Errors);
-            }
-            var createdCustomerAddressResult = await rootstockService.CreateCustomerAddress(rootstockCustomerAddressResult.Value);
-
+            var createdCustomerAddressResult = await CreateCustomerAddress(request, customerInfo.CustomerId);
             if (createdCustomerAddressResult.IsFailed)
             {
-                var errorMessage = $"Failed to create customer address {nextAddressSequence} for customer {request.CustomerAccountNumber}.";
-                logger.LogError(errorMessage);
                 return Result.Fail<CustomerAddressCreated>(createdCustomerAddressResult.Errors);
             }
 
-            logger.LogInformation($"Getting customer address info for customer {request.CustomerAccountNumber}.");
-            var customerAddressInfoResult = await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
-
+            var customerAddressInfoResult = await GetCustomerAddressInfo(request);
             if (customerAddressInfoResult.IsFailed)
             {
-                var errorMessage = $"Failed to get customer address info for customer {request.CustomerAccountNumber}.";
-                logger.LogError(errorMessage);
                 return Result.Fail<CustomerAddressCreated>(customerAddressInfoResult.Errors);
             }
 
-            #endregion
-
             return Result.Ok(new CustomerAddressCreated(customerAddressInfoResult.Value, customerInfo));
+        }
+
+        private async Task<Result<RstkCustomerInfoResponse>> GetCustomerInfo(string customerAccountId)
+        {
+            var customerInfoResult = await rootstockService.GetCustomerInfo(customerAccountId);
+            if (customerInfoResult.IsFailed)
+            {
+                logger.LogError("Customer {CustomerAccountId} not found.", customerAccountId);
+            }
+            return customerInfoResult;
+        }
+
+        private async Task<Result> UpdateForeignKeys(SalesOrderCustomerAddress address)
+        {
+            var result = Result.Ok();
+            result = await UpdateForeignKey(address.TaxLocation, "rstk__sotax__c", "rstk__externalid__c", address.UpdateTaxLocation, result);
+            return result;
+        }
+
+        private async Task<Result> UpdateForeignKey(string externalIdValue, string objectName, string externalIdColumnName, Action<string> updateAction, Result result)
+        {
+            var foreignKeyResult = await rootstockService.GetIdFromExternalColumnReference(objectName, externalIdColumnName, externalIdValue);
+            if (foreignKeyResult.IsFailed)
+            {
+                logger.LogError("Failed to get {ObjectName} id for {ExternalIdValue}.", objectName, externalIdValue);
+                result.WithError($"Failed to get {objectName} id for {externalIdValue}.");
+            }
+            else
+            {
+                updateAction(foreignKeyResult.Value);
+            }
+            return result;
+        }
+
+        private async Task<Result<string>> CreateCustomerAddress(CreateCustomerAddressCommand request, string customerId)
+        {
+            logger.LogInformation("Getting next address sequence for customer {CustomerId}.", customerId);
+            var nextAddressSequence = await rootstockService.GetCustomerAddressNextSequence(customerId) ?? 1;
+
+            logger.LogInformation("Creating customer address {NextAddressSequence} for customer {CustomerId}.", nextAddressSequence, customerId);
+            return await rootstockService.CreateCustomerAddress(request.Address, request.CustomerAccountId, nextAddressSequence, request.CustomerAccountNumber);
+        }
+
+        private async Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(CreateCustomerAddressCommand request)
+        {
+            logger.LogInformation("Getting customer address info for customer {CustomerAccountNumber}.", request.CustomerAccountNumber);
+            return await rootstockService.GetCustomerAddressInfo(request.CustomerAccountNumber, request.Address.Address1, request.Address.City, request.Address.State, request.Address.Zip);
         }
     }
 }

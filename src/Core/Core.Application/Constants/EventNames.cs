@@ -11,9 +11,9 @@ public static class Topics
 public static class Subscriptions
 {
     public const string CreateSalesOrderInRootStock = "CreateSalesOrderInRootStock";
-    public const string CreateMedSalesOrderInRootStock = "EcomSalesOrderReceived_CreateSalesOrderInRootStock";
     public const string CreateJournalEntriesInRootstock = "CreateJournalEntriesInRootstock";
     public const string UploadExpensesToSharepoint = "UploadExpensesToSharepoint";
     public const string UploadInvoicesToSharepoint = "UploadObeerInvoicesToSharepoint";
     public const string CreateInvoicesInObeer = "CreateInvoicesInObeer";
+    public const string CreateInvoicesInRootstock = "CreateInvoicesInRootstock";
 }

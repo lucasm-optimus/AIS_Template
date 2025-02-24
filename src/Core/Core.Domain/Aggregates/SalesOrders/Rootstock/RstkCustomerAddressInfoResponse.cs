@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
+﻿using Newtonsoft.Json.Linq;
+
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkCustomerAddressInfoResponse
     {
@@ -26,16 +28,16 @@
 
         #region Public Methods
 
-        public static Result<RstkCustomerAddressInfoResponse> MapFromPayload(dynamic records)
+        public static Result<RstkCustomerAddressInfoResponse> Create(JArray records)
         {
             if (records != null && records.Count > 0)
             {
                 return Result.Ok(new RstkCustomerAddressInfoResponse
                 {
-                    CustomerID = records[0]["ID"],
-                    CustomerAddressID = records[0]["rstk__externalid__c"],
-                    Name = records[0]["Name"],
-                    LocationReference = records[0]["External_Customer_Number__c"]
+                    CustomerID = records.First()["ID"].ToString(),
+                    CustomerAddressID = records.First()["rstk__externalid__c"].ToString(),
+                    Name = records.First()["Name"].ToString(),
+                    LocationReference = records.First()["External_Customer_Number__c"].ToString()
                 });
             }
             else
@@ -44,17 +46,12 @@
             }
         }
 
-        public static int? GetNextSequenceNumber(dynamic payload)
+        public static int? GetNextSequenceNumber(JArray payload)
         {
-            var MaxSequenceNum = payload[0]["MaxSequenceNum"];
-            if (MaxSequenceNum != null)
-            {
-                return Convert.ToInt32(MaxSequenceNum) + 1;
-            }
-            else
-            {
-                return 1;
-            }
+            var MaxSequenceNum = payload.First()["MaxSequenceNum"];
+            return MaxSequenceNum != null
+                ? Convert.ToInt32(MaxSequenceNum) + 1
+                : 1;
         }
 
         #endregion

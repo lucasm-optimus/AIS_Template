@@ -1,4 +1,5 @@
-﻿using Tilray.Integrations.Services.Sharepoint.Startup;
+﻿using Tilray.Integrations.Services.Rootstock.Service.Models;
+using Tilray.Integrations.Services.Sharepoint.Startup;
 
 namespace Tilray.Integrations.Services.Sharepoint.Service;
 
@@ -15,7 +16,11 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
             Type error when error == typeof(NonPOLineItemError) => sharepointSettings.InvoicesNonPOErrorsSubFolderPath,
             Type error when error == typeof(GrpoLineItemError) => sharepointSettings.InvoicesGrpoErrorsSubFolderPath,
             Type error when error == typeof(ExpenseError) => sharepointSettings.ExpensesErrorsSubFolderPath,
-            _ => string.Empty,
+            Type matchingAp when matchingAp == typeof(APLineItem) => sharepointSettings.InvoicesPOAPMatchedSubFolder,
+            Type matchingAp when matchingAp == typeof(APATOLineItem) => sharepointSettings.InvoicesAPATOMatchedSubFolder,
+            Type matchingAp when matchingAp == typeof(APMatchError) => sharepointSettings.InvoicesPOAPErrorsSubFolder,
+            Type matchingAp when matchingAp == typeof(APATOError) => sharepointSettings.InvoicesPOAPErrorsSubFolder,
+            _ => string.Empty
         };
     }
 
@@ -153,6 +158,52 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         logger.LogInformation("UploadFileAsync: {ObjectName} uploaded. Upload Path {UploadPath}", typeof(T).Name, uploadPath);
         return Result.Ok();
     }
+
+    public async Task<Result> UploadFileAsync(byte[] fileContent, string uploadUrl)
+    {
+        var driveResult = await GetDriveIdAsync();
+        if (driveResult.IsFailed) return driveResult.ToResult();
+
+        using (var memoryStream = new MemoryStream())
+        {
+            var uploadedFile = await graphServiceClient
+            .Drives[driveResult.Value]
+            .Items["root"]
+                .ItemWithPath(uploadUrl)
+                .Content
+                .PutAsync(memoryStream);
+
+            if (uploadedFile?.Id == null)
+            {
+                logger.LogError("UploadFileAsync: File upload failed");
+                return Result.Fail("UploadFileAsync: File upload failed");
+            }
+        }
+
+        return Result.Ok();
+    }
+
+    public Result<string> PrepareUploadUrl<T>(string companyName, string fileExtension)
+    {
+        try
+        {
+            var uploadPath = string.Format("{baseUrl}/{companyName}{InvoicesFolderPath}/{SubFolder}{companyName_dateTime}.{fileExtension}",
+                sharepointSettings.BasePath?.TrimEnd('/'),
+                companyName,
+                sharepointSettings.InvoicesFolderPath?.TrimEnd('/'),
+                GetSubFolderPath<T>(),
+                companyName+"_"+DateTime.Now.ToString("yyyy-MM-dd-HHmmss"),
+                fileExtension);
+
+            return Result.Ok(uploadPath);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "PrepareUploadUrl: Failed to prepare upload URL");
+            return Result.Fail<string>(e.Message);
+        }
+    }
+
 
     #endregion
 }
