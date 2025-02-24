@@ -34,24 +34,14 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
         };
     }
 
-    private string GetSOXReportUploadPath()
+    private string GetAuditDataUploadPath(string fileExtension)
     {
         var basePath = sharepointSettings.BasePath?.TrimEnd('/');
         var soxReportFolder = sharepointSettings.AuditItemsFolderPath?.TrimEnd('/') ?? "SOXReport";
 
         string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
-        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.csv";
-    }
-
-    private string GetSOXQueryUploadPath()
-    {
-        var basePath = sharepointSettings.BasePath?.TrimEnd('/');
-        var soxReportFolder = sharepointSettings.AuditItemsFolderPath?.TrimEnd('/') ?? "SOXReport";
-
-        string formattedDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
-
-        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}.txt";
+        return $"{basePath}/{soxReportFolder}/SF_SOX_Report_{formattedDate}{fileExtension}";
     }
 
     private string GetUploadPath<T>(CompanyReference companyReference)
@@ -190,7 +180,7 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
 
     public async Task<Result> UploadAuditItemsAsync(IEnumerable<AuditItem> auditItems)
     {
-        var uploadPath = GetSOXReportUploadPath();
+        var uploadPath = GetAuditDataUploadPath(".csv");
         string[] ignoredProperties = { "Attributes.Url" };
 
         return await UploadFileAsync(auditItems, uploadPath: uploadPath, ignoredProperties: ignoredProperties);
@@ -200,19 +190,19 @@ public class SharepointService(GraphServiceClient graphServiceClient, IMapper ma
     {
         if (query == null)
         {
-            logger.LogWarning("UploadQueryAsync: No query provided for upload");
-            return Result.Fail("UploadQueryAsync: No query provided for upload");
+            logger.LogWarning("UploadAuditItemsQueryAsync: No query provided for upload");
+            return Result.Fail("UploadAuditItemsQueryAsync: No query provided for upload");
         }
 
-        var uploadPath = GetSOXQueryUploadPath();
+        var uploadPath = GetAuditDataUploadPath(".txt");
         var result = await UploadAsync(query, uploadPath);
         if (result.IsFailed)
         {
-            logger.LogError("UploadQueryAsync: Failed to upload audit items query to Sharepoint");
+            logger.LogError("UploadAuditItemsQueryAsync: Failed to upload audit items query to Sharepoint");
             return result;
         }
 
-        logger.LogInformation("UploadQueryAsync: audit items query uploaded. Upload Path {UploadPath}", uploadPath);
+        logger.LogInformation("UploadAuditItemsQueryAsync: audit items query uploaded. Upload Path {UploadPath}", uploadPath);
         return Result.Ok();
     }
 

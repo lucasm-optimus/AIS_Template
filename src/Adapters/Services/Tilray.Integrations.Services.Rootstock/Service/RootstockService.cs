@@ -527,17 +527,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     public async Task<Result<IEnumerable<AuditItem>>> GetAuditItemsAsync(string reportDate)
     {
         var query = string.Format(RootstockQueries.GetAuditItemsQuery, reportDate);
-
-        var queryResult = await GetObjectListAsync<AuditItem>(query, "auditItems");
-
-        if (queryResult.IsFailed)
-        {
-            logger.LogInformation("Failed to fetch auditItems from salesforce.");
-            return Result.Fail<IEnumerable<AuditItem>>($"Failed to fetch auditItems from salesforce.");
-        }
-
-        return Result.Ok(queryResult.Value);
-
+        return await GetObjectListAsync<AuditItem>(query, "SetupAuditTrail");
     }
 
     public string GetAuditItemsQuery(string reportDate)

@@ -5,13 +5,14 @@ public class GetAuditDataFromRootstockQueryHandler(IRootstockService rootstockSe
     public async Task<Result<AuditItemAgg>> Handle(GetAuditData request, CancellationToken cancellationToken)
     {
         var reportDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        var soxReport = await rootstockService.GetAuditItemsAsync(reportDate);
-        var query = rootstockService.GetAuditItemsQuery(reportDate);
-        if (soxReport.IsSuccess)
+        var auditItemsResult = await rootstockService.GetAuditItemsAsync(reportDate);
+        var auditItemsQuery = rootstockService.GetAuditItemsQuery(reportDate);
+        if (auditItemsResult.IsSuccess)
         {
-            var auditItemAgg = AuditItemAgg.Create(soxReport.Value, query);
+            var auditItemAgg = AuditItemAgg.Create(auditItemsResult.Value, auditItemsQuery);
             return Result.Ok(auditItemAgg);
         }
-        return Result.Fail<AuditItemAgg>($"Failed to fetch audit items: {soxReport.Errors.FirstOrDefault()?.Message}");
+
+        return Result.Fail<AuditItemAgg>(auditItemsResult.Errors);
     }
 }
