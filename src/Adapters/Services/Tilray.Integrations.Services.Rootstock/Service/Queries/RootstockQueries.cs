@@ -61,4 +61,6 @@ internal static class RootstockQueries
     internal const string GetChatterGroupIdQuery = "SELECT Id FROM CollaborationGroup WHERE Name = '{0}'";
 
     internal const string GetChatterBodyQuery = "SELECT Body FROM FeedItem WHERE ParentId = '{0}'";
+
+    internal const string GetPOIdByPOName = @"SELECT Id, Name, rstk__porcptap_poline__r.rstk__poline_longdescr__c FROM rstk__porcptap__c WHERE Name = '{0}'";
 }

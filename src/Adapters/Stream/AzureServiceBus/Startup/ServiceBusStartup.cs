@@ -18,9 +18,8 @@ public class ServiceBusStartup : IStartupRegister
         if (!string.IsNullOrWhiteSpace(serviceBusConnectionString))
         {
             services.AddSingleton(new ServiceBusClient(serviceBusConnectionString));
+            services.AddSingleton<IStream, AzureServiceBusService>();
         }
-
-        services.AddKeyedSingleton<IStream, AzureServiceBusService>(nameof(AzureServiceBusService));
 
         return services;
     }

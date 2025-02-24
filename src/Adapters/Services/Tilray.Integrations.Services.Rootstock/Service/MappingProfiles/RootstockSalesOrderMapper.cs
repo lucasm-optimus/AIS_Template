@@ -6,7 +6,7 @@ public class RootstockSalesOrderMapper : Profile
 {
     public RootstockSalesOrderMapper()
     {
-        CreateMap<SalesOrder, RootstockSalesOrder>()
+        CreateMap<SalesOrder, Models.RootstockSalesOrder>()
             .ForMember(dest => dest.SoapiMode, opt => opt.MapFrom(src => "Add Both"))
             .ForMember(dest => dest.SoapiAddOrUpdate, opt => opt.MapFrom(src => false))
             .ForMember(dest => dest.SalesDivision, opt => opt.MapFrom(src => src.Division.ToString()))
@@ -33,7 +33,7 @@ public class RootstockSalesOrderMapper : Profile
             .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.LineItems.Count != 0 ? src.LineItems[0].UnitPrice : 0))
             .ForMember(dest => dest.ExternalOrderReference, opt => opt.MapFrom(src => src.ExternalRefNumber ?? null));
 
-        CreateMap<(Core.Domain.Aggregates.SalesOrders.LineItem LineItem, string createdSalesOrderHeaderId, SalesOrder SalesOrder), RootstockSalesOrder>()
+        CreateMap<(Core.Domain.Aggregates.SalesOrders.LineItem LineItem, string createdSalesOrderHeaderId, SalesOrder SalesOrder), Models.RootstockSalesOrder>()
             .ForMember(dest => dest.SoapiMode, opt => opt.MapFrom(src => "Add Line"))
             .ForMember(dest => dest.SoapiSohdr, opt => opt.MapFrom(src => src.createdSalesOrderHeaderId))
             .ForMember(dest => dest.SoapiProduct, opt => opt.MapFrom(src => new Product()

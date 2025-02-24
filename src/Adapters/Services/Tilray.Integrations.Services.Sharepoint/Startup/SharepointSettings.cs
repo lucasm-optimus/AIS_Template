@@ -18,5 +18,9 @@ public class SharepointSettings
     public string InvoicesGrpoErrorsSubFolderPath { get; set; }
     public string ExpensesErrorsSubFolderPath { get; set; }
     public string ExpensesFolderPath { get; set; }
+    public string InvoicesPOAPMatchedSubFolder { get; set; }
+    public string InvoicesAPATOMatchedSubFolder { get; set; }
+    public string InvoicesPOAPErrorsSubFolder { get; set; }
+    public string InvoicesAPATOErrorsSubFolder { get; set; }
     public string[] Scopes { get; set; } = ["https://graph.microsoft.com/.default"];
 }

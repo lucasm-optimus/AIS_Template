@@ -1,4 +1,6 @@
-﻿namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
+﻿using Newtonsoft.Json.Linq;
+
+namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock
 {
     public class RstkCustomerInfoResponse
     {
@@ -15,20 +17,28 @@
         #region Constructors
 
         private RstkCustomerInfoResponse() { }
-        public static RstkCustomerInfoResponse MapFromPayload(dynamic records)
+        public static Result<RstkCustomerInfoResponse> MapFromPayload(JArray records)
         {
-            if (records.Count > 0)
+            try
             {
-                return new RstkCustomerInfoResponse
+                if (records.Count > 0)
                 {
-                    CustomerNo = records[0]["rstk__socust_custno__c"],
-                    Name = records[0]["Name"],
-                    CustomerId = records[0]["Id"]
-                };
+                    return Result.Ok(new RstkCustomerInfoResponse
+                    {
+                        CustomerNo = records.FirstOrDefault()!["rstk__socust_custno__c"].ToString(),
+                        Name = records.FirstOrDefault()!["Name"].ToString(),
+                        CustomerId = records.FirstOrDefault()!["Id"].ToString()
+                    });
+                }
+                else
+                {
+                    return Result.Fail("No records found");
+                }
+
             }
-            else
+            catch (Exception e)
             {
-                return null;
+                return Result.Fail<RstkCustomerInfoResponse>(e.Message);
             }
         }
 

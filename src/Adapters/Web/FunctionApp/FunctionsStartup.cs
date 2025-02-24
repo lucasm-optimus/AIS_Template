@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tilray.Integrations.Core.Common.Startup;
-using Tilray.Integrations.Core.Common.Stream;
-using Tilray.Integrations.Stream.Bus.Services;
+using Tilray.Integrations.Core.Domain.Aggregates.Invoices;
 
 namespace Tilray.Integrations.Functions
 {
@@ -10,16 +9,15 @@ namespace Tilray.Integrations.Functions
     {
         public IServiceCollection Register(IServiceCollection services, IConfiguration configuration)
         {
-            var orderDefaults = configuration.GetSection("OrderDefaults").Get<OrderDefaultsSettings>();
-            if (orderDefaults != null)
+            if (configuration.GetSection("OrderDefaults").Get<OrderDefaultsSettings>() is OrderDefaultsSettings orderDefaults)
             {
                 services.AddSingleton(orderDefaults);
             }
 
-            services.AddSingleton(sp =>
+            if (configuration.GetSection("GLAccounts").Get<GLAccountsSettings>() is GLAccountsSettings glAccounts)
             {
-                return sp.GetKeyedService<IStream>(nameof(AzureServiceBusService))!;
-            });
+                services.AddSingleton(glAccounts);
+            }
 
             return services;
         }

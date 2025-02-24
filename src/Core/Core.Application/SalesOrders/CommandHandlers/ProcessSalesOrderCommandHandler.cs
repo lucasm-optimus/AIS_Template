@@ -1,6 +1,4 @@
-﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
-
-namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
+﻿namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class ProcessSalesOrderCommandHandler(
             IRootstockService rootstockService,
@@ -19,24 +17,19 @@ namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
             {
                 var response = await ProcessIndividualSalesOrder(salesOrder);
                 if (response.IsSuccess)
-                {
                     succesSalesOrders.Add(response.Value);
-                }
                 else
-                {
                     failedSalesOrders.Add(salesOrder.ECommOrderID);
-                    foreach (var message in response.Reasons.Select(r => r.Message).ToList())
-                    {
-                        logger.LogWarning($"Failed to process sales order:{salesOrder.ECommOrderID}, message: {message}");
-                    }
-                }
             });
 
             await Task.WhenAll(tasks);
 
             logger.LogInformation($"Successfully processed {succesSalesOrders.Count()} sales orders.");
 
-            return Result.Ok(new SalesOrdersProcessed(succesSalesOrders, failedSalesOrders));
+            var salesOrdersProcessed = new SalesOrdersProcessed(succesSalesOrders, failedSalesOrders);
+            await mediator.Publish(salesOrdersProcessed, cancellationToken);
+
+            return Result.Ok(salesOrdersProcessed);
         }
 
         private async Task<Result<MedSalesOrder>> ProcessIndividualSalesOrder(Domain.Aggregates.SalesOrders.Ecom.SalesOrder payload)
@@ -106,8 +99,7 @@ namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
                 }
                 else
                 {
-                    var errorMessage = $"Failed to create customer address for sales order {payload.ECommOrderID} and customer no:{payload.CustomerAccountNumber}";
-                    logger.LogWarning(errorMessage);
+                    logger.LogWarning("Failed to create customer address for sales order {CustomerAccountNumber} and customer no:", payload.CustomerAccountNumber);
                     return Result.Fail(response.Errors);
                 }
             }

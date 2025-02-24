@@ -1,77 +1,24 @@
-﻿using Microsoft.Extensions.Logging;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Events;
-using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+﻿using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Rootstock;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Customer;
 
 namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 {
     public class CreateCustomerCommandHandler(
-        IRootstockService rootstockService,
-        ILogger<ProcessSalesOrderCommandHandler> logger,
-        OrderDefaultsSettings orderDefaults) : ICommandHandler<CreateCustomerCommand, CustomerCreated>
+            IRootstockService rootstockService,
+            ILogger<ProcessSalesOrderCommandHandler> logger,
+            OrderDefaultsSettings orderDefaults) : ICommandHandler<CreateCustomerCommand, CustomerCreated>
     {
         public async Task<Result<CustomerCreated>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
             logger.LogInformation($"Begin creating customer {request.customer.CustomerNo}.");
 
-            #region Update foreign keys
-
-            var result = Result.Ok();
-            var customerClassResult = await rootstockService.GetIdFromExternalColumnReference("rstk__socclass__c", "rstk__externalid__c", request.customer.CustomerClass);
-            if (customerClassResult.IsFailed)
-            {
-                var errorMessage = $"Failed to get customer class id for {request.customer.CustomerClass}.";
-                logger.LogError(errorMessage);
-                result.WithError(errorMessage);
-            }
-            request.customer.UpdateCustomerClass(customerClassResult.Value);
-
-            var accountingDimension1Result = await rootstockService.GetIdFromExternalColumnReference("rstk__sydim__c", "rstk__externalid__c", request.customer.AccountingDimension1);
-            if (accountingDimension1Result.IsFailed)
-            {
-                var errorMessage = $"Failed to get accounting dimension 1 id for {request.customer.AccountingDimension1}.";
-                logger.LogError(errorMessage);
-                result.WithError(errorMessage);
-            }
-            request.customer.UpdateAccountingDimension1(accountingDimension1Result.Value);
-
-            var accountingDimension2Result = await rootstockService.GetIdFromExternalColumnReference("rstk__sydim__c", "rstk__externalid__c", request.customer.AccountingDimension2);
-            if (accountingDimension2Result.IsFailed)
-            {
-                var errorMessage = $"Failed to get accounting dimension 2 id for {request.customer.AccountingDimension2}.";
-                logger.LogError(errorMessage);
-                result.WithError(errorMessage);
-            }
-            request.customer.UpdateAccountingDimension2(accountingDimension2Result.Value);
-
-            var paymentTermsResult = await rootstockService.GetIdFromExternalColumnReference("rstk__syterms__c", "rstk__externalid__c", request.customer.PaymentTerms);
-            if (paymentTermsResult.IsFailed)
-            {
-                var errorMessage = $"Failed to get payment terms id for {request.customer.PaymentTerms}.";
-                logger.LogError(errorMessage);
-                result.WithError(errorMessage);
-            }
-            request.customer.UpdatePaymentTerms(paymentTermsResult.Value);
-
+            var result = await UpdateForeignKeys(request.customer);
             if (result.IsFailed)
             {
                 return Result.Fail<CustomerCreated>(result.Errors);
             }
 
-            #endregion
-
-            #region Create Customer
-
-            var rootstockCustomerResult = RstkCustomer.Create(request.customer);
-
-            if (rootstockCustomerResult.IsFailed)
-            {
-                var errorMessage = $"Failed to create customer {request.customer.CustomerNo}.";
-                logger.LogError(errorMessage);
-                return Result.Fail<CustomerCreated>(rootstockCustomerResult.Errors);
-            }
-
-            var createdCustomerResult = await rootstockService.CreateCustomer(rootstockCustomerResult.Value);
-
+            var createdCustomerResult = await rootstockService.CreateCustomer(request.customer);
             if (createdCustomerResult.IsFailed)
             {
                 var errorMessage = $"Failed to create customer {request.customer.CustomerNo}.";
@@ -81,8 +28,35 @@ namespace Tilray.Integrations.Core.Application.SalesOrders.CommandHandlers
 
             logger.LogInformation($"Customer {request.customer.CustomerNo} created.");
             return Result.Ok(new CustomerCreated(createdCustomerResult.Value));
+        }
 
-            #endregion
+        private async Task<Result> UpdateForeignKeys(SalesOrderCustomer customer)
+        {
+            var result = Result.Ok();
+
+            result = await UpdateForeignKey(customer.CustomerClass, "rstk__socclass__c", "rstk__externalid__c", customer.UpdateCustomerClass, result);
+            result = await UpdateForeignKey(customer.AccountingDimension1, "rstk__sydim__c", "rstk__externalid__c", customer.UpdateAccountingDimension1, result);
+            result = await UpdateForeignKey(customer.AccountingDimension2, "rstk__sydim__c", "rstk__externalid__c", customer.UpdateAccountingDimension2, result);
+            result = await UpdateForeignKey(customer.PaymentTerms, "rstk__syterms__c", "rstk__externalid__c", customer.UpdatePaymentTerms, result);
+
+            return result;
+        }
+
+        private async Task<Result> UpdateForeignKey(string externalIdValue, string objectName, string externalIdColumnName, Action<string> updateAction, Result result)
+        {
+            var foreignKeyResult = await rootstockService.GetIdFromExternalColumnReference(objectName, externalIdColumnName, externalIdValue);
+            if (foreignKeyResult.IsFailed)
+            {
+                var errorMessage = $"Failed to get {objectName} id for {externalIdValue}.";
+                logger.LogError(errorMessage);
+                result.WithError(errorMessage);
+            }
+            else
+            {
+                updateAction(foreignKeyResult.Value);
+            }
+
+            return result;
         }
     }
 }

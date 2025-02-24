@@ -1,4 +1,6 @@
-﻿using Tilray.Integrations.Services.Rootstock.Service.Queries;
+﻿using Tilray.Integrations.Core.Application.Invoices.Models;
+using Tilray.Integrations.Core.Domain.Aggregates.SalesOrders.Customer;
+using Tilray.Integrations.Services.Rootstock.Service.Queries;
 using Tilray.Integrations.Services.Rootstock.Startup;
 
 namespace Tilray.Integrations.Services.Rootstock.Service;
@@ -106,7 +108,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail<string>(result.Errors);
         }
 
-        if(result.Value == null)
+        if (result.Value == null)
         {
             string errorMessage = $"Chatter group {groupName} not found.";
             logger.LogWarning(errorMessage);
@@ -222,9 +224,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             return Result.Fail(errorMessage);
         }
 
-        var tasks = uploadGroups.Select(async uploadGroup =>
+        var tasks = uploadGroups.Select<string, Task<string>>(async uploadGroup =>
         {
-            var uploadGroupResult = await GetObjectByIdAsync<RootstockSalesOrder>(uploadGroup,
+            var uploadGroupResult = await GetObjectByIdAsync<Models.RootstockSalesOrder>(uploadGroup,
                 RootstockQueries.GetUploadGroupByIdQuery, "rstk__soapi__c");
             return uploadGroupResult.IsFailed || uploadGroupResult.Value != null ? uploadGroup : null;
         });
@@ -242,9 +244,9 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok();
     }
 
-    private async Task<Result<string>> CreateSalesOrderHeaderAsync(SalesOrder salesOrder)
+    private async Task<Result<string>> CreateSalesOrderHeaderAsync(Core.Domain.Aggregates.SalesOrders.SalesOrder salesOrder)
     {
-        var rootstockOrder = mapper.Map<RootstockSalesOrder>(salesOrder);
+        var rootstockOrder = mapper.Map<Models.RootstockSalesOrder>(salesOrder);
         var result = await CreateAsync(rootstockOrder, "rstk__soapi__c");
         if (result.IsFailed)
         {
@@ -257,15 +259,15 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok(result.Value);
     }
 
-    private async Task<Result> CreateSalesOrderLinesAsync(SalesOrder salesOrder, string salesOrderId)
+    private async Task<Result> CreateSalesOrderLinesAsync(Core.Domain.Aggregates.SalesOrders.SalesOrder salesOrder, string salesOrderId)
     {
-        var rootstockOrderResult = await GetObjectByIdAsync<RootstockSalesOrder>(salesOrderId, RootstockQueries.GetSalesOrderByIdQuery, "rstk__soapi__c");
+        var rootstockOrderResult = await GetObjectByIdAsync<Models.RootstockSalesOrder>(salesOrderId, RootstockQueries.GetSalesOrderByIdQuery, "rstk__soapi__c");
         if (rootstockOrderResult.IsFailed) { return Result.Fail("Sales Order not found"); }
         var errors = new List<string>();
 
         foreach (var lineItem in salesOrder.LineItems.Skip(1))
         {
-            var orderLine = mapper.Map<RootstockSalesOrder>((lineItem, rootstockOrderResult.Value.SoapiSohdr, salesOrder));
+            var orderLine = mapper.Map<Models.RootstockSalesOrder>((lineItem, rootstockOrderResult.Value.SoapiSohdr, salesOrder));
             var result = await CreateAsync(orderLine, "rstk__soapi__c");
 
             if (result.IsFailed)
@@ -287,36 +289,37 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
     {
         var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
         var response = await httpClient.PostAsync($"{SObjectUrl}/{objectName}", content);
-        var responseContent = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+        var responseContent = await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
         {
-            logger.LogInformation($"[Rootstock Create] Successfully created entry in entity {objectName}.");
-            var recordId = responseContent["id"];
-            return Result.Ok(recordId.Value);
+            logger.LogInformation("[PostRootstockData] Successfully created entry in entity {objectName}.", objectName);
+            var recordId = JObject.Parse(responseContent)?["id"]?.ToString();
+            return Result.Ok(recordId!);
         }
         else
         {
             string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')";
-            logger.LogError($"[Rootstock Create] Failed to create entry in entity {objectName}. Error: {errorMessage}.");
+            logger.LogError("[PostRootstockData] Failed to create entry in entity {objectName}. Error: {errorMessage}.", objectName, errorMessage);
             return Result.Fail(errorMessage);
         }
     }
 
-    private async Task<Result<dynamic>> ExecuteQueryAsync(string query)
+    private async Task<Result<JArray>> ExecuteQueryAsync(string query)
     {
         HttpResponseMessage response = await httpClient.GetAsync($"{QueryUrl}?q={query}");
-        var responseContent = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+
         if (response.IsSuccessStatusCode)
         {
-            logger.LogInformation($"Successfully fetched data. Query: {query}");
-            return Result.Ok(responseContent["records"]);
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JObject.Parse(content);
+            return Result.Ok((JArray)result["records"]!);
         }
         else
         {
-            string errorMessage = $"{response.StatusCode} (Details: '{responseContent}')";
-            logger.LogError($"Failed to fetch. Error: {errorMessage}");
-            return Result.Fail(errorMessage);
+            string errorMessage = Helpers.GetErrorFromResponse(response);
+            logger.LogError(errorMessage);
+            return Result.Fail<JArray>(errorMessage);
         }
     }
 
@@ -330,7 +333,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             RootstockQueries.GetAllCompanyReferenceQuery, "External_Company_Reference__c");
     }
 
-    public async Task<Result<IEnumerable<SalesOrder>>> ValidateSalesOrders(IEnumerable<SalesOrder> salesOrders)
+    public async Task<Result<IEnumerable<Core.Domain.Aggregates.SalesOrders.SalesOrder>>> ValidateSalesOrders(IEnumerable<Core.Domain.Aggregates.SalesOrders.SalesOrder> salesOrders)
     {
         logger.LogInformation($"Validating {salesOrders.Count()} sales orders.");
 
@@ -361,7 +364,7 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return Result.Ok(salesOrders);
     }
 
-    public async Task<Result> CreateSalesOrderAsync(SalesOrder salesOrder)
+    public async Task<Result> CreateSalesOrderAsync(Core.Domain.Aggregates.SalesOrders.SalesOrder salesOrder)
     {
         var salesOrderHeaderResult = await CreateSalesOrderHeaderAsync(salesOrder);
         return salesOrderHeaderResult.IsFailed
@@ -369,26 +372,40 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             : await CreateSalesOrderLinesAsync(salesOrder, salesOrderHeaderResult.Value);
     }
 
-    public async Task<Result<string?>> CreateCustomer(RstkCustomer customer)
+    public async Task<Result<string>> CreateCustomer(SalesOrderCustomer customer)
     {
-        var createdCustomerResult = await PostRootstockDataAsync(Constants.Rootstock.TableNames.Customer, customer);
-        return createdCustomerResult.IsFailed
-            ? createdCustomerResult
-            : RootstockCustomerCreateResponse.GetRecordId(createdCustomerResult.Value);
+        var rootstockCustomerResult = RootstockCustomer.Create(customer);
+        if (rootstockCustomerResult.IsFailed)
+        {
+            var errorMessage = $"Failed to create customer {customer.CustomerNo}.";
+            logger.LogError(errorMessage);
+            return Result.Fail<string>(rootstockCustomerResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.Customer, rootstockCustomerResult.Value);
     }
 
-    public async Task<Result<RstkCustomerInfoResponse?>> GetCustomerInfo(string sfAccountId)
+    public async Task<Result<RstkCustomerInfoResponse>> GetCustomerInfo(string sfAccountId)
     {
         var formattedQuery = string.Format(RootstockQueries.GetCustomerBySfAccountQuery, sfAccountId);
         var responseResult = await ExecuteQueryAsync(formattedQuery);
+
         return responseResult.IsFailed
-            ? responseResult
+            ? Result.Fail<RstkCustomerInfoResponse>(responseResult.Errors)
             : RstkCustomerInfoResponse.MapFromPayload(responseResult.Value);
     }
 
-    public async Task<Result<string?>> CreateCustomerAddress(RstkCustomerAddress customerAddress)
+    public async Task<Result<string>> CreateCustomerAddress(SalesOrderCustomerAddress salesOrderCustomerAddress, string customerId, int nextAddressSequence, string customerAccountNumber)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.CustomerAddress, customerAddress);
+        var rootstockCustomerAddressResult = RootstockCustomerAddress.Create(salesOrderCustomerAddress, customerId, nextAddressSequence);
+
+        if (rootstockCustomerAddressResult.IsFailed)
+        {
+            logger.LogError("Failed to create customer address {nextAddressSequence} for customer {customerAccountNumber}.", nextAddressSequence, customerAccountNumber);
+            return Result.Fail<string>(rootstockCustomerAddressResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.CustomerAddress, rootstockCustomerAddressResult.Value);
     }
 
     public async Task<int?> GetCustomerAddressNextSequence(string customerNo)
@@ -396,31 +413,6 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var formattedQuery = string.Format(RootstockQueries.GetMaxAddressSequenceByCustomerNo, customerNo);
         var responseResult = await ExecuteQueryAsync(formattedQuery);
         return RstkCustomerAddressInfoResponse.GetNextSequenceNumber(responseResult.Value);
-    }
-
-    public async Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string addressType)
-    {
-        //await string.Format(, customerNo)
-        var responseResult = addressType switch
-        {
-            "ShipTo" => await ExecuteQueryAsync(string.Format(RootstockQueries.GetShipToCustomerAddressInfoQuery, customerNo)),
-            "BillTo" => await ExecuteQueryAsync(string.Format(RootstockQueries.GetDefaultBillToCustomerAddressInfoQuery, customerNo)),
-            "Acknowledgement" => await ExecuteQueryAsync(string.Format(RootstockQueries.GetAcknowledgementCustomerAddressInfoQuery, customerNo)),
-            "Installation" => await ExecuteQueryAsync(string.Format(RootstockQueries.GetInstallationCustomerAddressInfoQuery, customerNo)),
-            _ => throw new Exception("Invalid address type.")
-        };
-
-        if (responseResult.IsFailed)
-        {
-            logger.LogError($"Failed to fetch customer address info. Error: {responseResult.Errors}");
-            return Result.Fail<RstkCustomerAddressInfoResponse>(responseResult.Errors);
-        }
-
-        var result = RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Value);
-        return result.IsSuccess
-            ? result
-            : Result.Fail<RstkCustomerAddressInfoResponse>(result.Errors);
-
     }
 
     public async Task<Result<RstkCustomerAddressInfoResponse>> GetCustomerAddressInfo(string customerNo, string address, string city, string state, string zip)
@@ -435,27 +427,54 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
             " AND rstk__socaddr_useasshipto__c = true";
 
         var responseResult = await ExecuteQueryAsync(query);
-        return RstkCustomerAddressInfoResponse.MapFromPayload(responseResult.Value);
+        return RstkCustomerAddressInfoResponse.Create(responseResult.Value);
     }
 
-    public async Task<Result<string?>> CreateSalesOrder(RstkSalesOrder salesOrder)
+    public async Task<Result<string>> CreateSalesOrder(MedSalesOrder salesOrder)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SalesOrder, salesOrder);
+        var rsoResult = RootstockSalesOrderApi.Create(salesOrder);
+        if (rsoResult.IsFailed)
+        {
+            return Result.Fail<string>(rsoResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.SalesOrder, rsoResult.Value);
     }
 
-    public async Task<Result<string?>> CreateSalesOrderLineItem(RstkSalesOrderLineItem salesOrderLineItem)
+    public async Task<Result<string>> CreateSalesOrderLineItem(SalesOrderLineItem salesOrderLineItem, string soHdrId)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SalesOrder, salesOrderLineItem);
+        var rsoResult = RootstockSalesOrderApi.Create(salesOrderLineItem);
+        if (rsoResult.IsFailed)
+        {
+            return Result.Fail<string>(rsoResult.Errors);
+        }
+
+        rsoResult.Value.UpdateSoHdr(soHdrId);
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.SalesOrder, rsoResult.Value);
     }
 
-    public async Task<Result<string?>> CreatePrePayment(RstkSalesOrderPrePayment prePayment)
+    public async Task<Result<string>> CreatePrePayment(CCPrepayment prePayment)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.Prepayment, prePayment);
+        var prepaymentsyDataResult = RootstockPrePaymentSyData.Create(prePayment);
+        if (prepaymentsyDataResult.IsFailed)
+        {
+            logger.LogError("Failed to create prepayment. Error: {Error}", prepaymentsyDataResult.Errors);
+            return Result.Fail<string>(prepaymentsyDataResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.Prepayment, prepaymentsyDataResult);
     }
 
-    public async Task<Result<string?>> CreatePrePayment(RstkSyDataPrePayment prePayment)
+    public async Task<Result<string>> CreatePrePayment(SalesOrderPrepayment soPrepayment, string divisionId, string paymentAccountId)
     {
-        return await PostRootstockDataAsync(Constants.Rootstock.TableNames.SyData, prePayment);
+        var soPrepaymentResult = RootstockSalesOrderPrePayment.Create(soPrepayment, divisionId, paymentAccountId);
+        if (soPrepaymentResult.IsFailed)
+        {
+            logger.LogError("Creating rootstock prepayment failed for ECommerceOrderID:{OrderID}.", soPrepayment.OrderID);
+            return Result.Fail(soPrepaymentResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.SyData, soPrepaymentResult.Value);
     }
 
     public async Task<bool> SalesOrderExists(string customerReferenceNumber)
@@ -465,13 +484,13 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         return responseResult.Value.Count > 0;
     }
 
-    public async Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalId)
+    public async Task<Result<string>> GetIdFromExternalColumnReference(string objectName, string externalIdColumnName, string externalIdValue)
     {
-        var formattedQuery = string.Format(RootstockQueries.GetIdByExternalReferenceId, objectName, externalIdColumnName, externalId);
+        var formattedQuery = string.Format(RootstockQueries.GetIdByExternalReferenceId, objectName, externalIdColumnName, externalIdValue);
         var responseResult = await ExecuteQueryAsync(formattedQuery);
         return responseResult.IsFailed
             ? Result.Fail<string>(responseResult.Errors)
-            : Result.Ok(responseResult.Value[0]["Id"].ToString());
+            : Result.Ok(responseResult.Value.FirstOrDefault()!["Id"]!.ToString());
     }
 
     public async Task<Result<string>> GetSoHdr(string soapiId)
@@ -480,7 +499,58 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var responseResult = await ExecuteQueryAsync(formattedQuery);
         return responseResult.IsFailed
             ? Result.Fail<string>(responseResult.Errors)
-            : Result.Ok(responseResult.Value[0]["rstk__soapi_sohdr__c"].Value);
+            : Result.Ok(responseResult.Value.FirstOrDefault()!["rstk__soapi_sohdr__c"]!.ToString());
+    }
+
+    public async Task<Result<string>> CreateSyData(POAPLineItem data)
+    {
+        var poHdrIdResult = await GetIdFromExternalColumnReference("rstk__pohdr__c", "rstk__externalid__c", $"{data.CompanyNumber}_{data.PurchaseOrderHeader}");
+        if (poHdrIdResult.IsFailed)
+        {
+            logger.LogError("Failed to fetch PO Header ID. Error: {Error}", poHdrIdResult.Errors);
+            return Result.Fail(poHdrIdResult.Errors);
+        }
+
+        return await PostRootstockDataAsync(RootstockConstants.TableNames.SyData, RootstockSyData.Create(data, poHdrIdResult.Value));
+    }
+
+    public async Task<Result> UpdateSyDataProcess(string syDataId, string processName)
+    {
+        var result = await PostRootstockDataAsync(RootstockConstants.TableNames.SyData, new
+        {
+            id = syDataId,
+            rstk__sydata_process__c = processName
+        });
+
+        return result.IsFailed
+            ? Result.Fail(result.Errors)
+            : Result.Ok();
+    }
+
+    public async Task<Result<RootstockPODetail>> GetPODetails(string poName)
+    {
+        var formattedQuery = string.Format(RootstockQueries.GetPOIdByPOName, poName);
+        var responseResult = await ExecuteQueryAsync(formattedQuery);
+        return responseResult.IsFailed
+            ? Result.Fail<RootstockPODetail>(responseResult.Errors)
+            : RootstockPODetail.Create(responseResult.Value);
+    }
+
+    public async Task<Result> CreateSyDataDetail(List<object> rootstockSyDataDetails)
+    {
+        var result = Result.Ok();
+        foreach (var rootstockSyDataDetail in rootstockSyDataDetails)
+        {
+            var responseResult = await PostRootstockDataAsync(RootstockConstants.TableNames.SyDatad, rootstockSyDataDetail);
+            if (responseResult.IsFailed)
+            {
+                result.WithErrors(responseResult.Errors);
+            }
+        }
+
+        return result.IsFailed
+            ? Result.Fail(result.Errors)
+            : Result.Ok();
     }
 
     private (RootstockJournalEntry Debit, RootstockJournalEntry Credit) CreateJournalPair(CompanyReference company,
@@ -530,6 +600,22 @@ public class RootstockService(HttpClient httpClient, RootstockSettings rootstock
         var message = $"The latest Journal Entry Upload for Expenses produced {errorCount} errors.";
         var groupName = $"{rootstockSettings.JournalEntryChatterGroupPrefix}{companyNumber}";
         return await PostMessageToChatterAsync(message, groupName);
+    }
+
+    public async Task<Result> PostInvoicesErrorGeneratedToChatterAsync(string message, string companyNumber)
+    {
+        var groupName = $"{rootstockSettings.InvoicesChatterGroupPrefix}{companyNumber}";
+        return await PostMessageToChatterAsync(message, groupName);
+    }
+
+    public async Task<Result> CreateApato(APATOLineItem apatoLine, string glAccountId, string companyId, string vendorId)
+    {
+        var item = RootstockAPATO.Create(apatoLine, glAccountId, companyId, vendorId);
+        var response = await PostRootstockDataAsync(RootstockConstants.TableNames.Apato, item);
+
+        return response.IsFailed
+            ? Result.Fail(response.Errors)
+            : Result.Ok();
     }
 
     #endregion

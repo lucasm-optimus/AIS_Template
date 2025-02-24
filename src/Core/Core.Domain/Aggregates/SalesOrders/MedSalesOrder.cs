@@ -82,7 +82,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
         public string CustomerAddressReference { get; set; }
         [JsonProperty("customerId ")]
         public string CustomerId { get; set; }
-        public RstkSyDataPrePayment SyDataPrePayment { get; private set; }
+        //public CCPrepayment SyDataPrePayment { get; private set; }
 
         #endregion
 
@@ -102,11 +102,11 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
             var salesOrder = new MedSalesOrder();
             try
             {
-                if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_AphriaMed)
+                if (payload.StoreName == SalesOrderConstants.StoreName_AphriaMed)
                 {
                     salesOrder = CreateForAphria(payload, orderDefaults);
                 }
-                else if (payload.StoreName == Constants.Ecom.SalesOrder.StoreName_SweetWater)
+                else if (payload.StoreName == SalesOrderConstants.StoreName_SweetWater)
                 {
                     salesOrder = CreateForSweetWater(payload, orderDefaults);
                 }
@@ -122,23 +122,6 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
         #endregion
 
         #region Public Methods
-
-        public Result AddCCPrePayment()
-        {
-            if (CCPrepayment != null)
-            {
-                var rsoPrePaymentResult = RstkSyDataPrePayment.Create(CCPrepayment);
-                if (rsoPrePaymentResult.IsFailed)
-                {
-                    return Result.Fail(rsoPrePaymentResult.Errors);
-                }
-
-                SyDataPrePayment = rsoPrePaymentResult.Value;
-                return Result.Ok();
-            }
-
-            return Result.Ok();
-        }
 
         public void UpdateCustomerAddressReference(string customerAddressReference)
         {
@@ -159,14 +142,14 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
             return Result.Fail<SalesOrderPrepayment>("No prepayment found");
         }
 
-        public Result<RstkSyDataPrePayment> HasSyDataPrePayment(string soHdrId)
+        public Result<CCPrepayment> HasPrePaymentData()
         {
-            if (SyDataPrePayment != null)
+            if (CCPrepayment != null)
             {
-                SyDataPrePayment.UpdateSoHdrId(soHdrId);
-                return Result.Ok(SyDataPrePayment);
+                return Result.Ok(CCPrepayment);
             }
-            return Result.Fail<RstkSyDataPrePayment>("No SyDataPrePayment found");
+
+            return Result.Fail<CCPrepayment>("No SyDataPrePayment found");
         }
 
         public void UpdateOrderId(string orderId)
@@ -202,7 +185,7 @@ namespace Tilray.Integrations.Core.Domain.Aggregates.SalesOrders
         {
             var result = Result.Ok();
 
-            if (payload.StoreName != Constants.Ecom.SalesOrder.StoreName_AphriaMed && payload.StoreName != Constants.Ecom.SalesOrder.StoreName_SweetWater)
+            if (payload.StoreName != SalesOrderConstants.StoreName_AphriaMed && payload.StoreName != SalesOrderConstants.StoreName_SweetWater)
             {
                 result.WithError("Store name not recognized");
             }
